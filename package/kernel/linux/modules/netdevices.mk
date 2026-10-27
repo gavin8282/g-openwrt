@@ -588,6 +588,39 @@ endef
 
 $(eval $(call KernelPackage,phy-aeonsemi-as21xxx))
 
+define KernelPackage/phy-airoha-an8801sb
+  SUBMENU:=$(NETWORK_DEVICES_MENU)
+  TITLE:=Airoha AN8801SB 1G Ethernet PHY
+  DEPENDS:=+kmod-libphy
+  KCONFIG:=CONFIG_AIROHA_AN8801_PHY
+  FILES:= \
+   $(LINUX_DIR)/drivers/net/phy/an8801.ko
+  AUTOLOAD:=$(call AutoLoad,18,an8801,1)
+endef
+
+define KernelPackage/phy-airoha-an8801sb/description
+  Kernel modules for Airoha AN8801SB 1G Ethernet PHY
+endef
+
+$(eval $(call KernelPackage,phy-airoha-an8801sb))
+
+define KernelPackage/phy-air_an8811hb
+  SUBMENU:=Network Devices
+  TITLE:=Airoha AN8811HB PHY driver
+  DEPENDS:=@TARGET_mediatek
+  KCONFIG:= \
+	CONFIG_AIR_AN8811HB_PHY \
+	CONFIG_AIR_AN8811HB_PHY_DEBUGFS=y
+  FILES:= \
+	$(LINUX_DIR)/drivers/net/phy/air_an8811hb.ko
+  AUTOLOAD:=$(call AutoLoad,20,air_an8811hb,1)
+endef
+
+define KernelPackage/phy-air_an8811hb/description
+  kernel modules for Airoha AN8811HB PHY driver
+endef
+
+$(eval $(call KernelPackage,phy-air_an8811hb))
 
 define KernelPackage/phy-airoha-en8811h
   SUBMENU:=$(NETWORK_DEVICES_MENU)
@@ -636,6 +669,23 @@ define KernelPackage/phy-motorcomm/description
 endef
 
 $(eval $(call KernelPackage,phy-motorcomm))
+
+
+define KernelPackage/dwmac-motorcomm
+  SUBMENU:=$(NETWORK_DEVICES_MENU)
+  TITLE:=Motorcomm PCI DWMAC support
+  DEPENDS:=@PCI_SUPPORT +kmod-phy-motorcomm +kmod-stmmac-core
+  KCONFIG:=CONFIG_DWMAC_MOTORCOMM
+  FILES:=$(LINUX_DIR)/drivers/net/ethernet/stmicro/stmmac/dwmac-motorcomm.ko
+  AUTOLOAD:=$(call AutoProbe,dwmac-motorcomm,1)
+endef
+
+define KernelPackage/dwmac-motorcomm/description
+  Supports the Motorcomm DWMAC-based PCI Ethernet controllers.
+  Currently only YT6801 is supported.
+endef
+
+$(eval $(call KernelPackage,dwmac-motorcomm))
 
 
 define KernelPackage/dsa
@@ -1326,7 +1376,7 @@ $(eval $(call KernelPackage,igb))
 define KernelPackage/igbvf
   SUBMENU:=$(NETWORK_DEVICES_MENU)
   TITLE:=Intel(R) 82576 Virtual Function Ethernet support
-  DEPENDS:=@PCI_SUPPORT @TARGET_x86 +kmod-i2c-core +kmod-i2c-algo-bit +kmod-ptp
+  DEPENDS:=@PCI_SUPPORT @(TARGET_loongarch64||TARGET_x86) +kmod-i2c-core +kmod-i2c-algo-bit +kmod-ptp
   KCONFIG:=CONFIG_IGBVF \
     CONFIG_IGB_HWMON=y \
     CONFIG_IGB_DCA=n
@@ -1401,7 +1451,7 @@ define KernelPackage/ice
   DEPENDS:=@PCI_SUPPORT +kmod-ptp +kmod-hwmon-core +kmod-libie
   KCONFIG:=CONFIG_ICE \
     CONFIG_ICE_HWMON=y \
-    CONFIG_ICE_HWTS=n \
+    CONFIG_ICE_HWTS=y \
     CONFIG_ICE_SWITCHDEV=y
   FILES:=$(LINUX_DIR)/drivers/net/ethernet/intel/ice/ice.ko
   AUTOLOAD:=$(call AutoProbe,ice)
@@ -1795,11 +1845,11 @@ define KernelPackage/bnxt-en
   DEPENDS:=@PCI_SUPPORT +kmod-hwmon-core +kmod-lib-crc32c +kmod-mdio +kmod-ptp
   FILES:=$(LINUX_DIR)/drivers/net/ethernet/broadcom/bnxt/bnxt_en.ko
   KCONFIG:= \
-	  CONFIG_BNXT \
-	  CONFIG_BNXT_SRIOV=y \
-	  CONFIG_BNXT_FLOWER_OFFLOAD=y \
-	  CONFIG_BNXT_DCB=y \
-	  CONFIG_BNXT_HWMON=y
+	CONFIG_BNXT \
+	CONFIG_BNXT_SRIOV=y \
+	CONFIG_BNXT_FLOWER_OFFLOAD=y \
+	CONFIG_BNXT_DCB=y \
+	CONFIG_BNXT_HWMON=y
   AUTOLOAD:=$(call AutoProbe,bnxt_en)
 endef
 
@@ -1866,12 +1916,14 @@ define KernelPackage/mlx5-core
 	CONFIG_MLX5_EN_IPSEC=n \
 	CONFIG_MLX5_EN_RXNFC=y \
 	CONFIG_MLX5_EN_TLS=n \
-	CONFIG_MLX5_ESWITCH=n \
+	CONFIG_MLX5_ESWITCH=y \
 	CONFIG_MLX5_FPGA=n \
 	CONFIG_MLX5_FPGA_IPSEC=n \
 	CONFIG_MLX5_FPGA_TLS=n \
 	CONFIG_MLX5_MPFS=y \
 	CONFIG_MLX5_SW_STEERING=n \
+	CONFIG_MLX5_HW_STEERING=n \
+	CONFIG_MLX5_CLS_ACT=n \
 	CONFIG_MLX5_TC_CT=n \
 	CONFIG_MLX5_TLS=n \
 	CONFIG_MLX5_VFIO_PCI=n
@@ -2049,6 +2101,30 @@ endef
 $(eval $(call KernelPackage,qlcnic))
 
 
+define KernelPackage/qede
+  SUBMENU:=$(NETWORK_DEVICES_MENU)
+  DEPENDS:=@PCI_SUPPORT +kmod-ptp +kmod-lib-crc8 +kmod-lib-zlib-inflate
+  TITLE:=QLogic FastLinQ 10/25/40/100Gb Ethernet NIC device support
+  KCONFIG:= \
+	CONFIG_QED \
+	CONFIG_QED_SRIOV=y \
+	CONFIG_QEDE \
+	CONFIG_QEDF=n \
+	CONFIG_QEDI=n
+  FILES:= \
+	$(LINUX_DIR)/drivers/net/ethernet/qlogic/qed/qed.ko \
+	$(LINUX_DIR)/drivers/net/ethernet/qlogic/qede/qede.ko
+  AUTOLOAD:=$(call AutoProbe,qed qede)
+endef
+
+define KernelPackage/qede/description
+  This driver supports QLogic FastLinQ 25/40/100Gb Ethernet NIC
+  devices.
+endef
+
+$(eval $(call KernelPackage,qede))
+
+
 define KernelPackage/sfp
   SUBMENU:=$(NETWORK_DEVICES_MENU)
   TITLE:=SFP cage support
@@ -2082,7 +2158,7 @@ $(eval $(call KernelPackage,pcs-qcom-ipq9574))
 define KernelPackage/pcs-xpcs
   SUBMENU:=$(NETWORK_DEVICES_MENU)
   TITLE:=Synopsis DesignWare PCS driver
-  DEPENDS:=@(TARGET_x86_64||TARGET_armsr) +kmod-phylink +kmod-mdio-devres
+  DEPENDS:=@(TARGET_armsr||TARGET_loongarch64||TARGET_x86_64) +kmod-phylink +kmod-mdio-devres
   KCONFIG:=CONFIG_PCS_XPCS
   FILES:=$(LINUX_DIR)/drivers/net/pcs/pcs_xpcs.ko
   AUTOLOAD:=$(call AutoLoad,20,pcs_xpcs)
@@ -2094,7 +2170,7 @@ $(eval $(call KernelPackage,pcs-xpcs))
 define KernelPackage/stmmac-core
   SUBMENU:=$(NETWORK_DEVICES_MENU)
   TITLE:=Synopsis Ethernet Controller core (NXP,STMMicro,others)
-  DEPENDS:=@TARGET_x86_64||TARGET_armsr +kmod-pcs-xpcs +kmod-ptp
+  DEPENDS:=@(TARGET_armsr||TARGET_loongarch64||TARGET_x86_64) +kmod-pcs-xpcs +kmod-ptp
   KCONFIG:=CONFIG_STMMAC_ETH \
     CONFIG_STMMAC_SELFTESTS=n \
     CONFIG_STMMAC_PLATFORM \
@@ -2128,7 +2204,7 @@ $(eval $(call KernelPackage,igc))
 define KernelPackage/hinic
   SUBMENU:=$(NETWORK_DEVICES_MENU)
   TITLE:=Huawei Intelligent PCIE Network Interface Card support
-  DEPENDS:=@PCI_SUPPORT @TARGET_x86||TARGET_armsr_armv8
+  DEPENDS:=@PCI_SUPPORT @(TARGET_armsr_armv8||TARGET_loongarch64||TARGET_x86)
   FILES:=$(LINUX_DIR)/drivers/net/ethernet/huawei/hinic/hinic.ko
   KCONFIG:=CONFIG_HINIC
   AUTOLOAD:=$(call AutoProbe,hinic)
@@ -2276,10 +2352,31 @@ define KernelPackage/mtk-t7xx
 endef
 
 define KernelPackage/mtk-t7xx/description
- Driver for MediaTek PCIe 5G WWAN modem T7xx device
+  Enables MediaTek PCIe based 5G WWAN modem (T7xx series) device.
+  Adapts WWAN framework and provides network interface like wwan0
+  and tty interfaces like wwan0at0 (AT protocol), wwan0mbim0
+  (MBIM protocol), etc.
 endef
 
 $(eval $(call KernelPackage,mtk-t7xx))
+
+define KernelPackage/mediatek_hnat
+  SUBMENU:=$(NETWORK_DEVICES_MENU)
+  TITLE:=Mediatek HNAT module
+  DEPENDS:=@TARGET_mediatek +kmod-nf-conntrack
+  KCONFIG:= \
+	CONFIG_BRIDGE_NETFILTER=y \
+	CONFIG_NETFILTER_FAMILY_BRIDGE=y \
+	CONFIG_NET_MEDIATEK_HNAT
+  FILES:= \
+        $(LINUX_DIR)/drivers/net/ethernet/mediatek/mtk_hnat/mtkhnat.ko
+endef
+
+define KernelPackage/mediatek_hnat/description
+  Kernel modules for MediaTek HW NAT offloading
+endef
+
+$(eval $(call KernelPackage,mediatek_hnat))
 
 
 define KernelPackage/atlantic
