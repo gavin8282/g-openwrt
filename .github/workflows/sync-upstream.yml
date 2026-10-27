@@ -48,12 +48,24 @@ jobs:
           }
           git push origin 25.12-mtk7981 || echo "Push skipped or rejected."
 
-      - name: Sync official openwrt-25.12 branch
+      - name: Sync official openwrt-25.12 branch with latest stable release tag
         run: |
-          echo "=== Syncing openwrt-25.12 with official openwrt/openwrt ==="
+          echo "=== Syncing openwrt-25.12 with official openwrt/openwrt stable tags ==="
           git remote add upstream-official https://github.com/openwrt/openwrt.git || true
-          git fetch upstream-official openwrt-25.12
-          if git checkout openwrt-25.12 2>/dev/null; then
-            git merge upstream-official/openwrt-25.12 --ff-only || echo "Fast-forward not possible, skipping."
+          git fetch upstream-official --tags
+          
+          # 提取形如 v25.12.X 的最新正式稳定版 Release Tag（自动排除 -rc 预发布测试版）
+          LATEST_STABLE_TAG=$(git tag -l "v25.12.*" --sort=-v:refname | grep -v -- "-rc" | head -n 1)
+          echo "Found latest official stable release tag: $LATEST_STABLE_TAG"
+          
+          if [ -n "$LATEST_STABLE_TAG" ] && git checkout openwrt-25.12 2>/dev/null; then
+            CURRENT_TAG=$(git tag --points-at HEAD | grep -E "^v25\.12\.[0-9]+$" || true)
+            echo "Current commit points to: ${CURRENT_TAG:-none}"
+            
+            echo "Merging latest official stable release tag $LATEST_STABLE_TAG..."
+            git merge "$LATEST_STABLE_TAG" --no-edit || {
+              echo "Merge conflict detected while merging $LATEST_STABLE_TAG, aborting merge."
+              git merge --abort
+            }
             git push origin openwrt-25.12 || echo "Push skipped or rejected."
           fi
