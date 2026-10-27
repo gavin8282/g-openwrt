@@ -1,0 +1,38 @@
+name: Sync Upstream 25.12-mtk7981
+
+on:
+  schedule:
+    # Runs at 00:00 UTC every Friday
+    - cron: '0 0 * * 5'
+  workflow_dispatch:
+
+jobs:
+  sync:
+    name: Sync 25.12-mtk7981 with chasey-dev
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Sync 25.12 branch with chasey-dev
+        run: |
+          echo "=== Syncing 25.12-mtk7981 with chasey-dev/immortalwrt-mt798x-rebase ==="
+          git remote add upstream-2512 https://github.com/chasey-dev/immortalwrt-mt798x-rebase.git || true
+          git fetch upstream-2512 25.12
+          git checkout 25.12-mtk7981
+          git merge upstream-2512/25.12 --no-edit || {
+            echo "Conflict detected on 25.12-mtk7981, aborting merge."
+            git merge --abort
+            exit 1
+          }
+          git push origin 25.12-mtk7981

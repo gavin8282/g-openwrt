@@ -1,0 +1,38 @@
+name: Sync Upstream 24.10-mtk7981
+
+on:
+  schedule:
+    # Runs at 00:00 UTC every Friday
+    - cron: '0 0 * * 5'
+  workflow_dispatch:
+
+jobs:
+  sync:
+    name: Sync 24.10-mtk7981 with padavanonly
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Sync 24.10 branch with padavanonly
+        run: |
+          echo "=== Syncing 24.10-mtk7981 with padavanonly/immortalwrt-mt798x-6.6 ==="
+          git remote add upstream-2410 https://github.com/padavanonly/immortalwrt-mt798x-6.6.git || true
+          git fetch upstream-2410 openwrt-24.10-6.6
+          git checkout 24.10-mtk7981
+          git merge upstream-2410/openwrt-24.10-6.6 --no-edit || {
+            echo "Conflict detected on 24.10-mtk7981, aborting merge."
+            git merge --abort
+            exit 1
+          }
+          git push origin 24.10-mtk7981
