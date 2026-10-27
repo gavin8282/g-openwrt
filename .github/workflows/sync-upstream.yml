@@ -1,14 +1,14 @@
-name: Sync Upstream Repositories
+name: Sync Upstream 25.12-mtk7981
 
 on:
   schedule:
-    # Runs at 00:00 UTC every Friday (Cron: minute hour day-of-month month day-of-week)
+    # Runs at 00:00 UTC every Friday
     - cron: '0 0 * * 5'
   workflow_dispatch:
 
 jobs:
   sync:
-    name: Sync Upstream Branches
+    name: Sync 25.12-mtk7981 with chasey-dev
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -24,18 +24,6 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Sync 24.10 branch with padavanonly
-        run: |
-          echo "=== Syncing 24.10-mtk7981 with padavanonly/immortalwrt-mt798x-6.6 ==="
-          git remote add upstream-2410 https://github.com/padavanonly/immortalwrt-mt798x-6.6.git || true
-          git fetch upstream-2410 openwrt-24.10-6.6
-          git checkout 24.10-mtk7981
-          git merge upstream-2410/openwrt-24.10-6.6 --no-edit || {
-            echo "Conflict detected on 24.10-mtk7981, aborting merge."
-            git merge --abort
-          }
-          git push origin 24.10-mtk7981 || echo "Push skipped or rejected."
-
       - name: Sync 25.12 branch with chasey-dev
         run: |
           echo "=== Syncing 25.12-mtk7981 with chasey-dev/immortalwrt-mt798x-rebase ==="
@@ -45,27 +33,6 @@ jobs:
           git merge upstream-2512/25.12 --no-edit || {
             echo "Conflict detected on 25.12-mtk7981, aborting merge."
             git merge --abort
+            exit 1
           }
-          git push origin 25.12-mtk7981 || echo "Push skipped or rejected."
-
-      - name: Sync official openwrt-25.12 branch with latest stable release tag
-        run: |
-          echo "=== Syncing openwrt-25.12 with official openwrt/openwrt stable tags ==="
-          git remote add upstream-official https://github.com/openwrt/openwrt.git || true
-          git fetch upstream-official --tags
-          
-          # 提取形如 v25.12.X 的最新正式稳定版 Release Tag（自动排除 -rc 预发布测试版）
-          LATEST_STABLE_TAG=$(git tag -l "v25.12.*" --sort=-v:refname | grep -v -- "-rc" | head -n 1)
-          echo "Found latest official stable release tag: $LATEST_STABLE_TAG"
-          
-          if [ -n "$LATEST_STABLE_TAG" ] && git checkout openwrt-25.12 2>/dev/null; then
-            CURRENT_TAG=$(git tag --points-at HEAD | grep -E "^v25\.12\.[0-9]+$" || true)
-            echo "Current commit points to: ${CURRENT_TAG:-none}"
-            
-            echo "Merging latest official stable release tag $LATEST_STABLE_TAG..."
-            git merge "$LATEST_STABLE_TAG" --no-edit || {
-              echo "Merge conflict detected while merging $LATEST_STABLE_TAG, aborting merge."
-              git merge --abort
-            }
-            git push origin openwrt-25.12 || echo "Push skipped or rejected."
-          fi
+          git push origin 25.12-mtk7981
