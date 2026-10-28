@@ -319,10 +319,10 @@ Signed-off-by: Fil Dunsky <filipp.dunsky@gmail.com>
 +bootcmd=if pstore check ; then run boot_recovery ; else run boot_ubi ; fi
 +bootconf=config-1
 +bootdelay=0
-+bootfile=openwrt-mediatek-filogic-teralink_tl3020-256mb-initramfs-recovery.itb
-+bootfile_bl2=openwrt-mediatek-filogic-teralink_tl3020-256mb-preloader.bin
-+bootfile_fip=openwrt-mediatek-filogic-teralink_tl3020-256mb-bl31-uboot.fip
-+bootfile_upg=openwrt-mediatek-filogic-teralink_tl3020-256mb-squashfs-sysupgrade.itb
++bootfile=immortalwrt-mediatek-filogic-teralink_tl3020-256mb-initramfs-recovery.itb
++bootfile_bl2=immortalwrt-mediatek-filogic-teralink_tl3020-256mb-preloader.bin
++bootfile_fip=immortalwrt-mediatek-filogic-teralink_tl3020-256mb-bl31-uboot.fip
++bootfile_upg=immortalwrt-mediatek-filogic-teralink_tl3020-256mb-squashfs-sysupgrade.itb
 +bootled_pwr=blue:power
 +bootled_rec=red:wan
 +bootmenu_confirm_return=askenv - Press ENTER to return to menu ; bootmenu 60

@@ -231,6 +231,18 @@ define U-Boot/mt7981_abt_asr3000
   DEPENDS:=+trusted-firmware-a-mt7981-spim-nand-ddr3
 endef
 
+define U-Boot/mt7981_aigo_ags21
+  NAME:=AIGO ASG21
+  BUILD_SUBTARGET:=filogic
+  BUILD_DEVICES:=aigo_ags21
+  UBOOT_CONFIG:=mt7981_aigo_ags21
+  UBOOT_IMAGE:=u-boot.fip
+  BL2_BOOTDEV:=emmc
+  BL2_SOC:=mt7981
+  BL2_DDRTYPE:=ddr4
+  DEPENDS:=+trusted-firmware-a-mt7981-emmc-ddr4
+endef
+
 define U-Boot/mt7981_bazis-ax3000wm
   NAME:=BAZIS AX3000WM
   BUILD_SUBTARGET:=filogic
@@ -241,6 +253,18 @@ define U-Boot/mt7981_bazis-ax3000wm
   BL2_SOC:=mt7981
   BL2_DDRTYPE:=ddr3
   DEPENDS:=+trusted-firmware-a-mt7981-spim-nand-ddr3
+endef
+
+define U-Boot/mt7981_cetron_ct3003
+  NAME:=Cetron CT3003
+  BUILD_SUBTARGET:=filogic
+  BUILD_DEVICES:=cetron_ct3003-ubootmod
+  UBOOT_CONFIG:=mt7981_cetron_ct3003
+  UBOOT_IMAGE:=u-boot.fip
+  BL2_BOOTDEV:=spim-nand
+  BL2_SOC:=mt7981
+  BL2_DDRTYPE:=ddr3-1866
+  DEPENDS:=+trusted-firmware-a-mt7981-spim-nand-ddr3-1866
 endef
 
 define U-Boot/mt7981_cmcc_a10
@@ -255,19 +279,7 @@ define U-Boot/mt7981_cmcc_a10
   DEPENDS:=+trusted-firmware-a-mt7981-spim-nand-ddr3
 endef
 
-define U-Boot/mt7981_cmcc_rax3000m-emmc-ddr3
-  NAME:=CMCC RAX3000M
-  BUILD_SUBTARGET:=filogic
-  BUILD_DEVICES:=cmcc_rax3000m
-  UBOOT_CONFIG:=mt7981_cmcc_rax3000m-emmc
-  UBOOT_IMAGE:=u-boot.fip
-  BL2_BOOTDEV:=emmc
-  BL2_SOC:=mt7981
-  BL2_DDRTYPE:=ddr3-1866
-  DEPENDS:=+trusted-firmware-a-mt7981-emmc-ddr3-1866
-endef
-
-define U-Boot/mt7981_cmcc_rax3000m-emmc-ddr4
+define U-Boot/mt7981_cmcc_rax3000m-emmc
   NAME:=CMCC RAX3000M
   BUILD_SUBTARGET:=filogic
   BUILD_DEVICES:=cmcc_rax3000m
@@ -279,7 +291,7 @@ define U-Boot/mt7981_cmcc_rax3000m-emmc-ddr4
   DEPENDS:=+trusted-firmware-a-mt7981-emmc-ddr4
 endef
 
-define U-Boot/mt7981_cmcc_rax3000m-nand-ddr3
+define U-Boot/mt7981_cmcc_rax3000m-nand
   NAME:=CMCC RAX3000M
   BUILD_SUBTARGET:=filogic
   BUILD_DEVICES:=cmcc_rax3000m
@@ -287,15 +299,51 @@ define U-Boot/mt7981_cmcc_rax3000m-nand-ddr3
   UBOOT_IMAGE:=u-boot.fip
   BL2_BOOTDEV:=spim-nand
   BL2_SOC:=mt7981
+  BL2_DDRTYPE:=ddr4
+  DEPENDS:=+trusted-firmware-a-mt7981-spim-nand-ddr4
+endef
+
+define U-Boot/mt7981_cmcc_rax3000me-emmc-ddr3
+  NAME:=CMCC RAX3000Me
+  BUILD_SUBTARGET:=filogic
+  BUILD_DEVICES:=cmcc_rax3000me
+  UBOOT_CONFIG:=mt7981_cmcc_rax3000me-emmc-ddr3
+  UBOOT_IMAGE:=u-boot.fip
+  BL2_BOOTDEV:=emmc
+  BL2_SOC:=mt7981
+  BL2_DDRTYPE:=ddr3-1866
+  DEPENDS:=+trusted-firmware-a-mt7981-emmc-ddr3-1866
+endef
+
+define U-Boot/mt7981_cmcc_rax3000me-emmc-ddr4
+  NAME:=CMCC RAX3000Me
+  BUILD_SUBTARGET:=filogic
+  BUILD_DEVICES:=cmcc_rax3000me
+  UBOOT_CONFIG:=mt7981_cmcc_rax3000me-emmc-ddr4
+  UBOOT_IMAGE:=u-boot.fip
+  BL2_BOOTDEV:=emmc
+  BL2_SOC:=mt7981
+  BL2_DDRTYPE:=ddr4
+  DEPENDS:=+trusted-firmware-a-mt7981-emmc-ddr4
+endef
+
+define U-Boot/mt7981_cmcc_rax3000me-nand-ddr3
+  NAME:=CMCC RAX3000Me
+  BUILD_SUBTARGET:=filogic
+  BUILD_DEVICES:=cmcc_rax3000me
+  UBOOT_CONFIG:=mt7981_cmcc_rax3000me-nand-ddr3
+  UBOOT_IMAGE:=u-boot.fip
+  BL2_BOOTDEV:=spim-nand
+  BL2_SOC:=mt7981
   BL2_DDRTYPE:=ddr3-1866
   DEPENDS:=+trusted-firmware-a-mt7981-spim-nand-ddr3-1866
 endef
 
-define U-Boot/mt7981_cmcc_rax3000m-nand-ddr4
-  NAME:=CMCC RAX3000M
+define U-Boot/mt7981_cmcc_rax3000me-nand-ddr4
+  NAME:=CMCC RAX3000Me
   BUILD_SUBTARGET:=filogic
-  BUILD_DEVICES:=cmcc_rax3000m
-  UBOOT_CONFIG:=mt7981_cmcc_rax3000m-nand
+  BUILD_DEVICES:=cmcc_rax3000me
+  UBOOT_CONFIG:=mt7981_cmcc_rax3000me-nand-ddr4
   UBOOT_IMAGE:=u-boot.fip
   BL2_BOOTDEV:=spim-nand
   BL2_SOC:=mt7981
@@ -510,6 +558,43 @@ define U-Boot/mt7981_konka_komi-a31
   BUILD_SUBTARGET:=filogic
   BUILD_DEVICES:=konka_komi-a31
   UBOOT_CONFIG:=mt7981_konka_komi-a31
+  UBOOT_IMAGE:=u-boot.fip
+  BL2_BOOTDEV:=spim-nand
+  BL2_SOC:=mt7981
+  BL2_DDRTYPE:=ddr3
+  DEPENDS:=+trusted-firmware-a-mt7981-spim-nand-ddr3
+endef
+
+define U-Boot/mt7981_konka_komi-a31-emmc
+  NAME:=Konka KOMI A31 eMMC
+  BUILD_SUBTARGET:=filogic
+  BUILD_DEVICES:=konka_komi-a31
+  UBOOT_CONFIG:=mt7981_konka_komi-a31-emmc
+  UBOOT_IMAGE:=u-boot.fip
+  BL2_BOOTDEV:=emmc
+  BL2_SOC:=mt7981
+  BL2_DDRTYPE:=ddr3
+  DEPENDS:=+trusted-firmware-a-mt7981-emmc-ddr3
+endef
+
+define U-Boot/mt7981_konka_komi-a31-nor
+  NAME:=Konka KOMI A31 NOR
+  BUILD_SUBTARGET:=filogic
+  BUILD_DEVICES:=konka_komi-a31
+  UBOOT_CONFIG:=mt7981_konka_komi-a31-nor
+  UBOOT_IMAGE:=u-boot.fip
+  BL2_BOOTDEV:=nor
+  BL2_SOC:=mt7981
+  BL2_DDRTYPE:=ddr3
+  FIP_COMPRESS:=1
+  DEPENDS:=+trusted-firmware-a-mt7981-nor-ddr3
+endef
+
+define U-Boot/mt7981_livinet_zr-3020
+  NAME:=Livinet ZR-3020
+  BUILD_SUBTARGET:=filogic
+  BUILD_DEVICES:=livinet_zr-3020-ubootmod
+  UBOOT_CONFIG:=mt7981_livinet_zr-3020
   UBOOT_IMAGE:=u-boot.fip
   BL2_BOOTDEV:=spim-nand
   BL2_SOC:=mt7981
@@ -747,6 +832,30 @@ define U-Boot/mt7981_teralink_tl3020-256mb
   DEPENDS:=+trusted-firmware-a-mt7981-spim-nand-ddr3-1866
 endef
 
+define U-Boot/mt7981_viettel_32x6
+  NAME:=Viettel 32X6
+  BUILD_SUBTARGET:=filogic
+  BUILD_DEVICES:=viettel_32x6
+  UBOOT_CONFIG:=mt7981_viettel_32x6
+  UBOOT_IMAGE:=u-boot.fip
+  BL2_BOOTDEV:=spim-nand
+  BL2_SOC:=mt7981
+  BL2_DDRTYPE:=ddr3
+  DEPENDS:=+trusted-firmware-a-mt7981-spim-nand-ddr3
+endef
+
+define U-Boot/mt7981_viettel_nr3053
+  NAME:=Viettel NR3053
+  BUILD_SUBTARGET:=filogic
+  BUILD_DEVICES:=viettel_nr3053
+  UBOOT_CONFIG:=mt7981_viettel_nr3053
+  UBOOT_IMAGE:=u-boot.fip
+  BL2_BOOTDEV:=spim-nand
+  BL2_SOC:=mt7981
+  BL2_DDRTYPE:=ddr3
+  DEPENDS:=+trusted-firmware-a-mt7981-spim-nand-ddr3
+endef
+
 define U-Boot/mt7981_wavlink_wl-wnt100x3
   NAME:=WAVLINK WL-WNT100X3
   BUILD_SUBTARGET:=filogic
@@ -776,6 +885,18 @@ define U-Boot/mt7981_xiaomi_mi-router-wr30u
   BUILD_SUBTARGET:=filogic
   BUILD_DEVICES:=xiaomi_mi-router-wr30u-ubootmod
   UBOOT_CONFIG:=mt7981_xiaomi_mi-router-wr30u
+  UBOOT_IMAGE:=u-boot.fip
+  BL2_BOOTDEV:=spim-nand
+  BL2_SOC:=mt7981
+  BL2_DDRTYPE:=ddr3
+  DEPENDS:=+trusted-firmware-a-mt7981-spim-nand-ddr3
+endef
+
+define U-Boot/mt7981_wirelesstag_zx7981pd
+  NAME:=Wireless-Tag ZX7981PD
+  BUILD_SUBTARGET:=filogic
+  BUILD_DEVICES:=wirelesstag_zx7981pd-ubootmod
+  UBOOT_CONFIG:=mt7981_zx7981pd
   UBOOT_IMAGE:=u-boot.fip
   BL2_BOOTDEV:=spim-nand
   BL2_SOC:=mt7981
@@ -938,6 +1059,18 @@ define U-Boot/mt7986_netcore_n60-pro
   BL2_SOC:=mt7986
   BL2_DDRTYPE:=ddr4
   DEPENDS:=+trusted-firmware-a-mt7986-spim-nand-ddr4
+endef
+
+define U-Boot/mt7986_ruijie_rg-x60-new-ubi
+  NAME:=Ruijie RG-X60 New (UBI)
+  BUILD_SUBTARGET:=filogic
+  BUILD_DEVICES:=ruijie_rg-x60-new-ubi
+  UBOOT_CONFIG:=mt7986_ruijie_rg-x60-new-ubi
+  UBOOT_IMAGE:=u-boot.fip
+  BL2_BOOTDEV:=spim-nand-ubi
+  BL2_SOC:=mt7986
+  BL2_DDRTYPE:=ddr3
+  DEPENDS:=+trusted-firmware-a-mt7986-spim-nand-ubi-ddr3
 endef
 
 define U-Boot/mt7986_tplink_tl-xdr4288
@@ -1180,6 +1313,42 @@ define U-Boot/mt7988_bananapi_bpi-r4-poe-snand
   DEPENDS:=+trusted-firmware-a-mt7988-spim-nand-ubi-comb
 endef
 
+define U-Boot/mt7988_tplink_tl-7dr7230-v1
+  NAME:=TP-Link TL-7DR7230 v1
+  BUILD_SUBTARGET:=filogic
+  BUILD_DEVICES:=tplink_tl-7dr7230-v1
+  UBOOT_CONFIG:=mt7988d_tplink_tl-7dr7230-v1
+  UBOOT_IMAGE:=u-boot.fip
+  BL2_BOOTDEV:=spim-nand
+  BL2_SOC:=mt7988
+  BL2_DDRTYPE:=ddr4
+  DEPENDS:=+trusted-firmware-a-mt7988-spim-nand-ddr4
+endef
+
+define U-Boot/mt7988_tplink_tl-7dr7230-v2
+  NAME:=TP-Link TL-7DR7230 v2
+  BUILD_SUBTARGET:=filogic
+  BUILD_DEVICES:=tplink_tl-7dr7230-v2
+  UBOOT_CONFIG:=mt7988d_tplink_tl-7dr7230-v2
+  UBOOT_IMAGE:=u-boot.fip
+  BL2_BOOTDEV:=spim-nand
+  BL2_SOC:=mt7988
+  BL2_DDRTYPE:=ddr3
+  DEPENDS:=+trusted-firmware-a-mt7988-spim-nand-ddr3
+endef
+
+define U-Boot/mt7988_tplink_tl-7dr7250-v1
+  NAME:=TP-Link TL-7DR7250 v1
+  BUILD_SUBTARGET:=filogic
+  BUILD_DEVICES:=tplink_tl-7dr7250-v1
+  UBOOT_CONFIG:=mt7988d_tplink_tl-7dr7250-v1
+  UBOOT_IMAGE:=u-boot.fip
+  BL2_BOOTDEV:=spim-nand
+  BL2_SOC:=mt7988
+  BL2_DDRTYPE:=ddr4
+  DEPENDS:=+trusted-firmware-a-mt7988-spim-nand-ddr4
+endef
+
 define U-Boot/mt7987_rfb-emmc
   NAME:=MT7987 Reference Board
   BUILD_SUBTARGET:=filogic
@@ -1298,12 +1467,16 @@ UBOOT_TARGETS := \
 	mt7628_ravpower_rp-wd009 \
 	mt7629_rfb \
 	mt7981_abt_asr3000 \
+	mt7981_aigo_ags21 \
 	mt7981_bazis-ax3000wm \
+	mt7981_cetron_ct3003 \
 	mt7981_cmcc_a10 \
-	mt7981_cmcc_rax3000m-emmc-ddr3 \
-	mt7981_cmcc_rax3000m-emmc-ddr4 \
-	mt7981_cmcc_rax3000m-nand-ddr3 \
-	mt7981_cmcc_rax3000m-nand-ddr4 \
+	mt7981_cmcc_rax3000m-emmc \
+	mt7981_cmcc_rax3000m-nand \
+	mt7981_cmcc_rax3000me-emmc-ddr3 \
+	mt7981_cmcc_rax3000me-emmc-ddr4 \
+	mt7981_cmcc_rax3000me-nand-ddr3 \
+	mt7981_cmcc_rax3000me-nand-ddr4 \
 	mt7981_comfast_cf-wr632ax \
 	mt7981_creatlentem_clt-r30b1-ubi \
 	mt7981_cudy_m3000-v1 \
@@ -1323,6 +1496,9 @@ UBOOT_TARGETS := \
 	mt7981_imou_hx21 \
 	mt7981_jcg_q30-pro \
 	mt7981_konka_komi-a31 \
+	mt7981_konka_komi-a31-emmc \
+	mt7981_konka_komi-a31-nor \
+	mt7981_livinet_zr-3020 \
 	mt7981_netis_eap930-v1 \
 	mt7981_netis_n6-v2 \
 	mt7981_netis_nx30v2 \
@@ -1341,7 +1517,10 @@ UBOOT_TARGETS := \
 	mt7981_qihoo_360t7-ubi \
 	mt7981_snr_snr-cpe-ax2 \
 	mt7981_teralink_tl3020-256mb \
-	mt7981_wavlink_wl-wnt100x3 \
+  mt7981_viettel_32x6 \
+	mt7981_viettel_nr3053 \
+  mt7981_wavlink_wl-wnt100x3 \
+	mt7981_wirelesstag_zx7981pd \
 	mt7981_xiaomi_mi-router-ax3000t \
 	mt7981_xiaomi_mi-router-wr30u \
 	mt7986_acer_predator-w6x \
@@ -1356,6 +1535,7 @@ UBOOT_TARGETS := \
 	mt7986_mercusys_mr90x-v1 \
 	mt7986_netcore_n60 \
 	mt7986_netcore_n60-pro \
+	mt7986_ruijie_rg-x60-new-ubi \
 	mt7986_tplink_tl-xdr4288 \
 	mt7986_tplink_tl-xdr6086 \
 	mt7986_tplink_tl-xdr6088 \
@@ -1380,6 +1560,9 @@ UBOOT_TARGETS := \
 	mt7988_bananapi_bpi-r4-poe-emmc \
 	mt7988_bananapi_bpi-r4-poe-sdmmc \
 	mt7988_bananapi_bpi-r4-poe-snand \
+	mt7988_tplink_tl-7dr7230-v1 \
+	mt7988_tplink_tl-7dr7230-v2 \
+	mt7988_tplink_tl-7dr7250-v1 \
 	mt7988_rfb-spim-nand \
 	mt7988_rfb-snand \
 	mt7988_rfb-nor \
