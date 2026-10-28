@@ -2059,3 +2059,22 @@ define KernelPackage/enc28j60/description
 endef
 
 $(eval $(call KernelPackage,enc28j60))
+
+define KernelPackage/mediatek_hnat
+  SUBMENU:=$(NETWORK_DEVICES_MENU)
+  TITLE:=Mediatek HNAT module
+  AUTOLOAD:=$(call AutoLoad,20,mtkhnat)
+  DEPENDS:=@TARGET_mediatek +kmod-nf-conntrack +wireless-tools +@KERNEL_WIRELESS_EXT
+  KCONFIG:= \
+	CONFIG_BRIDGE_NETFILTER=y \
+	CONFIG_NETFILTER_FAMILY_BRIDGE=y \
+	CONFIG_NET_MEDIATEK_HNAT
+  FILES:= \
+        $(LINUX_DIR)/drivers/net/ethernet/mediatek/mtk_hnat/mtkhnat.ko
+endef
+
+define KernelPackage/mediatek_hnat/description
+  Kernel modules for MediaTek HW NAT offloading
+endef
+
+$(eval $(call KernelPackage,mediatek_hnat))
