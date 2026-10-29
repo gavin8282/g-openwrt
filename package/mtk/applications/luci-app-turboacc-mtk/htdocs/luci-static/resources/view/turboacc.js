@@ -20,12 +20,6 @@ var getFastPathStat = rpc.declare({
 	expect: { '': {} }
 });
 
-var getFullConeStat = rpc.declare({
-	object: 'luci.turboacc',
-	method: 'getFullConeStat',
-	expect: { '': {} }
-});
-
 var getTCPCCAStat = rpc.declare({
 	object: 'luci.turboacc',
 	method: 'getTCPCCAStat',
@@ -41,7 +35,6 @@ var getMTKPPEStat = rpc.declare({
 function getServiceStatus() {
 	return Promise.all([
 		L.resolveDefault(getFastPathStat(), {}),
-		L.resolveDefault(getFullConeStat(), {}),
 		L.resolveDefault(getTCPCCAStat(), {})
 	]);
 }
@@ -106,7 +99,7 @@ return view.extend({
 			poll.add(function () {
 				return L.resolveDefault(getServiceStatus()).then(function (res) {
 					var stats = renderStatus(res);
-					var tds = [ 'fastpath_state', 'fullcone_state', 'tcpcca_state' ];
+					var tds = [ 'fastpath_state', 'tcpcca_state' ];
 					for (var i in tds) {
 						var view = document.getElementById(tds[i]);
 						view.innerHTML = stats[i];
@@ -118,10 +111,6 @@ return view.extend({
 				E('tr', {}, [
 					E('td', { 'width': '33%' }, _('FastPath Engine')),
 					E('td', { 'id': 'fastpath_state' }, E('em', {}, _('Collecting data...')))
-				]),
-				E('tr', {}, [
-					E('td', { 'width': '33%' }, _('Full Cone NAT')),
-					E('td', { 'id': 'fullcone_state' }, E('em', {}, _('Collecting data...')))
 				]),
 				E('tr', {}, [
 					E('td', { 'width': '33%' }, _('TCP CCA')),
@@ -238,13 +227,6 @@ return view.extend({
 		o.value(2);
 		o.default = 2;
 		o.depends('fastpath_mh_eth_hnat', '1');
-
-		o = s.option(form.ListValue, 'fullcone', _('Full cone NAT'),
-			_('Full cone NAT (NAT1) can improve gaming performance effectively.'));
-		o.value('0', _('Disable'))
-		o.value('2', _('Boardcom_FULLCONE_NAT'));
-		o.default = '0';
-		o.rmempty = false;
 
 		o = s.option(form.ListValue, 'tcpcca', _('TCP CCA'),
 			_('TCP congestion control algorithm.'));
