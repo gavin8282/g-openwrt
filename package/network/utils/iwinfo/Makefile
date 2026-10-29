@@ -11,14 +11,13 @@ PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL=$(PROJECT_GIT)/project/iwinfo.git
-PKG_SOURCE_DATE:=2026-05-26
-PKG_SOURCE_VERSION:=66bdd1a071895d91babc9b9228bb84626bbce226
-PKG_MIRROR_HASH:=e58dab2e33c52b0c217134e81b3ba5376b7a3b57dc1885edf62826573d9f6292
+PKG_SOURCE_DATE:=2024-10-20
+PKG_SOURCE_VERSION:=b94f066e3f5839b8509483cdd8f4f582a45fa233
+PKG_MIRROR_HASH:=ee0bce167707fe78f68a951b7ee1e0e61a92cae281e0e24eb709857ae849777e
 PKG_MAINTAINER:=Jo-Philipp Wich <jo@mein.io>
 PKG_LICENSE:=GPL-2.0
 
 PKG_BUILD_FLAGS:=no-lto
-PKG_CONFIG_DEPENDS:=CONFIG_WIFI_SCRIPTS_UCODE
 
 IWINFO_ABI_VERSION:=20230701
 
@@ -29,7 +28,7 @@ define Package/libiwinfo
   SECTION:=libs
   CATEGORY:=Libraries
   TITLE:=Generalized Wireless Information Library (iwinfo)
-  DEPENDS:=+libnl-tiny +libuci +libubus +libiwinfo-data +libl1parser
+  DEPENDS:=+libnl-tiny +libuci +libubus +libiwinfo-data
   ABI_VERSION:=$(IWINFO_ABI_VERSION)
 endef
 
@@ -63,7 +62,7 @@ define Package/iwinfo
   SECTION:=utils
   CATEGORY:=Utilities
   TITLE:=Generalized Wireless Information utility
-  DEPENDS:=+@!WIFI_SCRIPTS_UCODE:libiwinfo
+  DEPENDS:=+libiwinfo
 endef
 
 define Package/iwinfo/description
@@ -81,7 +80,7 @@ TARGET_CFLAGS += \
 
 MAKE_FLAGS += \
 	FPIC="$(FPIC)" \
-	CFLAGS="$(TARGET_CFLAGS) $(TARGET_CPPFLAGS)" \
+	CFLAGS="$(TARGET_CFLAGS)" \
 	LDFLAGS="$(TARGET_LDFLAGS)" \
 	BACKENDS="nl80211 mtk" \
 	SOVERSION="$(IWINFO_ABI_VERSION)"
@@ -111,16 +110,10 @@ define Package/libiwinfo-data/install
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/devices.txt $(1)/usr/share/libiwinfo/devices.txt
 endef
 
-ifdef CONFIG_WIFI_SCRIPTS_UCODE
-  define Package/iwinfo/install
-	:
-  endef
-else
-  define Package/iwinfo/install
+define Package/iwinfo/install
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/iwinfo $(1)/usr/bin/iwinfo
-  endef
-endif
+endef
 
 $(eval $(call BuildPackage,libiwinfo))
 $(eval $(call BuildPackage,libiwinfo-lua))
