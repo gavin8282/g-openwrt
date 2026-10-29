@@ -5,7 +5,7 @@
 #include <dt-bindings/input/input.h>
 #include <dt-bindings/leds/common.h>
 
-#include "mt7981b.dtsi"
+#include "mt7981.dtsi"
 
 / {
 	aliases {
@@ -21,9 +21,8 @@
 		stdout-path = "serial0:115200n8";
 	};
 
-	memory@40000000 {
+	memory {
 		reg = <0 0x40000000 0 0x10000000>;
-		device_type = "memory";
 	};
 
 	gpio-keys {
@@ -96,6 +95,8 @@
 	status = "okay";
 
 	spi_nand: flash@0 {
+		#address-cells = <1>;
+		#size-cells = <1>;
 		compatible = "spi-nand";
 		reg = <0>;
 
@@ -232,8 +233,6 @@
 };
 
 &wifi {
-	#address-cells = <1>;
-	#size-cells = <0>;
 	nvmem-cells = <&eeprom_factory_0>;
 	nvmem-cell-names = "eeprom";
 	status = "okay";
