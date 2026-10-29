@@ -20,12 +20,6 @@ let callFastPathStat = rpc.declare({
 	expect: { '': {} }
 });
 
-let callFullConeStat = rpc.declare({
-	object: 'luci.turboacc',
-	method: 'getFullConeStat',
-	expect: { '': {} }
-});
-
 let callTCPCCAStat = rpc.declare({
 	object: 'luci.turboacc',
 	method: 'getTCPCCAStat',
@@ -91,10 +85,6 @@ return view.extend({
 					E('td', { 'id': 'fastpath_state' }, E('em', {}, _('Collecting data...')))
 				]),
 				E('tr', {}, [
-					E('td', { 'class': 'tdLeft' }, _('Full Cone NAT')),
-					E('td', { 'id': 'fullcone_state' }, E('em', {}, _('Collecting data...')))
-				]),
-				E('tr', {}, [
 					E('td', { 'class': 'tdLeft' }, _('TCP CCA')),
 					E('td', { 'id': 'tcpcca_state' }, E('em', {}, _('Collecting data...')))
 				])
@@ -119,7 +109,6 @@ return view.extend({
 			poll.add(async function () {
 				let tasks = [
 					L.resolveDefault(callFastPathStat(), {}),
-					L.resolveDefault(callFullConeStat(), {}),
 					L.resolveDefault(callTCPCCAStat(), {})
 				];
 
@@ -129,8 +118,8 @@ return view.extend({
 
 				let res = await Promise.all(tasks);
 
-				const dom_ids = ['fastpath_state', 'fullcone_state', 'tcpcca_state'];
-				for (let i = 0; i < 3; i++) {
+				const dom_ids = ['fastpath_state', 'tcpcca_state'];
+				for (let i = 0; i < 2; i++) {
 					let el = document.getElementById(dom_ids[i]);
 					if (el) {
 						L.dom.content(el, renderStatusItem(res[i]));
@@ -138,7 +127,7 @@ return view.extend({
 				}
 
 				if (has_ppe) {
-					let mtk_res = res[3];
+					let mtk_res = res[2];
 					let ppe_num = parseInt(mtk_res['PPE num'] || 0);
 					for (let j = 0; j < ppe_num; j++) {
 						let ppe_key = 'PPE' + j;

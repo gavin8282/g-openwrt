@@ -37,8 +37,6 @@ const methods = {
 				hasSHORTCUTFECM:   access(`${mod_path}shortcut-fe-cm.ko`),
 				hasMEDIATEKHNAT:   access(`${mod_path}mtkhnat.ko`),
 				hasGMAC2:          access('/sys/class/net/eth1'),
-				hasXTFULLCONENAT:  access(`${mod_path}xt_FULLCONENAT.ko`),
-				hasNFTFULLCONE:    access(`${mod_path}nft_fullcone.ko`),
 				hasTCPCCA:         read_trimmed('/proc/sys/net/ipv4/tcp_available_congestion_control')
 			};
 
@@ -64,26 +62,6 @@ const methods = {
 			}
 
 			return { type: fptype };
-		}
-	},
-
-	getFullConeStat: {
-		call: function(req) {
-			let fctype = null;
-			if (module_active('nft_fullcone')) {
-				fctype = 'nft_fullcone';
-			} else if (module_active('xt_FULLCONENAT')) {
-				fctype = 'xt_FULLCONENAT';
-			} else {
-				// Only use popen as a fallback for Broadcom check
-				let ipt = popen('iptables -t nat -L zone_wan_postrouting 2>/dev/null');
-				if (ipt) {
-					let output = ipt.read('all');
-					if (match(output, /fullcone/)) fctype = 'Boardcom Fullcone';
-					ipt.close();
-				}
-			}
-			return { type: fctype };
 		}
 	},
 
