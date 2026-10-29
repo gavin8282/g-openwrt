@@ -1,6 +1,6 @@
 --- /dev/null
 +++ b/configs/mt7988a_bananapi_bpi-r4-emmc_defconfig
-@@ -0,0 +1,139 @@
+@@ -0,0 +1,140 @@
 +CONFIG_ARM=y
 +CONFIG_SYS_HAS_NONCACHED_MEMORY=y
 +CONFIG_POSITION_INDEPENDENT=y
@@ -13,11 +13,11 @@
 +CONFIG_DEFAULT_DEVICE_TREE="mt7988a-bananapi-bpi-r4-emmc"
 +CONFIG_OF_LIBFDT_OVERLAY=y
 +CONFIG_TARGET_MT7988=y
-+CONFIG_SYS_LOAD_ADDR=0x50000000
 +CONFIG_PRE_CON_BUF_ADDR=0x4007EF00
 +CONFIG_DEBUG_UART_BASE=0x11000000
 +CONFIG_DEBUG_UART_CLOCK=40000000
 +CONFIG_ENV_OFFSET_REDUND=0x440000
++CONFIG_SYS_LOAD_ADDR=0x50000000
 +CONFIG_PCI=y
 +CONFIG_DEBUG_UART=y
 +CONFIG_AHCI=y
@@ -32,7 +32,6 @@
 +CONFIG_LOGLEVEL=7
 +CONFIG_PRE_CONSOLE_BUFFER=y
 +CONFIG_LOG=y
-+# CONFIG_BOARD_INIT is not set
 +CONFIG_BOARD_LATE_INIT=y
 +CONFIG_HUSH_PARSER=y
 +CONFIG_SYS_PROMPT="MT7988> "
@@ -54,14 +53,14 @@
 +CONFIG_CMD_PCI=y
 +CONFIG_CMD_SF_TEST=y
 +CONFIG_CMD_USB=y
++CONFIG_CMD_DHCP=y
 +CONFIG_CMD_TFTPSRV=y
 +CONFIG_CMD_RARP=y
++CONFIG_CMD_PING=y
 +CONFIG_CMD_CDP=y
 +CONFIG_CMD_SNTP=y
-+CONFIG_CMD_LINK_LOCAL=y
-+CONFIG_CMD_DHCP=y
 +CONFIG_CMD_DNS=y
-+CONFIG_CMD_PING=y
++CONFIG_CMD_LINK_LOCAL=y
 +CONFIG_CMD_PXE=y
 +CONFIG_CMD_CACHE=y
 +CONFIG_CMD_PSTORE=y
@@ -78,18 +77,20 @@
 +CONFIG_OF_EMBED=y
 +CONFIG_ENV_OVERWRITE=y
 +CONFIG_ENV_IS_IN_MMC=y
-+CONFIG_ENV_REDUNDANT=y
-+CONFIG_ENV_RELOC_GD_ENV_ADDR=y
-+CONFIG_ENV_USE_DEFAULT_ENV_TEXT_FILE=y
-+CONFIG_ENV_DEFAULT_ENV_TEXT_FILE="defenvs/bananapi_bpi-r4_emmc_env"
++CONFIG_SYS_REDUNDAND_ENVIRONMENT=y
++CONFIG_SYS_RELOC_GD_ENV_ADDR=y
++CONFIG_USE_DEFAULT_ENV_FILE=y
++CONFIG_DEFAULT_ENV_FILE="bananapi_bpi-r4_emmc_env"
 +CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG=y
 +CONFIG_VERSION_VARIABLE=y
++CONFIG_NET_RANDOM_ETHADDR=y
 +CONFIG_NETCONSOLE=y
 +CONFIG_USE_IPADDR=y
 +CONFIG_IPADDR="192.168.1.1"
 +CONFIG_USE_SERVERIP=y
 +CONFIG_SERVERIP="192.168.1.254"
-+CONFIG_NET_RANDOM_ETHADDR=y
++CONFIG_REGMAP=y
++CONFIG_SYSCON=y
 +CONFIG_SCSI_AHCI=y
 +CONFIG_AHCI_PCI=y
 +CONFIG_MTK_AHCI=y
@@ -129,7 +130,6 @@
 +CONFIG_RAM=y
 +CONFIG_SCSI=y
 +CONFIG_DM_SERIAL=y
-+CONFIG_SERIAL_RX_BUFFER=y
 +CONFIG_MTK_SERIAL=y
 +CONFIG_SPI=y
 +CONFIG_DM_SPI=y
@@ -140,9 +140,10 @@
 +CONFIG_USB_STORAGE=y
 +CONFIG_ZSTD=y
 +CONFIG_HEXDUMP=y
++CONFIG_LMB_MAX_REGIONS=64
 --- /dev/null
 +++ b/configs/mt7988a_bananapi_bpi-r4-sdmmc_defconfig
-@@ -0,0 +1,139 @@
+@@ -0,0 +1,140 @@
 +CONFIG_ARM=y
 +CONFIG_SYS_HAS_NONCACHED_MEMORY=y
 +CONFIG_POSITION_INDEPENDENT=y
@@ -155,11 +156,11 @@
 +CONFIG_DEFAULT_DEVICE_TREE="mt7988a-bananapi-bpi-r4-sd"
 +CONFIG_OF_LIBFDT_OVERLAY=y
 +CONFIG_TARGET_MT7988=y
-+CONFIG_SYS_LOAD_ADDR=0x50000000
 +CONFIG_PRE_CON_BUF_ADDR=0x4007EF00
 +CONFIG_DEBUG_UART_BASE=0x11000000
 +CONFIG_DEBUG_UART_CLOCK=40000000
 +CONFIG_ENV_OFFSET_REDUND=0x440000
++CONFIG_SYS_LOAD_ADDR=0x50000000
 +CONFIG_PCI=y
 +CONFIG_DEBUG_UART=y
 +CONFIG_AHCI=y
@@ -174,7 +175,6 @@
 +CONFIG_LOGLEVEL=7
 +CONFIG_PRE_CONSOLE_BUFFER=y
 +CONFIG_LOG=y
-+# CONFIG_BOARD_INIT is not set
 +CONFIG_BOARD_LATE_INIT=y
 +CONFIG_HUSH_PARSER=y
 +CONFIG_SYS_PROMPT="MT7988> "
@@ -196,14 +196,14 @@
 +CONFIG_CMD_PCI=y
 +CONFIG_CMD_SF_TEST=y
 +CONFIG_CMD_USB=y
++CONFIG_CMD_DHCP=y
 +CONFIG_CMD_TFTPSRV=y
 +CONFIG_CMD_RARP=y
++CONFIG_CMD_PING=y
 +CONFIG_CMD_CDP=y
 +CONFIG_CMD_SNTP=y
-+CONFIG_CMD_LINK_LOCAL=y
-+CONFIG_CMD_DHCP=y
 +CONFIG_CMD_DNS=y
-+CONFIG_CMD_PING=y
++CONFIG_CMD_LINK_LOCAL=y
 +CONFIG_CMD_PXE=y
 +CONFIG_CMD_CACHE=y
 +CONFIG_CMD_PSTORE=y
@@ -220,18 +220,20 @@
 +CONFIG_OF_EMBED=y
 +CONFIG_ENV_OVERWRITE=y
 +CONFIG_ENV_IS_IN_MMC=y
-+CONFIG_ENV_REDUNDANT=y
-+CONFIG_ENV_RELOC_GD_ENV_ADDR=y
-+CONFIG_ENV_USE_DEFAULT_ENV_TEXT_FILE=y
-+CONFIG_ENV_DEFAULT_ENV_TEXT_FILE="defenvs/bananapi_bpi-r4_sdmmc_env"
++CONFIG_SYS_REDUNDAND_ENVIRONMENT=y
++CONFIG_SYS_RELOC_GD_ENV_ADDR=y
++CONFIG_USE_DEFAULT_ENV_FILE=y
++CONFIG_DEFAULT_ENV_FILE="bananapi_bpi-r4_sdmmc_env"
 +CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG=y
 +CONFIG_VERSION_VARIABLE=y
++CONFIG_NET_RANDOM_ETHADDR=y
 +CONFIG_NETCONSOLE=y
 +CONFIG_USE_IPADDR=y
 +CONFIG_IPADDR="192.168.1.1"
 +CONFIG_USE_SERVERIP=y
 +CONFIG_SERVERIP="192.168.1.254"
-+CONFIG_NET_RANDOM_ETHADDR=y
++CONFIG_REGMAP=y
++CONFIG_SYSCON=y
 +CONFIG_SCSI_AHCI=y
 +CONFIG_AHCI_PCI=y
 +CONFIG_MTK_AHCI=y
@@ -271,7 +273,6 @@
 +CONFIG_RAM=y
 +CONFIG_SCSI=y
 +CONFIG_DM_SERIAL=y
-+CONFIG_SERIAL_RX_BUFFER=y
 +CONFIG_MTK_SERIAL=y
 +CONFIG_SPI=y
 +CONFIG_DM_SPI=y
@@ -282,9 +283,10 @@
 +CONFIG_USB_STORAGE=y
 +CONFIG_ZSTD=y
 +CONFIG_HEXDUMP=y
++CONFIG_LMB_MAX_REGIONS=64
 --- /dev/null
 +++ b/configs/mt7988a_bananapi_bpi-r4-snand_defconfig
-@@ -0,0 +1,139 @@
+@@ -0,0 +1,140 @@
 +CONFIG_ARM=y
 +CONFIG_SYS_HAS_NONCACHED_MEMORY=y
 +CONFIG_POSITION_INDEPENDENT=y
@@ -295,10 +297,10 @@
 +CONFIG_DEFAULT_DEVICE_TREE="mt7988a-bananapi-bpi-r4-emmc"
 +CONFIG_OF_LIBFDT_OVERLAY=y
 +CONFIG_TARGET_MT7988=y
-+CONFIG_SYS_LOAD_ADDR=0x50000000
 +CONFIG_PRE_CON_BUF_ADDR=0x4007EF00
 +CONFIG_DEBUG_UART_BASE=0x11000000
 +CONFIG_DEBUG_UART_CLOCK=40000000
++CONFIG_SYS_LOAD_ADDR=0x50000000
 +CONFIG_PCI=y
 +CONFIG_DEBUG_UART=y
 +CONFIG_AHCI=y
@@ -313,7 +315,6 @@
 +CONFIG_LOGLEVEL=7
 +CONFIG_PRE_CONSOLE_BUFFER=y
 +CONFIG_LOG=y
-+# CONFIG_BOARD_INIT is not set
 +CONFIG_BOARD_LATE_INIT=y
 +CONFIG_HUSH_PARSER=y
 +CONFIG_SYS_PROMPT="MT7988> "
@@ -335,14 +336,14 @@
 +CONFIG_CMD_PCI=y
 +CONFIG_CMD_SF_TEST=y
 +CONFIG_CMD_USB=y
++CONFIG_CMD_DHCP=y
 +CONFIG_CMD_TFTPSRV=y
 +CONFIG_CMD_RARP=y
++CONFIG_CMD_PING=y
 +CONFIG_CMD_CDP=y
 +CONFIG_CMD_SNTP=y
-+CONFIG_CMD_LINK_LOCAL=y
-+CONFIG_CMD_DHCP=y
 +CONFIG_CMD_DNS=y
-+CONFIG_CMD_PING=y
++CONFIG_CMD_LINK_LOCAL=y
 +CONFIG_CMD_PXE=y
 +CONFIG_CMD_CACHE=y
 +CONFIG_CMD_PSTORE=y
@@ -359,21 +360,23 @@
 +CONFIG_OF_EMBED=y
 +CONFIG_ENV_OVERWRITE=y
 +CONFIG_ENV_IS_IN_UBI=y
-+CONFIG_ENV_REDUNDANT=y
++CONFIG_SYS_REDUNDAND_ENVIRONMENT=y
 +CONFIG_ENV_UBI_PART="ubi"
 +CONFIG_ENV_UBI_VOLUME="ubootenv"
 +CONFIG_ENV_UBI_VOLUME_REDUND="ubootenv2"
-+CONFIG_ENV_RELOC_GD_ENV_ADDR=y
-+CONFIG_ENV_USE_DEFAULT_ENV_TEXT_FILE=y
-+CONFIG_ENV_DEFAULT_ENV_TEXT_FILE="defenvs/bananapi_bpi-r4_snand_env"
++CONFIG_SYS_RELOC_GD_ENV_ADDR=y
++CONFIG_USE_DEFAULT_ENV_FILE=y
++CONFIG_DEFAULT_ENV_FILE="bananapi_bpi-r4_snand_env"
 +CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG=y
 +CONFIG_VERSION_VARIABLE=y
++CONFIG_NET_RANDOM_ETHADDR=y
 +CONFIG_NETCONSOLE=y
 +CONFIG_USE_IPADDR=y
 +CONFIG_IPADDR="192.168.1.1"
 +CONFIG_USE_SERVERIP=y
 +CONFIG_SERVERIP="192.168.1.254"
-+CONFIG_NET_RANDOM_ETHADDR=y
++CONFIG_REGMAP=y
++CONFIG_SYSCON=y
 +CONFIG_SCSI_AHCI=y
 +CONFIG_AHCI_PCI=y
 +CONFIG_MTK_AHCI=y
@@ -413,7 +416,6 @@
 +CONFIG_RAM=y
 +CONFIG_SCSI=y
 +CONFIG_DM_SERIAL=y
-+CONFIG_SERIAL_RX_BUFFER=y
 +CONFIG_MTK_SERIAL=y
 +CONFIG_SPI=y
 +CONFIG_DM_SPI=y
@@ -424,8 +426,9 @@
 +CONFIG_USB_STORAGE=y
 +CONFIG_ZSTD=y
 +CONFIG_HEXDUMP=y
++CONFIG_LMB_MAX_REGIONS=64
 --- /dev/null
-+++ b/defenvs/bananapi_bpi-r4_sdmmc_env
++++ b/bananapi_bpi-r4_sdmmc_env
 @@ -0,0 +1,66 @@
 +ipaddr=192.168.1.1
 +serverip=192.168.1.254
@@ -437,8 +440,8 @@
 +bootconf_emmc=mt7988a-bananapi-bpi-r4-emmc
 +bootconf_extra=
 +bootdelay=0
-+bootfile=immortalwrt-mediatek-filogic-bananapi_bpi-r4-initramfs-recovery.itb
-+bootfile_upg=immortalwrt-mediatek-filogic-bananapi_bpi-r4-squashfs-sysupgrade.itb
++bootfile=openwrt-mediatek-filogic-bananapi_bpi-r4-initramfs-recovery.itb
++bootfile_upg=openwrt-mediatek-filogic-bananapi_bpi-r4-squashfs-sysupgrade.itb
 +bootled_pwr=green:status
 +bootled_rec=blue:status
 +bootmenu_confirm_return=askenv - Press ENTER to return to menu ; bootmenu 60
@@ -494,7 +497,7 @@
 +_switch_to_menu=setenv _switch_to_menu ; setenv bootdelay 3 ; setenv bootmenu_delay 3 ; setenv bootmenu_0 $bootmenu_0d ; setenv bootmenu_0d ; run _bootmenu_update_title
 +_bootmenu_update_title=setenv _bootmenu_update_title ; setenv bootmenu_title "$bootmenu_title       [33m$ver[0m"
 --- /dev/null
-+++ b/defenvs/bananapi_bpi-r4_snand_env
++++ b/bananapi_bpi-r4_snand_env
 @@ -0,0 +1,67 @@
 +ipaddr=192.168.1.1
 +serverip=192.168.1.254
@@ -504,10 +507,10 @@
 +bootconf_extra=mt7988a-bananapi-bpi-r4-emmc
 +bootcmd=if pstore check ; then run boot_recovery ; else run boot_ubi ; fi
 +bootdelay=0
-+bootfile=immortalwrt-mediatek-filogic-bananapi_bpi-r4-initramfs-recovery.itb
-+bootfile_bl2=immortalwrt-mediatek-filogic-bananapi_bpi-r4-snand-preloader.bin
-+bootfile_fip=immortalwrt-mediatek-filogic-bananapi_bpi-r4-snand-bl31-uboot.fip
-+bootfile_upg=immortalwrt-mediatek-filogic-bananapi_bpi-r4-squashfs-sysupgrade.itb
++bootfile=openwrt-mediatek-filogic-bananapi_bpi-r4-initramfs-recovery.itb
++bootfile_bl2=openwrt-mediatek-filogic-bananapi_bpi-r4-snand-preloader.bin
++bootfile_fip=openwrt-mediatek-filogic-bananapi_bpi-r4-snand-bl31-uboot.fip
++bootfile_upg=openwrt-mediatek-filogic-bananapi_bpi-r4-squashfs-sysupgrade.itb
 +bootled_pwr=green:status
 +bootled_rec=blue:status
 +bootmenu_confirm_return=askenv - Press ENTER to return to menu ; bootmenu 60
@@ -564,7 +567,7 @@
 +_switch_to_menu=setenv _switch_to_menu ; setenv bootdelay 3 ; setenv bootmenu_delay 3 ; setenv bootmenu_0 $bootmenu_0d ; setenv bootmenu_0d ; run _bootmenu_update_title
 +_bootmenu_update_title=setenv _bootmenu_update_title ; setenv bootmenu_title "$bootmenu_title       [33m$ver[0m"
 --- /dev/null
-+++ b/defenvs/bananapi_bpi-r4_emmc_env
++++ b/bananapi_bpi-r4_emmc_env
 @@ -0,0 +1,57 @@
 +ipaddr=192.168.1.1
 +serverip=192.168.1.254
@@ -576,10 +579,10 @@
 +bootconf_emmc=mt7988a-bananapi-bpi-r4-emmc
 +bootconf_extra=
 +bootdelay=0
-+bootfile=immortalwrt-mediatek-filogic-bananapi_bpi-r4-initramfs-recovery.itb
-+bootfile_bl2=immortalwrt-mediatek-filogic-bananapi_bpi-r4-emmc-preloader.bin
-+bootfile_fip=immortalwrt-mediatek-filogic-bananapi_bpi-r4-emmc-bl31-uboot.fip
-+bootfile_upg=immortalwrt-mediatek-filogic-bananapi_bpi-r4-squashfs-sysupgrade.itb
++bootfile=openwrt-mediatek-filogic-bananapi_bpi-r4-initramfs-recovery.itb
++bootfile_bl2=openwrt-mediatek-filogic-bananapi_bpi-r4-emmc-preloader.bin
++bootfile_fip=openwrt-mediatek-filogic-bananapi_bpi-r4-emmc-bl31-uboot.fip
++bootfile_upg=openwrt-mediatek-filogic-bananapi_bpi-r4-squashfs-sysupgrade.itb
 +bootled_pwr=green:status
 +bootled_rec=blue:status
 +bootmenu_confirm_return=askenv - Press ENTER to return to menu ; bootmenu 60
@@ -674,7 +677,7 @@
 +		wps {
 +			label = "reset";
 +			linux,code = <KEY_RESTART>;
-+			gpios = <&pio 14 GPIO_ACTIVE_LOW>;
++			gpios = <&gpio 14 GPIO_ACTIVE_LOW>;
 +		};
 +	};
 +
@@ -683,12 +686,12 @@
 +
 +		led_status_green: led-green {
 +			label = "green:status";
-+			gpios = <&pio 79 GPIO_ACTIVE_HIGH>;
++			gpios = <&gpio 79 GPIO_ACTIVE_HIGH>;
 +		};
 +
 +		led_status_blue: led-blue {
 +			label = "blue:status";
-+			gpios = <&pio 63 GPIO_ACTIVE_HIGH>;
++			gpios = <&gpio 63 GPIO_ACTIVE_HIGH>;
 +		};
 +	};
 +};
@@ -703,7 +706,7 @@
 +	status = "okay";
 +};
 +
-+&eth0 {
++&eth {
 +	status = "okay";
 +	mediatek,gmac-id = <0>;
 +	phy-mode = "usxgmii";
@@ -716,7 +719,7 @@
 +	};
 +};
 +
-+&pio {
++&pinctrl {
 +	i2c1_pins: i2c1-pins {
 +		mux {
 +			function = "i2c";
@@ -873,7 +876,7 @@
 +};
 --- /dev/null
 +++ b/configs/mt7988a_bananapi_bpi-r4-poe-emmc_defconfig
-@@ -0,0 +1,139 @@
+@@ -0,0 +1,140 @@
 +CONFIG_ARM=y
 +CONFIG_SYS_HAS_NONCACHED_MEMORY=y
 +CONFIG_POSITION_INDEPENDENT=y
@@ -886,11 +889,11 @@
 +CONFIG_DEFAULT_DEVICE_TREE="mt7988a-bananapi-bpi-r4-emmc"
 +CONFIG_OF_LIBFDT_OVERLAY=y
 +CONFIG_TARGET_MT7988=y
-+CONFIG_SYS_LOAD_ADDR=0x50000000
 +CONFIG_PRE_CON_BUF_ADDR=0x4007EF00
 +CONFIG_DEBUG_UART_BASE=0x11000000
 +CONFIG_DEBUG_UART_CLOCK=40000000
 +CONFIG_ENV_OFFSET_REDUND=0x440000
++CONFIG_SYS_LOAD_ADDR=0x50000000
 +CONFIG_PCI=y
 +CONFIG_DEBUG_UART=y
 +CONFIG_AHCI=y
@@ -905,7 +908,6 @@
 +CONFIG_LOGLEVEL=7
 +CONFIG_PRE_CONSOLE_BUFFER=y
 +CONFIG_LOG=y
-+# CONFIG_BOARD_INIT is not set
 +CONFIG_BOARD_LATE_INIT=y
 +CONFIG_HUSH_PARSER=y
 +CONFIG_SYS_PROMPT="MT7988> "
@@ -927,14 +929,14 @@
 +CONFIG_CMD_PCI=y
 +CONFIG_CMD_SF_TEST=y
 +CONFIG_CMD_USB=y
++CONFIG_CMD_DHCP=y
 +CONFIG_CMD_TFTPSRV=y
 +CONFIG_CMD_RARP=y
++CONFIG_CMD_PING=y
 +CONFIG_CMD_CDP=y
 +CONFIG_CMD_SNTP=y
-+CONFIG_CMD_LINK_LOCAL=y
-+CONFIG_CMD_DHCP=y
 +CONFIG_CMD_DNS=y
-+CONFIG_CMD_PING=y
++CONFIG_CMD_LINK_LOCAL=y
 +CONFIG_CMD_PXE=y
 +CONFIG_CMD_CACHE=y
 +CONFIG_CMD_PSTORE=y
@@ -951,18 +953,20 @@
 +CONFIG_OF_EMBED=y
 +CONFIG_ENV_OVERWRITE=y
 +CONFIG_ENV_IS_IN_MMC=y
-+CONFIG_ENV_REDUNDANT=y
-+CONFIG_ENV_RELOC_GD_ENV_ADDR=y
-+CONFIG_ENV_USE_DEFAULT_ENV_TEXT_FILE=y
-+CONFIG_ENV_DEFAULT_ENV_TEXT_FILE="defenvs/bananapi_bpi-r4-poe_emmc_env"
++CONFIG_SYS_REDUNDAND_ENVIRONMENT=y
++CONFIG_SYS_RELOC_GD_ENV_ADDR=y
++CONFIG_USE_DEFAULT_ENV_FILE=y
++CONFIG_DEFAULT_ENV_FILE="bananapi_bpi-r4-poe_emmc_env"
 +CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG=y
 +CONFIG_VERSION_VARIABLE=y
++CONFIG_NET_RANDOM_ETHADDR=y
 +CONFIG_NETCONSOLE=y
 +CONFIG_USE_IPADDR=y
 +CONFIG_IPADDR="192.168.1.1"
 +CONFIG_USE_SERVERIP=y
 +CONFIG_SERVERIP="192.168.1.254"
-+CONFIG_NET_RANDOM_ETHADDR=y
++CONFIG_REGMAP=y
++CONFIG_SYSCON=y
 +CONFIG_SCSI_AHCI=y
 +CONFIG_AHCI_PCI=y
 +CONFIG_MTK_AHCI=y
@@ -1002,7 +1006,6 @@
 +CONFIG_RAM=y
 +CONFIG_SCSI=y
 +CONFIG_DM_SERIAL=y
-+CONFIG_SERIAL_RX_BUFFER=y
 +CONFIG_MTK_SERIAL=y
 +CONFIG_SPI=y
 +CONFIG_DM_SPI=y
@@ -1013,9 +1016,10 @@
 +CONFIG_USB_STORAGE=y
 +CONFIG_ZSTD=y
 +CONFIG_HEXDUMP=y
++CONFIG_LMB_MAX_REGIONS=64
 --- /dev/null
 +++ b/configs/mt7988a_bananapi_bpi-r4-poe-sdmmc_defconfig
-@@ -0,0 +1,139 @@
+@@ -0,0 +1,140 @@
 +CONFIG_ARM=y
 +CONFIG_SYS_HAS_NONCACHED_MEMORY=y
 +CONFIG_POSITION_INDEPENDENT=y
@@ -1028,11 +1032,11 @@
 +CONFIG_DEFAULT_DEVICE_TREE="mt7988a-bananapi-bpi-r4-sd"
 +CONFIG_OF_LIBFDT_OVERLAY=y
 +CONFIG_TARGET_MT7988=y
-+CONFIG_SYS_LOAD_ADDR=0x50000000
 +CONFIG_PRE_CON_BUF_ADDR=0x4007EF00
 +CONFIG_DEBUG_UART_BASE=0x11000000
 +CONFIG_DEBUG_UART_CLOCK=40000000
 +CONFIG_ENV_OFFSET_REDUND=0x440000
++CONFIG_SYS_LOAD_ADDR=0x50000000
 +CONFIG_PCI=y
 +CONFIG_DEBUG_UART=y
 +CONFIG_AHCI=y
@@ -1047,7 +1051,6 @@
 +CONFIG_LOGLEVEL=7
 +CONFIG_PRE_CONSOLE_BUFFER=y
 +CONFIG_LOG=y
-+# CONFIG_BOARD_INIT is not set
 +CONFIG_BOARD_LATE_INIT=y
 +CONFIG_HUSH_PARSER=y
 +CONFIG_SYS_PROMPT="MT7988> "
@@ -1069,14 +1072,14 @@
 +CONFIG_CMD_PCI=y
 +CONFIG_CMD_SF_TEST=y
 +CONFIG_CMD_USB=y
++CONFIG_CMD_DHCP=y
 +CONFIG_CMD_TFTPSRV=y
 +CONFIG_CMD_RARP=y
++CONFIG_CMD_PING=y
 +CONFIG_CMD_CDP=y
 +CONFIG_CMD_SNTP=y
-+CONFIG_CMD_LINK_LOCAL=y
-+CONFIG_CMD_DHCP=y
 +CONFIG_CMD_DNS=y
-+CONFIG_CMD_PING=y
++CONFIG_CMD_LINK_LOCAL=y
 +CONFIG_CMD_PXE=y
 +CONFIG_CMD_CACHE=y
 +CONFIG_CMD_PSTORE=y
@@ -1093,18 +1096,20 @@
 +CONFIG_OF_EMBED=y
 +CONFIG_ENV_OVERWRITE=y
 +CONFIG_ENV_IS_IN_MMC=y
-+CONFIG_ENV_REDUNDANT=y
-+CONFIG_ENV_RELOC_GD_ENV_ADDR=y
-+CONFIG_ENV_USE_DEFAULT_ENV_TEXT_FILE=y
-+CONFIG_ENV_DEFAULT_ENV_TEXT_FILE="defenvs/bananapi_bpi-r4-poe_sdmmc_env"
++CONFIG_SYS_REDUNDAND_ENVIRONMENT=y
++CONFIG_SYS_RELOC_GD_ENV_ADDR=y
++CONFIG_USE_DEFAULT_ENV_FILE=y
++CONFIG_DEFAULT_ENV_FILE="bananapi_bpi-r4-poe_sdmmc_env"
 +CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG=y
 +CONFIG_VERSION_VARIABLE=y
++CONFIG_NET_RANDOM_ETHADDR=y
 +CONFIG_NETCONSOLE=y
 +CONFIG_USE_IPADDR=y
 +CONFIG_IPADDR="192.168.1.1"
 +CONFIG_USE_SERVERIP=y
 +CONFIG_SERVERIP="192.168.1.254"
-+CONFIG_NET_RANDOM_ETHADDR=y
++CONFIG_REGMAP=y
++CONFIG_SYSCON=y
 +CONFIG_SCSI_AHCI=y
 +CONFIG_AHCI_PCI=y
 +CONFIG_MTK_AHCI=y
@@ -1144,7 +1149,6 @@
 +CONFIG_RAM=y
 +CONFIG_SCSI=y
 +CONFIG_DM_SERIAL=y
-+CONFIG_SERIAL_RX_BUFFER=y
 +CONFIG_MTK_SERIAL=y
 +CONFIG_SPI=y
 +CONFIG_DM_SPI=y
@@ -1155,9 +1159,10 @@
 +CONFIG_USB_STORAGE=y
 +CONFIG_ZSTD=y
 +CONFIG_HEXDUMP=y
++CONFIG_LMB_MAX_REGIONS=64
 --- /dev/null
 +++ b/configs/mt7988a_bananapi_bpi-r4-poe-snand_defconfig
-@@ -0,0 +1,139 @@
+@@ -0,0 +1,140 @@
 +CONFIG_ARM=y
 +CONFIG_SYS_HAS_NONCACHED_MEMORY=y
 +CONFIG_POSITION_INDEPENDENT=y
@@ -1168,10 +1173,10 @@
 +CONFIG_DEFAULT_DEVICE_TREE="mt7988a-bananapi-bpi-r4-emmc"
 +CONFIG_OF_LIBFDT_OVERLAY=y
 +CONFIG_TARGET_MT7988=y
-+CONFIG_SYS_LOAD_ADDR=0x50000000
 +CONFIG_PRE_CON_BUF_ADDR=0x4007EF00
 +CONFIG_DEBUG_UART_BASE=0x11000000
 +CONFIG_DEBUG_UART_CLOCK=40000000
++CONFIG_SYS_LOAD_ADDR=0x50000000
 +CONFIG_PCI=y
 +CONFIG_DEBUG_UART=y
 +CONFIG_AHCI=y
@@ -1186,7 +1191,6 @@
 +CONFIG_LOGLEVEL=7
 +CONFIG_PRE_CONSOLE_BUFFER=y
 +CONFIG_LOG=y
-+# CONFIG_BOARD_INIT is not set
 +CONFIG_BOARD_LATE_INIT=y
 +CONFIG_HUSH_PARSER=y
 +CONFIG_SYS_PROMPT="MT7988> "
@@ -1208,14 +1212,14 @@
 +CONFIG_CMD_PCI=y
 +CONFIG_CMD_SF_TEST=y
 +CONFIG_CMD_USB=y
++CONFIG_CMD_DHCP=y
 +CONFIG_CMD_TFTPSRV=y
 +CONFIG_CMD_RARP=y
++CONFIG_CMD_PING=y
 +CONFIG_CMD_CDP=y
 +CONFIG_CMD_SNTP=y
-+CONFIG_CMD_LINK_LOCAL=y
-+CONFIG_CMD_DHCP=y
 +CONFIG_CMD_DNS=y
-+CONFIG_CMD_PING=y
++CONFIG_CMD_LINK_LOCAL=y
 +CONFIG_CMD_PXE=y
 +CONFIG_CMD_CACHE=y
 +CONFIG_CMD_PSTORE=y
@@ -1232,21 +1236,23 @@
 +CONFIG_OF_EMBED=y
 +CONFIG_ENV_OVERWRITE=y
 +CONFIG_ENV_IS_IN_UBI=y
-+CONFIG_ENV_REDUNDANT=y
++CONFIG_SYS_REDUNDAND_ENVIRONMENT=y
 +CONFIG_ENV_UBI_PART="ubi"
 +CONFIG_ENV_UBI_VOLUME="ubootenv"
 +CONFIG_ENV_UBI_VOLUME_REDUND="ubootenv2"
-+CONFIG_ENV_RELOC_GD_ENV_ADDR=y
-+CONFIG_ENV_USE_DEFAULT_ENV_TEXT_FILE=y
-+CONFIG_ENV_DEFAULT_ENV_TEXT_FILE="defenvs/bananapi_bpi-r4-poe_snand_env"
++CONFIG_SYS_RELOC_GD_ENV_ADDR=y
++CONFIG_USE_DEFAULT_ENV_FILE=y
++CONFIG_DEFAULT_ENV_FILE="bananapi_bpi-r4-poe_snand_env"
 +CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG=y
 +CONFIG_VERSION_VARIABLE=y
++CONFIG_NET_RANDOM_ETHADDR=y
 +CONFIG_NETCONSOLE=y
 +CONFIG_USE_IPADDR=y
 +CONFIG_IPADDR="192.168.1.1"
 +CONFIG_USE_SERVERIP=y
 +CONFIG_SERVERIP="192.168.1.254"
-+CONFIG_NET_RANDOM_ETHADDR=y
++CONFIG_REGMAP=y
++CONFIG_SYSCON=y
 +CONFIG_SCSI_AHCI=y
 +CONFIG_AHCI_PCI=y
 +CONFIG_MTK_AHCI=y
@@ -1286,7 +1292,6 @@
 +CONFIG_RAM=y
 +CONFIG_SCSI=y
 +CONFIG_DM_SERIAL=y
-+CONFIG_SERIAL_RX_BUFFER=y
 +CONFIG_MTK_SERIAL=y
 +CONFIG_SPI=y
 +CONFIG_DM_SPI=y
@@ -1297,8 +1302,9 @@
 +CONFIG_USB_STORAGE=y
 +CONFIG_ZSTD=y
 +CONFIG_HEXDUMP=y
++CONFIG_LMB_MAX_REGIONS=64
 --- /dev/null
-+++ b/defenvs/bananapi_bpi-r4-poe_emmc_env
++++ b/bananapi_bpi-r4-poe_emmc_env
 @@ -0,0 +1,57 @@
 +ipaddr=192.168.1.1
 +serverip=192.168.1.254
@@ -1310,10 +1316,10 @@
 +bootconf_emmc=mt7988a-bananapi-bpi-r4-emmc
 +bootconf_extra=
 +bootdelay=0
-+bootfile=immortalwrt-mediatek-filogic-bananapi_bpi-r4-poe-initramfs-recovery.itb
-+bootfile_bl2=immortalwrt-mediatek-filogic-bananapi_bpi-r4-poe-emmc-preloader.bin
-+bootfile_fip=immortalwrt-mediatek-filogic-bananapi_bpi-r4-poe-emmc-bl31-uboot.fip
-+bootfile_upg=immortalwrt-mediatek-filogic-bananapi_bpi-r4-poe-squashfs-sysupgrade.itb
++bootfile=openwrt-mediatek-filogic-bananapi_bpi-r4-poe-initramfs-recovery.itb
++bootfile_bl2=openwrt-mediatek-filogic-bananapi_bpi-r4-poe-emmc-preloader.bin
++bootfile_fip=openwrt-mediatek-filogic-bananapi_bpi-r4-poe-emmc-bl31-uboot.fip
++bootfile_upg=openwrt-mediatek-filogic-bananapi_bpi-r4-poe-squashfs-sysupgrade.itb
 +bootled_pwr=green:status
 +bootled_rec=blue:status
 +bootmenu_confirm_return=askenv - Press ENTER to return to menu ; bootmenu 60
@@ -1358,7 +1364,7 @@
 +_switch_to_menu=setenv _switch_to_menu ; setenv bootdelay 3 ; setenv bootmenu_delay 3 ; setenv bootmenu_0 $bootmenu_0d ; setenv bootmenu_0d ; run _bootmenu_update_title
 +_bootmenu_update_title=setenv _bootmenu_update_title ; setenv bootmenu_title "$bootmenu_title       [33m$ver[0m"
 --- /dev/null
-+++ b/defenvs/bananapi_bpi-r4-poe_sdmmc_env
++++ b/bananapi_bpi-r4-poe_sdmmc_env
 @@ -0,0 +1,66 @@
 +ipaddr=192.168.1.1
 +serverip=192.168.1.254
@@ -1370,8 +1376,8 @@
 +bootconf_emmc=mt7988a-bananapi-bpi-r4-emmc
 +bootconf_extra=
 +bootdelay=0
-+bootfile=immortalwrt-mediatek-filogic-bananapi_bpi-r4-poe-initramfs-recovery.itb
-+bootfile_upg=immortalwrt-mediatek-filogic-bananapi_bpi-r4-poe-squashfs-sysupgrade.itb
++bootfile=openwrt-mediatek-filogic-bananapi_bpi-r4-poe-initramfs-recovery.itb
++bootfile_upg=openwrt-mediatek-filogic-bananapi_bpi-r4-poe-squashfs-sysupgrade.itb
 +bootled_pwr=green:status
 +bootled_rec=blue:status
 +bootmenu_confirm_return=askenv - Press ENTER to return to menu ; bootmenu 60
@@ -1427,7 +1433,7 @@
 +_switch_to_menu=setenv _switch_to_menu ; setenv bootdelay 3 ; setenv bootmenu_delay 3 ; setenv bootmenu_0 $bootmenu_0d ; setenv bootmenu_0d ; run _bootmenu_update_title
 +_bootmenu_update_title=setenv _bootmenu_update_title ; setenv bootmenu_title "$bootmenu_title       [33m$ver[0m"
 --- /dev/null
-+++ b/defenvs/bananapi_bpi-r4-poe_snand_env
++++ b/bananapi_bpi-r4-poe_snand_env
 @@ -0,0 +1,67 @@
 +ipaddr=192.168.1.1
 +serverip=192.168.1.254
@@ -1437,10 +1443,10 @@
 +bootconf_extra=mt7988a-bananapi-bpi-r4-emmc
 +bootcmd=if pstore check ; then run boot_recovery ; else run boot_ubi ; fi
 +bootdelay=0
-+bootfile=immortalwrt-mediatek-filogic-bananapi_bpi-r4-poe-initramfs-recovery.itb
-+bootfile_bl2=immortalwrt-mediatek-filogic-bananapi_bpi-r4-poe-snand-preloader.bin
-+bootfile_fip=immortalwrt-mediatek-filogic-bananapi_bpi-r4-poe-snand-bl31-uboot.fip
-+bootfile_upg=immortalwrt-mediatek-filogic-bananapi_bpi-r4-poe-squashfs-sysupgrade.itb
++bootfile=openwrt-mediatek-filogic-bananapi_bpi-r4-poe-initramfs-recovery.itb
++bootfile_bl2=openwrt-mediatek-filogic-bananapi_bpi-r4-poe-snand-preloader.bin
++bootfile_fip=openwrt-mediatek-filogic-bananapi_bpi-r4-poe-snand-bl31-uboot.fip
++bootfile_upg=openwrt-mediatek-filogic-bananapi_bpi-r4-poe-squashfs-sysupgrade.itb
 +bootled_pwr=green:status
 +bootled_rec=blue:status
 +bootmenu_confirm_return=askenv - Press ENTER to return to menu ; bootmenu 60

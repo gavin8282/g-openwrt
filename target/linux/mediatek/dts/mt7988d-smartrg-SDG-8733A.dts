@@ -88,13 +88,6 @@
 };
 
 &pio {
-	i2p5gbe_led0_pins: 2p5gbe-led0-pins {
-		mux {
-			function = "led";
-			groups = "2p5gbe_led0";
-		};
-	};
-
 	pcie3_1_pins: pcie3-pins-g1 {
 		mux {
 			function = "pcie";
@@ -136,7 +129,6 @@
 
 &i2p5gbe_led0 {
 	color = <LED_COLOR_ID_GREEN>;
-	function = LED_FUNCTION_LAN;
 	status = "okay";
 };
 
@@ -156,10 +148,10 @@
 	status = "disabled";
 };
 
-&serial1 {
+&uart1 {
 	status = "disabled";
 };
 
-&xsphy {
+&xphy {
 	status = "disabled";
 };

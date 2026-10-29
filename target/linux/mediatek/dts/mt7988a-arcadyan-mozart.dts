@@ -11,7 +11,7 @@
 	model = "MediaTek / Arcadyan - Mozart";
 
 	aliases {
-		serial0 = &serial0;
+		serial0 = &uart0;
 		led-boot = &led_status_blue;
 		led-failsafe = &led_status_red;
 		led-running = &led_status_green;
@@ -59,14 +59,26 @@
 			gpios = <&pio 13 GPIO_ACTIVE_LOW>;
 		};
 	};
+};
 
-	fan: pwm-fan {
-		compatible = "pwm-fan";
-		#cooling-cells = <2>;
-		#thermal-sensor-cells = <1>;
-		/* cooling level (0, 1, 2) : (0% duty, 50% duty, 100% duty) */
-		cooling-levels = <0 128 255>;
-		pwms = <&pwm 1 40000 0>;
+&pio {
+	mdio0_pins: mdio0-pins {
+		mux {
+			function = "eth";
+			groups = "mdc_mdio0";
+		};
+
+		conf {
+			groups = "mdc_mdio0";
+			drive-strength = <MTK_DRIVE_10mA>;
+		};
+	};
+
+	spic_pins: spi1-pins {
+		mux {
+			function = "spi";
+			groups = "spi1";
+		};
 	};
 };
 
@@ -79,6 +91,8 @@
 };
 
 &mdio_bus {
+	#address-cells = <1>;
+	#size-cells = <0>;
 	reset-gpios = <&pio 72 GPIO_ACTIVE_LOW>;
 	reset-assert-us = <100000>;
 	reset-deassert-us = <100000>;
@@ -159,18 +173,23 @@
 	};
 };
 
-&pwm {
+&uart1 {
 	status = "okay";
 };
 
-&serial1 {
+&fan {
+	pwms = <&pwm 1 40000 0>;
+	status = "okay";
+};
+
+&pwm {
 	status = "okay";
 };
 
 &spi1 {
 	pinctrl-names = "default";
 	/* pin shared with snfi */
-	pinctrl-0 = <&spi1_pins>;
+	pinctrl-0 = <&spic_pins>;
 	status = "disabled";
 };
 
@@ -307,10 +326,8 @@
 
 	pcie@0,0 {
 		reg = <0x0000 0 0 0 0>;
-		#address-cells = <3>;
-		#size-cells = <2>;
 
-		mt7996@0,0 {
+		mt7996@1,0 {
 			reg = <0x0000 0 0 0 0>;
 			nvmem-cells = <&eeprom_factory_0>;
 			nvmem-cell-names = "eeprom";

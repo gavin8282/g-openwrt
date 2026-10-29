@@ -4,7 +4,6 @@
 #include <dt-bindings/input/input.h>
 #include <dt-bindings/gpio/gpio.h>
 #include <dt-bindings/leds/common.h>
-#include <dt-bindings/pinctrl/mt65xx.h>
 
 #include "mt7986a.dtsi"
 
@@ -27,7 +26,6 @@
 
 	memory@40000000 {
 		reg = <0 0x40000000 0 0x20000000>;
-		device_type = "memory";
 	};
 
 	gpio-keys {
@@ -89,8 +87,9 @@
 		reset-post-delay-us = <1000000>;
 
 		phy6: phy@6 {
-			compatible = "ethernet-phy-ieee802.3-c45";
+			compatible = "maxlinear,gpy211", "ethernet-phy-ieee802.3-c45";
 			reg = <6>;
+			phy-mode = "2500base-x";
 		};
 
 		switch@1f {
@@ -150,13 +149,13 @@
 		};
 		conf-pu {
 			pins = "SPI2_CS", "SPI2_HOLD", "SPI2_WP";
-			drive-strength = <MTK_DRIVE_8mA>;
-			bias-disable; /* bias-disable */
+			drive-strength = <8>;
+			mediatek,pull-up-adv = <0>; /* bias-disable */
 		};
 		conf-pd {
 			pins = "SPI2_CLK", "SPI2_MOSI", "SPI2_MISO";
-			drive-strength = <MTK_DRIVE_8mA>;
-			bias-disable; /* bias-disable */
+			drive-strength = <8>;
+			mediatek,pull-down-adv = <0>; /* bias-disable */
 		};
 	};
 
@@ -191,7 +190,7 @@
 				"WF1_HB8",
 				"WF1_TOP_CLK",
 				"WF1_TOP_DATA";
-			drive-strength = <MTK_DRIVE_4mA>;
+			drive-strength = <4>;
 		};
 	};
 
@@ -210,6 +209,8 @@
 
 	flash@0 {
 		compatible = "spi-nand";
+		#address-cells = <1>;
+		#size-cells = <1>;
 		reg = <0>;
 
 		spi-max-frequency = <20000000>;
@@ -311,8 +312,6 @@
 };
 
 &wifi {
-	#address-cells = <1>;
-	#size-cells = <0>;
 	status = "okay";
 	pinctrl-names = "default";
 	pinctrl-0 = <&wf_2g_5g_pins>;
@@ -350,8 +349,6 @@
 
 	gca230718@40 {
 		compatible = "unknown,gca230718";
-		#address-cells = <1>;
-		#size-cells = <0>;
 		reg = <0x40>;
 
 		led_status_red: led@0 {

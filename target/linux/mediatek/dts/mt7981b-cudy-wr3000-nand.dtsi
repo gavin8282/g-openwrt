@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: (GPL-2.0 OR MIT)
 
 #include <dt-bindings/leds/common.h>
-#include "mt7981b.dtsi"
+#include "mt7981.dtsi"
 
 / {
 	chosen {
@@ -72,6 +72,8 @@
 	status = "okay";
 
 	spi_nand: flash@0 {
+		#address-cells = <1>;
+		#size-cells = <1>;
 		compatible = "spi-nand";
 		reg = <0>;
 		spi-max-frequency = <52000000>;
@@ -85,6 +87,9 @@
 
 		spi-tx-bus-width = <4>;
 		spi-rx-bus-width = <4>;
+		mediatek,nmbm;
+		mediatek,bmt-max-ratio = <1>;
+		mediatek,bmt-max-reserved-blocks = <64>;
 
 		partitions {
 			compatible = "fixed-partitions";
@@ -143,7 +148,7 @@
 				read-only;
 			};
 
-			ubi: partition@5c0000 {
+			partition@5c0000 {
 				label = "ubi";
 				reg = <0x5c0000 0x4000000>;
 				compatible = "linux,ubi";

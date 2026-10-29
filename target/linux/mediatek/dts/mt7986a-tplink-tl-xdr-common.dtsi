@@ -3,7 +3,6 @@
 #include <dt-bindings/gpio/gpio.h>
 #include <dt-bindings/input/input.h>
 #include <dt-bindings/leds/common.h>
-#include <dt-bindings/pinctrl/mt65xx.h>
 
 #include "mt7986a.dtsi"
 
@@ -23,9 +22,8 @@
 		stdout-path = "serial0:115200n8";
 	};
 
-	memory@40000000 {
+	memory {
 		reg = <0 0x40000000 0 0x20000000>;
-		device_type = "memory";
 	};
 
 	reg_3p3v: regulator-3p3v {
@@ -136,7 +134,6 @@
 		reset-deassert-us = <100000>;
 		reset-gpios = <&pio 13 GPIO_ACTIVE_LOW>;
 		realtek,aldps-enable;
-		realtek,led-link-select = <0xa7 0x0 0x0>;
 	};
 
 	phy7: ethernet-phy@7 {
@@ -146,7 +143,6 @@
 		reset-deassert-us = <100000>;
 		reset-gpios = <&pio 17 GPIO_ACTIVE_LOW>;
 		realtek,aldps-enable;
-		realtek,led-link-select = <0xa7 0x0 0x0>;
 	};
 
 	switch: switch@1f {
@@ -167,6 +163,8 @@
 
 	flash@0 {
 		compatible = "spi-nand";
+		#address-cells = <1>;
+		#size-cells = <1>;
 		reg = <0>;
 
 		spi-max-frequency = <20000000>;
@@ -243,13 +241,13 @@
 		};
 		conf-pu {
 			pins = "SPI2_CS", "SPI2_HOLD", "SPI2_WP";
-			drive-strength = <MTK_DRIVE_8mA>;
-			bias-disable; /* bias-disable */
+			drive-strength = <8>;
+			mediatek,pull-up-adv = <0>; /* bias-disable */
 		};
 		conf-pd {
 			pins = "SPI2_CLK", "SPI2_MOSI", "SPI2_MISO";
-			drive-strength = <MTK_DRIVE_8mA>;
-			bias-disable; /* bias-disable */
+			drive-strength = <8>;
+			mediatek,pull-down-adv = <0>; /* bias-disable */
 		};
 	};
 };

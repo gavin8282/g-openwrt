@@ -2,7 +2,7 @@
 
 /dts-v1/;
 
-#include "mt7981b.dtsi"
+#include "mt7981.dtsi"
 
 / {
 	model = "Cudy AP3000 v1";
@@ -133,6 +133,8 @@
 
 	/* ESMT F50L2G41XA (256M) */
 	spi_nand@0 {
+		#address-cells = <1>;
+		#size-cells = <1>;
 		compatible = "spi-nand";
 		reg = <0>;
 

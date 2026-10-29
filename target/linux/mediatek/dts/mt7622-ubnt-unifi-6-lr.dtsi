@@ -45,9 +45,8 @@
 		};
 	};
 
-	memory@40000000 {
+	memory {
 		reg = <0 0x40000000 0 0x3f000000>;
-		device_type = "memory";
 	};
 
 	reg_1p8v: regulator-1p8v {

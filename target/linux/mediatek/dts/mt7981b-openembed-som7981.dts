@@ -5,9 +5,7 @@
 #include <dt-bindings/gpio/gpio.h>
 #include <dt-bindings/input/input.h>
 #include <dt-bindings/leds/common.h>
-#include <dt-bindings/pinctrl/mt65xx.h>
-
-#include "mt7981b.dtsi"
+#include "mt7981.dtsi"
 
 / {
 	model = "OpenEmbed SOM7981";
@@ -27,7 +25,6 @@
 
 	memory@40000000 {
 		reg = <0 0x40000000 0 0x40000000>;
-		device_type = "memory";
 	};
 
 	beeper {
@@ -132,9 +129,6 @@
 		reset-assert-us = <15000>;
 		reset-deassert-us = <68000>;
 		realtek,aldps-enable;
-		realtek,led-link-select = <0x0 0xa7 0xa7>;
-		realtek,led-act-select = <0x2614>;
-		realtek,led-polarity-select = <0x63>;
 	};
 };
 
@@ -145,6 +139,8 @@
 
 	spi_nand: flash@0 {
 		compatible = "spi-nand";
+		#address-cells = <1>;
+		#size-cells = <1>;
 		reg = <0>;
 
 		spi-max-frequency = <52000000>;
@@ -168,6 +164,7 @@
 			};
 
 			partition@180000 {
+				compatible = "nvmem-cells";
 				label = "factory";
 				reg = <0x180000 0x100000>;
 				read-only;
@@ -225,14 +222,14 @@
 
 		conf-pu {
 			pins = "SPI0_CS", "SPI0_HOLD", "SPI0_WP";
-			drive-strength = <MTK_DRIVE_8mA>;
-			bias-disable;
+			drive-strength = <8>;
+			mediatek,pull-up-adv = <0>;
 		};
 
 		conf-pd {
 			pins = "SPI0_CLK", "SPI0_MOSI", "SPI0_MISO";
-			drive-strength = <MTK_DRIVE_8mA>;
-			bias-disable;
+			drive-strength = <8>;
+			mediatek,pull-down-adv = <0>;
 		};
 	};
 
@@ -252,8 +249,8 @@
 
 	wwan_rst_h: wwan-rst-h {
 		pins = "GPIO_WPS";
-		drive-strength = <MTK_DRIVE_8mA>;
-		bias-disable;
+		drive-strength = <8>;
+		mediatek,pull-down-adv = <0>;
 		output-low;
 	};
 };
@@ -283,8 +280,6 @@
 };
 
 &wifi {
-	#address-cells = <1>;
-	#size-cells = <0>;
 	nvmem-cells = <&eeprom_factory_0>;
 	nvmem-cell-names = "eeprom";
 	status = "okay";

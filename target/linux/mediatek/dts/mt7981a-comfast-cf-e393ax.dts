@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later OR MIT
 
 /dts-v1/;
-#include "mt7981b.dtsi"
+#include "mt7981.dtsi"
 
 / {
 	model = "COMFAST CF-E393AX";
@@ -20,9 +20,8 @@
 		stdout-path = "serial0:115200n8";
 	};
 
-	memory@40000000 {
+	memory {
 		reg = <0 0x40000000 0 0x10000000>; // 256mb
-		device_type = "memory";
 	};
 
 	gpio-keys {
@@ -126,6 +125,7 @@
 &spi0 {
 	pinctrl-names = "default";
 	pinctrl-0 = <&spi0_flash_pins>;
+	cs-gpios = <0>, <0>;
 	#address-cells = <1>;
 	#size-cells = <0>;
 	status = "okay";
@@ -133,8 +133,10 @@
 	#size-cells = <0>;
 
 	spi_nand: spi_nand@0 {
+		#address-cells = <1>;
+		#size-cells = <1>;
 		compatible = "spi-nand";
-		reg = <0>;
+		reg = <1>;
 		spi-max-frequency = <52000000>;
 
 		spi-cal-enable;

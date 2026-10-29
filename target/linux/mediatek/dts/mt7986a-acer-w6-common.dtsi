@@ -3,7 +3,6 @@
 #include <dt-bindings/input/input.h>
 #include <dt-bindings/gpio/gpio.h>
 #include <dt-bindings/leds/common.h>
-#include <dt-bindings/pinctrl/mt65xx.h>
 
 #include "mt7986a.dtsi"
 
@@ -13,9 +12,8 @@
 		bootargs = "dm-mod.create=\"acer,,,ro,0 1 zero 1 0 0 0\" rootfstype=squashfs,ext4 rootwait root=/dev/mmcblk0p6 fstools_ignore_partname=1";
 	};
 
-	memory@40000000 {
+	memory@0 {
 		reg = <0 0x40000000 0 0x20000000>;
-		device_type = "memory";
 	};
 
 	reg_1p8v: regulator-1p8v {
@@ -78,25 +76,25 @@
 			       "EMMC_DATA_3", "EMMC_DATA_4", "EMMC_DATA_5",
 			       "EMMC_DATA_6", "EMMC_DATA_7", "EMMC_CMD";
 			input-enable;
-			drive-strength = <MTK_DRIVE_4mA>;
-			bias-pull-up = <MTK_PUPD_SET_R1R0_01>;	/* pull-up 10K */
+			drive-strength = <4>;
+			mediatek,pull-up-adv = <1>;	/* pull-up 10K */
 		};
 
 		conf-clk {
 			pins = "EMMC_CK";
-			drive-strength = <MTK_DRIVE_6mA>;
-			bias-pull-down = <MTK_PUPD_SET_R1R0_10>;	/* pull-down 50K */
+			drive-strength = <6>;
+			mediatek,pull-down-adv = <2>;	/* pull-down 50K */
 		};
 
 		conf-ds {
 			pins = "EMMC_DSL";
-			bias-pull-down = <MTK_PUPD_SET_R1R0_10>;	/* pull-down 50K */
+			mediatek,pull-down-adv = <2>;	/* pull-down 50K */
 		};
 
 		conf-rst {
 			pins = "EMMC_RSTB";
-			drive-strength = <MTK_DRIVE_4mA>;
-			bias-pull-up = <MTK_PUPD_SET_R1R0_01>;	/* pull-up 10K */
+			drive-strength = <4>;
+			mediatek,pull-up-adv = <1>;	/* pull-up 10K */
 		};
 	};
 
@@ -111,25 +109,25 @@
 			       "EMMC_DATA_3", "EMMC_DATA_4", "EMMC_DATA_5",
 			       "EMMC_DATA_6", "EMMC_DATA_7", "EMMC_CMD";
 			input-enable;
-			drive-strength = <MTK_DRIVE_4mA>;
-			bias-pull-up = <MTK_PUPD_SET_R1R0_01>;	/* pull-up 10K */
+			drive-strength = <4>;
+			mediatek,pull-up-adv = <1>;	/* pull-up 10K */
 		};
 
 		conf-clk {
 			pins = "EMMC_CK";
-			drive-strength = <MTK_DRIVE_6mA>;
-			bias-pull-down = <MTK_PUPD_SET_R1R0_10>;	/* pull-down 50K */
+			drive-strength = <6>;
+			mediatek,pull-down-adv = <2>;	/* pull-down 50K */
 		};
 
 		conf-ds {
 			pins = "EMMC_DSL";
-			bias-pull-down = <MTK_PUPD_SET_R1R0_10>;	/* pull-down 50K */
+			mediatek,pull-down-adv = <2>;	/* pull-down 50K */
 		};
 
 		conf-rst {
 			pins = "EMMC_RSTB";
-			drive-strength = <MTK_DRIVE_4mA>;
-			bias-pull-up = <MTK_PUPD_SET_R1R0_01>;	/* pull-up 10K */
+			drive-strength = <4>;
+			mediatek,pull-up-adv = <1>;	/* pull-up 10K */
 		};
 	};
 
@@ -153,7 +151,7 @@
 			       "WF1_HB2", "WF1_HB3", "WF1_HB4", "WF1_HB0",
 			       "WF1_HB5", "WF1_HB6", "WF1_HB7", "WF1_HB8",
 			       "WF1_TOP_CLK", "WF1_TOP_DATA";
-			drive-strength = <MTK_DRIVE_4mA>;
+			drive-strength = <4>;
 		};
 	};
 
@@ -170,7 +168,7 @@
 				"WF1_HB2", "WF1_HB3", "WF1_HB4", "WF1_HB0",
 				"WF1_HB5", "WF1_HB6", "WF1_HB7", "WF1_HB8",
 				"WF1_TOP_CLK", "WF1_TOP_DATA";
-			drive-strength = <MTK_DRIVE_4mA>;
+			drive-strength = <4>;
 		};
 	};
 
@@ -238,10 +236,6 @@
 						eeprom_factory_0: eeprom@0 {
 							reg = <0x0 0x1000>;
 						};
-
-						precal_factory_1010: precal@1010 {
-							reg = <0x1010 0x62810>;
-						};
 					};
 				};
 			};
@@ -256,7 +250,7 @@
 
 	slot0: pcie@0,0 {
 		reg = <0x0000 0 0 0 0>;
-		#address-cells = <0x03>;
+		#address-cells = <0x03>; 
 		#size-cells = <0x02>;
 	};
 };
@@ -288,6 +282,8 @@
 			compatible = "mediatek,mt7531";
 			reg = <31>;
 			reset-gpios = <&pio 5 GPIO_ACTIVE_HIGH>;
+			reset-assert-us = <10000>;
+			reset-deassert-us = <10000>;
 
 			ports {
 				#address-cells = <1>;
@@ -395,8 +391,8 @@
 };
 
 &wifi {
-	nvmem-cells = <&eeprom_factory_0>, <&precal_factory_1010>;
-	nvmem-cell-names = "eeprom", "precal";
+	nvmem-cells = <&eeprom_factory_0>;
+	nvmem-cell-names = "eeprom";
 	pinctrl-names = "default", "dbdc";
 	pinctrl-0 = <&wf_2g_5g_pins>;
 	pinctrl-1 = <&wf_dbdc_pins>;

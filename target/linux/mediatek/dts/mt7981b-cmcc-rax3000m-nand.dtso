@@ -3,10 +3,8 @@
 /dts-v1/;
 /plugin/;
 
-#include <dt-bindings/pinctrl/mt65xx.h>
-
 / {
-	compatible = "cmcc,rax3000m", "cmcc,rax3000me", "mediatek,mt7981";
+	compatible = "cmcc,rax3000m", "mediatek,mt7981";
 
 	fragment@0 {
 		target = <&chosen>;
@@ -42,14 +40,14 @@
 
 				conf-pu {
 					pins = "SPI0_CS", "SPI0_HOLD", "SPI0_WP";
-					drive-strength = <MTK_DRIVE_8mA>;
-					bias-disable; /* bias-disable */
+					drive-strength = <8>;
+					mediatek,pull-up-adv = <0>; /* bias-disable */
 				};
 
 				conf-pd {
 					pins = "SPI0_CLK", "SPI0_MOSI", "SPI0_MISO";
-					drive-strength = <MTK_DRIVE_8mA>;
-					bias-disable; /* bias-disable */
+					drive-strength = <8>;
+					mediatek,pull-up-adv = <0>; /* bias-disable */
 				};
 			};
 		};
@@ -58,14 +56,14 @@
 	fragment@4 {
 		target = <&spi0>;
 		__overlay__ {
-			#address-cells = <1>;
-			#size-cells = <0>;
 			pinctrl-names = "default";
 			pinctrl-0 = <&spi0_flash_pins>;
 			status = "okay";
 
 			spi_nand@0 {
 				compatible = "spi-nand";
+				#address-cells = <1>;
+				#size-cells = <1>;
 				reg = <0>;
 
 				spi-max-frequency = <52000000>;
@@ -100,12 +98,6 @@
 
 							eeprom_factory_0: eeprom@0 {
 								reg = <0x0 0x1000>;
-							};
-
-							macaddr_factory_a: macaddr@a {
-								compatible = "mac-base";
-								reg = <0xa 0x6>;
-								#nvmem-cell-cells = <1>;
 							};
 
 							macaddr_factory_24: macaddr@24 {
@@ -147,16 +139,8 @@
 	fragment@5 {
 		target = <&wifi>;
 		__overlay__ {
-			#address-cells = <1>;
-			#size-cells = <0>;
 			nvmem-cells = <&eeprom_factory_0>;
 			nvmem-cell-names = "eeprom";
-
-			band@1 {
-				reg = <1>;
-				nvmem-cells = <&macaddr_factory_a 0>;
-				nvmem-cell-names = "mac-address";
-			};
 		};
 	};
 };

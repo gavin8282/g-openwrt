@@ -95,7 +95,7 @@
 		compatible = "mediatek,rtk-gsw";
 		mediatek,ethsys = <&ethsys>;
 		mediatek,mdio = <&mdio>;
-		reset-gpios = <&pio 54 GPIO_ACTIVE_LOW>;
+		mediatek,reset-pin = <&pio 54 0>;
 		status = "okay";
 	};
 };

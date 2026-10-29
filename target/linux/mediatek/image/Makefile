@@ -22,7 +22,7 @@ define Device/Default
   KERNEL_INITRAMFS = kernel-bin | lzma | \
 	fit lzma $$(KDIR)/image-$$(firstword $$(DEVICE_DTS)).dtb with-initrd
   KERNEL_LOADADDR = $(loadaddr-y)
-  FILESYSTEMS := squashfs erofs
+  FILESYSTEMS := squashfs
   DEVICE_DTS_DIR := $(DTS_DIR)
   NETGEAR_ENC_MODEL :=
   NETGEAR_ENC_REGION :=
@@ -39,7 +39,6 @@ define Build/asus-trx
 endef
 
 include $(SUBTARGET).mk
-include filogic-ext.mk
 
 define Image/Build
 	$(call Image/Build/$(1),$(1))

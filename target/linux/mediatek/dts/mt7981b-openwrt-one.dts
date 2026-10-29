@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: (GPL-2.0 OR MIT)
 
 /dts-v1/;
-#include "mt7981b.dtsi"
+#include "mt7981.dtsi"
 
 / {
 	model = "OpenWrt One";
@@ -22,9 +22,8 @@
 		rootdisk = <&ubi_fit_volume>;
 	};
 
-	memory@40000000 {
+	memory {
 		reg = <0 0x40000000 0 0x40000000>;
-		device_type = "memory";
 	};
 
 	reg_3p3v: regulator-3p3v {
@@ -51,7 +50,7 @@
 		user {
 			label = "user";
 			linux,code = <BTN_0>;
-			gpios = <&pio 0 GPIO_ACTIVE_LOW>;
+			gpios = <&pio 0 GPIO_ACTIVE_HIGH>;
 		};
 
 		reset {
@@ -298,13 +297,16 @@
 &spi0 {
 	pinctrl-names = "default";
 	pinctrl-0 = <&spi0_flash_pins>;
+	cs-gpios = <0>, <0>;
 	#address-cells = <1>;
 	#size-cells = <0>;
 	status = "okay";
 
 	flash@0 {
+		#address-cells = <1>;
+		#size-cells = <1>;
 		compatible = "spi-nand";
-		reg = <0>;
+		reg = <1>;
 		spi-max-frequency = <52000000>;
 
 		spi-cal-enable;
@@ -352,6 +354,8 @@
 	status = "okay";
 
 	flash@0 {
+		#address-cells = <1>;
+		#size-cells = <1>;
 		compatible = "jedec,spi-nor";
 		reg = <0>;
 
@@ -434,8 +438,6 @@
 };
 
 &wifi {
-	#address-cells = <1>;
-	#size-cells = <0>;
 	nvmem-cells = <&eeprom_factory_0>;
 	nvmem-cell-names = "eeprom";
 	status = "okay";
@@ -457,4 +459,8 @@
 	pinctrl-names = "default";
 	pinctrl-0 = <&pcie_pins>;
 	status = "okay";
+};
+
+&sgmiisys0 {
+	/delete-node/ mediatek,pnswap;
 };

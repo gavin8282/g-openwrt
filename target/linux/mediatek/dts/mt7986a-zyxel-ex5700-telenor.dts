@@ -4,7 +4,6 @@
 #include <dt-bindings/input/input.h>
 #include <dt-bindings/leds/common.h>
 #include <dt-bindings/gpio/gpio.h>
-#include <dt-bindings/pinctrl/mt65xx.h>
 
 #include "mt7986a.dtsi"
 
@@ -28,9 +27,8 @@
 		bootargs = "earlycon=uart8250,mmio32,0x11002000 console=ttyS0,115200n8";
 	};
 
-	memory@40000000 {
+	memory {
 		reg = <0 0x40000000 0 0x40000000>;
-		device_type = "memory";
 	};
 
 	reg_3p3v: regulator-3p3v {
@@ -160,45 +158,13 @@
 	phy5: phy@5 {
 		compatible = "ethernet-phy-ieee802.3-c45";
 		reg = <5>;
-
-		leds {
-			#address-cells = <1>;
-			#size-cells = <0>;
-
-			led@0 {
-				reg = <0>;
-				color = <LED_COLOR_ID_GREEN>;
-				function = LED_FUNCTION_LAN;
-			};
-
-			led@1 {
-				reg = <1>;
-				color = <LED_COLOR_ID_AMBER>;
-				function = LED_FUNCTION_LAN;
-			};
-		};
+		mxl,led-config = <0x3f0 0x330 0x0 0x0>;
 	};
 
 	phy6: phy@6 {
 		compatible = "ethernet-phy-ieee802.3-c45";
 		reg = <6>;
-
-		leds {
-			#address-cells = <1>;
-			#size-cells = <0>;
-
-			led@0 {
-				reg = <0>;
-				color = <LED_COLOR_ID_GREEN>;
-				function = LED_FUNCTION_WAN;
-			};
-
-			led@1 {
-				reg = <1>;
-				color = <LED_COLOR_ID_AMBER>;
-				function = LED_FUNCTION_WAN;
-			};
-		};
+		mxl,led-config = <0x3f0 0x330 0x0 0x0>;
 	};
 
 	switch: switch@1f {
@@ -263,8 +229,6 @@
 	status = "okay";
 
 	pcie@0,0 {
-		#address-cells = <3>;
-		#size-cells = <2>;
 		reg = <0x0000 0 0 0 0>;
 
 		wifi@0,0 {
@@ -313,13 +277,13 @@
 		};
 		conf-pu {
 			pins = "SPI2_CS", "SPI2_HOLD", "SPI2_WP";
-			drive-strength = <MTK_DRIVE_8mA>;
-			bias-disable; /* bias-disable */
+			drive-strength = <8>;
+			mediatek,pull-up-adv = <0>; /* bias-disable */
 		};
 		conf-pd {
 			pins = "SPI2_CLK", "SPI2_MOSI", "SPI2_MISO";
-			drive-strength = <MTK_DRIVE_8mA>;
-			bias-disable; /* bias-disable */
+			drive-strength = <8>;
+			mediatek,pull-down-adv = <0>; /* bias-disable */
 		};
 	};
 
@@ -332,7 +296,7 @@
 			pins = "WF1_HB1", "WF1_HB2", "WF1_HB3", "WF1_HB4",
 			       "WF1_HB0", "WF1_HB5", "WF1_HB6", "WF1_HB7",
 			       "WF1_HB8", "WF1_TOP_CLK", "WF1_TOP_DATA";
-			drive-strength = <MTK_DRIVE_4mA>;
+			drive-strength = <4>;
 		};
 	};
 
@@ -341,11 +305,18 @@
 &spi0 {
 	pinctrl-names = "default";
 	pinctrl-0 = <&spi_flash_pins>;
+	cs-gpios = <0>, <0>;
 	status = "okay";
 
 	flash@0 {
-		compatible = "spi-nand";
+		compatible = "jedec,spi-nor";
 		reg = <0>;
+		spi-max-frequency = <20000000>;
+	};
+
+	flash@1 {
+		compatible = "spi-nand";
+		reg = <1>;
 
 		mediatek,nmbm;
 		mediatek,bmt-max-ratio = <1>;

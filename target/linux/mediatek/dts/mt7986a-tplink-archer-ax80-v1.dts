@@ -4,7 +4,6 @@
 #include <dt-bindings/gpio/gpio.h>
 #include <dt-bindings/input/input.h>
 #include <dt-bindings/leds/common.h>
-#include <dt-bindings/pinctrl/mt65xx.h>
 
 #include "mt7986a.dtsi"
 
@@ -26,7 +25,6 @@
 
 	memory@40000000 {
 		reg = <0 0x40000000 0 0x20000000>;
-		device_type = "memory";
 	};
 
 	gpio-keys {
@@ -278,13 +276,13 @@
 		};
 		conf-pu {
 			pins = "SPI2_CS", "SPI2_HOLD", "SPI2_WP";
-			drive-strength = <MTK_DRIVE_8mA>;
-			bias-disable; /* bias-disable */
+			drive-strength = <4>;
+			mediatek,pull-up-adv = <0>;
 		};
 		conf-pd {
 			pins = "SPI2_CLK", "SPI2_MOSI", "SPI2_MISO";
-			drive-strength = <MTK_DRIVE_8mA>;
-			bias-disable; /* bias-disable */
+			drive-strength = <4>;
+			mediatek,pull-down-adv = <0>;
 		};
 	};
 	wf_2g_5g_pins: wf_2g_5g-pins {
@@ -300,7 +298,7 @@
 			"WF1_HB2", "WF1_HB3", "WF1_HB4", "WF1_HB0",
 			"WF1_HB5", "WF1_HB6", "WF1_HB7", "WF1_HB8",
 			"WF1_TOP_CLK", "WF1_TOP_DATA";
-			drive-strength = <MTK_DRIVE_4mA>;
+			drive-strength = <4>;
 		};
 	};
 };
