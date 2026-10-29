@@ -1,0 +1,30 @@
+From 3f0c9e77a1c2d3b4e5f6a7b8c9d0e1f2a3b4c5d6 Mon Sep 17 00:00:00 2001
+From: gavin8282
+Date: 2026-10-29 00:00:00 +0800
+Subject: [PATCH] net: ethernet: mtk_eth_soc: include mtk_eth_reset.h
+
+The MTK HNAT/reset integration (SER/WED reset notifiers, PPE CPU-reason
+handling) references symbols defined in mtk_eth_reset.h
+(MTK_FE_START_RESET, MTK_FE_RESET_DONE, MTK_FE_RESET_NAT_DONE,
+MTK_WIFI_RESET_DONE, MTK_WIFI_CHIP_ONLINE, MTK_WIFI_CHIP_OFFLINE).
+
+On the mainline v24.10.8 mtk_eth driver this header is not included,
+so include it to make the reset notifier code compile.
+---
+ drivers/net/ethernet/mediatek/mtk_eth_soc.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.c b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
+index 70dd8eb..0da39e7 100644
+--- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
++++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
+@@ -34,6 +34,7 @@
+ #include "mtk_eth_soc.h"
+ #include "mtk_eth_dbg.h"
+ #include "mtk_wed.h"
++#include "mtk_eth_reset.h"
+ 
+ #if defined(CONFIG_NET_MEDIASTK_HNAT) || defined(CONFIG_NET_MEDIASTK_HNAT_MODULE)
+ #include "mtk_hnat/nf_hnat_mtk.h"
+-- 
+2.45.2

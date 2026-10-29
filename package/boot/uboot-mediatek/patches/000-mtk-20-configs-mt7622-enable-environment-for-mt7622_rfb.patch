@@ -5,6 +5,10 @@ Subject: [PATCH 10/12] configs: mt7622: enable environment for mt7622_rfb
 
 Enable environment vairables for mt7622_rfb
 
+Refreshed context for u-boot 2025.10: config key ordering in
+configs/mt7622_rfb_defconfig changed (CONFIG_SYS_LOAD_ADDR now precedes
+CONFIG_DEBUG_UART_BASE; CONFIG_USE_IPADDR precedes CONFIG_NET_RANDOM_ETHADDR).
+
 Signed-off-by: Weijie Gao <weijie.gao@mediatek.com>
 ---
  configs/mt7622_rfb_defconfig | 5 +++++
@@ -12,16 +16,16 @@ Signed-off-by: Weijie Gao <weijie.gao@mediatek.com>
 
 --- a/configs/mt7622_rfb_defconfig
 +++ b/configs/mt7622_rfb_defconfig
-@@ -6,6 +6,8 @@ CONFIG_TEXT_BASE=0x41e00000
+@@ -6,6 +6,8 @@
  CONFIG_SYS_MALLOC_F_LEN=0x4000
  CONFIG_NR_DRAM_BANKS=1
  CONFIG_DEFAULT_DEVICE_TREE="mt7622-rfb"
 +CONFIG_ENV_SIZE=0x20000
 +CONFIG_ENV_OFFSET=0x280000
+ CONFIG_SYS_LOAD_ADDR=0x4007ff28
  CONFIG_DEBUG_UART_BASE=0x11002000
  CONFIG_DEBUG_UART_CLOCK=25000000
- CONFIG_SYS_LOAD_ADDR=0x4007ff28
-@@ -25,6 +27,9 @@ CONFIG_CMD_SF_TEST=y
+@@ -26,5 +28,8 @@
  CONFIG_CMD_PING=y
  CONFIG_CMD_SMC=y
  CONFIG_ENV_OVERWRITE=y
@@ -29,5 +33,4 @@ Signed-off-by: Weijie Gao <weijie.gao@mediatek.com>
 +CONFIG_ENV_MTD_NAME="spi-nand0"
 +CONFIG_ENV_SIZE_REDUND=0x40000
  CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG=y
- CONFIG_NET_RANDOM_ETHADDR=y
  CONFIG_USE_IPADDR=y

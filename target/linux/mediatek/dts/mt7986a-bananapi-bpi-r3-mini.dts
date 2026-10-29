@@ -7,6 +7,7 @@
 #include <dt-bindings/gpio/gpio.h>
 #include <dt-bindings/input/input.h>
 #include <dt-bindings/leds/common.h>
+#include <dt-bindings/pinctrl/mt65xx.h>
 
 #include "mt7986a.dtsi"
 
@@ -32,8 +33,9 @@
 		rootdisk-spim-nand = <&nand_rootdisk>;
 	};
 
-	memory {
+	memory@40000000 {
 		reg = <0 0x40000000 0 0x80000000>;
+		device_type = "memory";
 	};
 
 	gpio-keys {
@@ -150,30 +152,22 @@
 	gmac0: mac@0 {
 		compatible = "mediatek,eth-mac";
 		reg = <0>;
+		phy-handle = <&phy14>;
 		phy-mode = "2500base-x";
-		fixed-link {
-                        speed = <2500>;
-                        full-duplex;
-                        paus;
-                };
 	};
 
 	gmac1: mac@1 {
 		compatible = "mediatek,eth-mac";
 		reg = <1>;
+		phy-handle = <&phy15>;
 		phy-mode = "2500base-x";
-		fixed-link {
-                        speed = <2500>;
-                        full-duplex;
-                        paus;
-                };
 	};
 
 	mdio: mdio-bus {
 		#address-cells = <1>;
 		#size-cells = <0>;
 
-		phy14: phy@14 {
+		phy14: phy@e {
 			compatible = "ethernet-phy-id03a2.a411";
 			reg = <14>;
 			pinctrl-names = "default";
@@ -182,17 +176,34 @@
 			airoha,pnswap-rx;
 
 			interrupt-parent = <&pio>;
-			interrupts = <48 IRQ_TYPE_LEVEL_HIGH>;
-			reset-gpios = <&pio 49 1>;
+			interrupts = <48 IRQ_TYPE_EDGE_FALLING>;
+			reset-gpios = <&pio 49 GPIO_ACTIVE_LOW>;
 			reset-assert-us = <10000>;
 			reset-deassert-us = <20000>;
 
 			phy-mode = "2500base-x";
 			full-duplex;
 			pause;
+
+			leds {
+				#address-cells = <1>;
+				#size-cells = <0>;
+
+				led@0 {
+					reg = <0>;
+					function = LED_FUNCTION_LAN;
+					color = <LED_COLOR_ID_YELLOW>;
+				};
+
+				led@1 {
+					reg = <1>;
+					function = LED_FUNCTION_LAN;
+					color = <LED_COLOR_ID_GREEN>;
+				};
+			};
 		};
 
-		phy15: phy@15 {
+		phy15: phy@f {
 			compatible = "ethernet-phy-id03a2.a411";
 			reg = <15>;
 			pinctrl-names = "default";
@@ -201,14 +212,31 @@
 			airoha,pnswap-rx;
 
 			interrupt-parent = <&pio>;
-			interrupts = <46 IRQ_TYPE_LEVEL_HIGH>;
-			reset-gpios = <&pio 47 1>;
+			interrupts = <46 IRQ_TYPE_EDGE_FALLING>;
+			reset-gpios = <&pio 47 GPIO_ACTIVE_LOW>;
 			reset-assert-us = <10000>;
 			reset-deassert-us = <20000>;
 
 			phy-mode = "2500base-x";
 			full-duplex;
 			pause;
+
+			leds {
+				#address-cells = <1>;
+				#size-cells = <0>;
+
+				led@0 {
+					reg = <0>;
+					function = LED_FUNCTION_WAN;
+					color = <LED_COLOR_ID_YELLOW>;
+				};
+
+				led@1 {
+					reg = <1>;
+					function = LED_FUNCTION_WAN;
+					color = <LED_COLOR_ID_GREEN>;
+				};
+			};
 		};
 	};
 };
@@ -227,6 +255,8 @@
 };
 
 &mmc0 {
+	#address-cells = <1>;
+	#size-cells = <0>;
 	pinctrl-names = "default", "state_uhs";
 	pinctrl-0 = <&mmc0_pins_default>;
 	pinctrl-1 = <&mmc0_pins_uhs>;
@@ -271,15 +301,15 @@
 &pio {
 	en8811_pwr_a: en8811-pwr-a {
 		pins = "GPIO_11";
-		drive-strength = <8>;
-		mediatek,pull-down-adv = <1>;
+		drive-strength = <MTK_DRIVE_8mA>;
+		bias-pull-down = <MTK_PUPD_SET_R1R0_01>;
 		output-low;
 	};
 
 	en8811_pwr_b: en8811-pwr-b {
 		pins = "GPIO_12";
-		drive-strength = <8>;
-		mediatek,pull-down-adv = <1>;
+		drive-strength = <MTK_DRIVE_8mA>;
+		bias-pull-down = <MTK_PUPD_SET_R1R0_01>;
 		output-low;
 	};
 
@@ -307,22 +337,22 @@
 			       "EMMC_DATA_3", "EMMC_DATA_4", "EMMC_DATA_5",
 			       "EMMC_DATA_6", "EMMC_DATA_7", "EMMC_CMD";
 			input-enable;
-			drive-strength = <4>;
-			mediatek,pull-up-adv = <1>;
+			drive-strength = <MTK_DRIVE_4mA>;
+			bias-pull-up = <MTK_PUPD_SET_R1R0_01>;
 		};
 		conf-clk {
 			pins = "EMMC_CK";
-			drive-strength = <6>;
-			mediatek,pull-down-adv = <2>;
+			drive-strength = <MTK_DRIVE_6mA>;
+			bias-pull-down = <MTK_PUPD_SET_R1R0_10>;
 		};
 		conf-ds {
 			pins = "EMMC_DSL";
-			mediatek,pull-down-adv = <2>;
+			bias-pull-down = <MTK_PUPD_SET_R1R0_10>;
 		};
 		conf-rst {
 			pins = "EMMC_RSTB";
-			drive-strength = <4>;
-			mediatek,pull-up-adv = <1>;
+			drive-strength = <MTK_DRIVE_4mA>;
+			bias-pull-up = <MTK_PUPD_SET_R1R0_01>;
 		};
 	};
 
@@ -336,22 +366,22 @@
 			       "EMMC_DATA_3", "EMMC_DATA_4", "EMMC_DATA_5",
 			       "EMMC_DATA_6", "EMMC_DATA_7", "EMMC_CMD";
 			input-enable;
-			drive-strength = <4>;
-			mediatek,pull-up-adv = <1>;
+			drive-strength = <MTK_DRIVE_4mA>;
+			bias-pull-up = <MTK_PUPD_SET_R1R0_01>;
 		};
 		conf-clk {
 			pins = "EMMC_CK";
-			drive-strength = <6>;
-			mediatek,pull-down-adv = <2>;
+			drive-strength = <MTK_DRIVE_6mA>;
+			bias-pull-down = <MTK_PUPD_SET_R1R0_10>;
 		};
 		conf-ds {
 			pins = "EMMC_DSL";
-			mediatek,pull-down-adv = <2>;
+			bias-pull-down = <MTK_PUPD_SET_R1R0_10>;
 		};
 		conf-rst {
 			pins = "EMMC_RSTB";
-			drive-strength = <4>;
-			mediatek,pull-up-adv = <1>;
+			drive-strength = <MTK_DRIVE_4mA>;
+			bias-pull-up = <MTK_PUPD_SET_R1R0_01>;
 		};
 	};
 
@@ -376,13 +406,13 @@
 		};
 		conf-pu {
 			pins = "SPI2_CS", "SPI2_HOLD", "SPI2_WP";
-			drive-strength = <8>;
-			mediatek,pull-up-adv = <0>;
+			drive-strength = <MTK_DRIVE_8mA>;
+			bias-disable;
 		};
 		conf-pd {
 			pins = "SPI2_CLK", "SPI2_MOSI", "SPI2_MISO";
-			drive-strength = <8>;
-			mediatek,pull-down-adv = <0>;
+			drive-strength = <MTK_DRIVE_8mA>;
+			bias-disable;
 		};
 	};
 
@@ -403,33 +433,33 @@
 	usb_ngff_pins: usb-ngff-pins {
 		ngff-gnss-off {
 			pins = "GPIO_6";
-			drive-strength = <8>;
-			mediatek,pull-up-adv = <1>;
+			drive-strength = <MTK_DRIVE_8mA>;
+			bias-pull-up = <MTK_PUPD_SET_R1R0_01>;
 		};
 		ngff-pe-rst {
 			pins = "GPIO_7";
-			drive-strength = <8>;
-			mediatek,pull-up-adv = <1>;
+			drive-strength = <MTK_DRIVE_8mA>;
+			bias-pull-up = <MTK_PUPD_SET_R1R0_01>;
 		};
 		ngff-wwan-off {
 			pins = "GPIO_8";
-			drive-strength = <8>;
-			mediatek,pull-up-adv = <1>;
+			drive-strength = <MTK_DRIVE_8mA>;
+			bias-pull-up = <MTK_PUPD_SET_R1R0_01>;
 		};
 		ngff-pwr-off {
 			pins = "GPIO_9";
-			drive-strength = <8>;
-			mediatek,pull-up-adv = <1>;
+			drive-strength = <MTK_DRIVE_8mA>;
+			bias-pull-up = <MTK_PUPD_SET_R1R0_01>;
 		};
 		ngff-rst {
 			pins = "GPIO_10";
-			drive-strength = <8>;
-			mediatek,pull-up-adv = <1>;
+			drive-strength = <MTK_DRIVE_8mA>;
+			bias-pull-up = <MTK_PUPD_SET_R1R0_01>;
 		};
 		ngff-coex {
 			pins = "SPI1_CS";
-			drive-strength = <8>;
-			mediatek,pull-up-adv = <1>;
+			drive-strength = <MTK_DRIVE_8mA>;
+			bias-pull-up = <MTK_PUPD_SET_R1R0_01>;
 		};
 	};
 
@@ -446,7 +476,7 @@
 			       "WF1_HB2", "WF1_HB3", "WF1_HB4", "WF1_HB0",
 			       "WF1_HB5", "WF1_HB6", "WF1_HB7", "WF1_HB8",
 			       "WF1_TOP_CLK", "WF1_TOP_DATA";
-			drive-strength = <4>;
+			drive-strength = <MTK_DRIVE_4mA>;
 		};
 	};
 
@@ -463,7 +493,7 @@
 			       "WF1_HB2", "WF1_HB3", "WF1_HB4", "WF1_HB0",
 			       "WF1_HB5", "WF1_HB6", "WF1_HB7", "WF1_HB8",
 			       "WF1_TOP_CLK", "WF1_TOP_DATA";
-			drive-strength = <4>;
+			drive-strength = <MTK_DRIVE_4mA>;
 		};
 	};
 };
@@ -481,8 +511,6 @@
 
 	flash@0 {
 		compatible = "spi-nand";
-		#address-cells = <1>;
-		#size-cells = <1>;
 		reg = <0>;
 
 		spi-max-frequency = <20000000>;

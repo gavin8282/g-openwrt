@@ -1,6 +1,6 @@
 --- /dev/null
 +++ b/configs/mt7981_netis_nx32u_defconfig
-@@ -0,0 +1,107 @@
+@@ -0,0 +1,108 @@
 +CONFIG_ARM=y
 +CONFIG_SYS_HAS_NONCACHED_MEMORY=y
 +CONFIG_POSITION_INDEPENDENT=y
@@ -24,6 +24,7 @@
 +CONFIG_LOGLEVEL=7
 +CONFIG_PRE_CONSOLE_BUFFER=y
 +CONFIG_LOG=y
++# CONFIG_BOARD_INIT is not set
 +CONFIG_BOARD_LATE_INIT=y
 +CONFIG_HUSH_PARSER=y
 +CONFIG_SYS_PROMPT="MT7981> "
@@ -59,13 +60,13 @@
 +CONFIG_OF_EMBED=y
 +CONFIG_ENV_OVERWRITE=y
 +CONFIG_ENV_IS_IN_UBI=y
-+CONFIG_SYS_REDUNDAND_ENVIRONMENT=y
++CONFIG_ENV_REDUNDANT=y
 +CONFIG_ENV_UBI_PART="ubi"
 +CONFIG_ENV_UBI_VOLUME="ubootenv"
 +CONFIG_ENV_UBI_VOLUME_REDUND="ubootenv2"
-+CONFIG_SYS_RELOC_GD_ENV_ADDR=y
-+CONFIG_USE_DEFAULT_ENV_FILE=y
-+CONFIG_DEFAULT_ENV_FILE="defenvs/netis_nx32u_env"
++CONFIG_ENV_RELOC_GD_ENV_ADDR=y
++CONFIG_ENV_USE_DEFAULT_ENV_TEXT_FILE=y
++CONFIG_ENV_DEFAULT_ENV_TEXT_FILE="defenvs/netis_nx32u_env"
 +CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG=y
 +CONFIG_VERSION_VARIABLE=y
 +CONFIG_NETCONSOLE=y
@@ -110,7 +111,7 @@
 +CONFIG_HEXDUMP=y
 --- /dev/null
 +++ b/arch/arm/dts/mt7981-netis_nx32u.dts
-@@ -0,0 +1,162 @@
+@@ -0,0 +1,167 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
 + * Copyright (c) 2026
@@ -125,7 +126,7 @@
 +/ {
 +	#address-cells = <1>;
 +	#size-cells = <1>;
-+	model = "Netis NX32U";
++	model = "netis NX32U";
 +	compatible = "netis,nx32u", "mediatek,mt7981";
 +
 +	chosen {
@@ -141,40 +142,45 @@
 +	keys {
 +		compatible = "gpio-keys";
 +
-+		button-0 {
-+			label = "mesh";
-+			linux,code = <BTN_0>;
-+			gpios = <&gpio 1 GPIO_ACTIVE_LOW>;
-+		};
-+
-+		button-1 {
++		button-reset {
 +			label = "reset";
 +			linux,code = <KEY_RESTART>;
-+			gpios = <&gpio 1 GPIO_ACTIVE_LOW>;
++			gpios = <&pio 1 GPIO_ACTIVE_LOW>;
++		};
++
++		button-mesh {
++			label = "mesh";
++			linux,code = <BTN_0>;
++			gpios = <&pio 0 GPIO_ACTIVE_LOW>;
 +		};
 +	};
 +
-+	leds {
++	gpio-leds {
 +		compatible = "gpio-leds";
 +
-+		led-0 {
++		led_internet {
 +			label = "green:internet";
-+			gpios = <&gpio 9 GPIO_ACTIVE_LOW>;
++			gpios = <&pio 9 GPIO_ACTIVE_LOW>;
 +		};
 +
-+		led-1 {
++		led_wps {
 +			label = "green:wps";
-+			gpios = <&gpio 5 GPIO_ACTIVE_LOW>;
++			gpios = <&pio 5 GPIO_ACTIVE_LOW>;
 +		};
 +
-+		led-2 {
-+			label = "green:wifi";
-+			gpios = <&gpio 34 GPIO_ACTIVE_LOW>;
++		led_wifi2g {
++			label = "green:wifi2g";
++			gpios = <&pio 34 GPIO_ACTIVE_LOW>;
 +		};
 +
-+		led-3 {
++		led_wifi5g {
++			label = "green:wifi5g";
++			gpios = <&pio 35 GPIO_ACTIVE_LOW>;
++		};
++
++		led_usb {
 +			label = "green:usb";
-+			gpios = <&gpio 13 GPIO_ACTIVE_LOW>;
++			gpios = <&pio 13 GPIO_ACTIVE_LOW>;
 +		};
 +	};
 +};
@@ -189,7 +195,7 @@
 +	mediatek,gmac-id = <0>;
 +	phy-mode = "2500base-x";
 +	mediatek,switch = "mt7531";
-+	reset-gpios = <&gpio 39 GPIO_ACTIVE_HIGH>;
++	reset-gpios = <&pio 39 GPIO_ACTIVE_HIGH>;
 +
 +	fixed-link {
 +		speed = <2500>;
@@ -197,7 +203,7 @@
 +	};
 +};
 +
-+&gpio {
++&pio {
 +	spi_flash_pins: spi0-pins-func-1 {
 +		mux {
 +			function = "flash";
@@ -283,10 +289,10 @@
 +bootcmd=run check_buttons ; if pstore check ; then run boot_recovery ; else run boot_ubi ; fi
 +bootconf=config-1
 +bootdelay=0
-+bootfile=openwrt-mediatek-filogic-netis_nx32u-initramfs-recovery.itb
-+bootfile_bl2=openwrt-mediatek-filogic-netis_nx32u-preloader.bin
-+bootfile_fip=openwrt-mediatek-filogic-netis_nx32u-bl31-uboot.fip
-+bootfile_upg=openwrt-mediatek-filogic-netis_nx32u-squashfs-sysupgrade.itb
++bootfile=immortalwrt-mediatek-filogic-netis_nx32u-initramfs-recovery.itb
++bootfile_bl2=immortalwrt-mediatek-filogic-netis_nx32u-preloader.bin
++bootfile_fip=immortalwrt-mediatek-filogic-netis_nx32u-bl31-uboot.fip
++bootfile_upg=immortalwrt-mediatek-filogic-netis_nx32u-squashfs-sysupgrade.itb
 +bootled_status=green:wps
 +bootmenu_confirm_return=askenv - Press ENTER to return to menu ; bootmenu 60
 +bootmenu_default=0
