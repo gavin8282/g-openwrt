@@ -105,7 +105,6 @@ run_cmd sed -i "s/map_agent_alid=.*/map_agent_alid=${agent_al_mac}/g" /etc/map/1
     ra0_7986="$(uci_get_default wireless.default_MT7986_1_1.disabled 0)"
     if [ "$ra0_7981" -eq "1" ] || [ "$ra0_7986" -eq "1" ]; then
     ra0=0
-    rax0=0
     fi
     
     rax0_7981="$(uci_get_default wireless.MT7981_1_2.ieee80211r 0)"
