@@ -31,5 +31,8 @@ uci -q batch <<-EOF >"/dev/null"
 	add ucitrack turboacc
 EOF
 
+/etc/init.d/turboacc enable 2>/dev/null || true
+/etc/init.d/turboacc start 2>/dev/null || true
+
 rm -f /tmp/luci-indexcache
 exit 0

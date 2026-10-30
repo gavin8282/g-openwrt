@@ -40,12 +40,14 @@ local methods = {
 			elseif fs.stat("/sys/module/shortcut_fe_cm", "type") == "dir" then
 				fptype = "Shortcut-FE CM"
 			elseif fs.stat("/sys/kernel/debug/hnat", "type") == "dir" then
-				local ethernet_hnat = readfile("/sys/kernel/debug/hnat/hook_toggle")
-				ethernet_hnat = (ethernet_hnat ~= "enabled") and " / Ethernet HNAT Disabled" or ""
+				local hook = readfile("/sys/kernel/debug/hnat/hook_toggle")
+				local ethernet_hnat = (hook == "enabled" or hook == "1") and "" or " / Ethernet HNAT Disabled"
 
-				local wireless_hnat = (sys.call("grep -q 'WHNAT=1' '/etc/wireless/mediatek/'*_card*.dat") ~= 0) and " / Wireless HNAT Disabled" or ""
+				local wireless_hnat = (sys.call("grep -sq 'WHNAT=1' /etc/wireless/mediatek/*.dat") ~= 0) and " / Wireless HNAT Disabled" or ""
 				if (ethernet_hnat == "") or (wireless_hnat == "") then
 					fptype = "MediaTek HNAT" .. ethernet_hnat .. wireless_hnat
+				elseif hook == "disabled" or hook == "0" then
+					fptype = "MediaTek HNAT / Ethernet HNAT Disabled"
 				end
 			end
 			print(json.stringify({ type = fptype }))
