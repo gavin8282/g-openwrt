@@ -1,0 +1,16 @@
+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+
+/dts-v1/;
+#include "mt7981b-cetron-ct3003.dtsi"
+
+/ {
+	model = "Cetron CT3003 (112M UBI layout)";
+	compatible = "cetron,ct3003", "mediatek,mt7981";
+};
+
+&partitions {
+	partition@580000 {
+		label = "ubi";
+		reg = <0x0580000 0x6e80000>;
+	};
+};

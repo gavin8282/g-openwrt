@@ -888,6 +888,25 @@ define Device/cetron_ct3003
 endef
 TARGET_DEVICES += cetron_ct3003
 
+define Device/cetron_ct3003-112m
+  DEVICE_VENDOR := Cetron
+  DEVICE_MODEL := CT3003
+  DEVICE_VARIANT := (112M UBI layout)
+  DEVICE_DTS := mt7981b-cetron-ct3003-112m
+  DEVICE_DTS_DIR := ../dts
+  SUPPORTED_DEVICES += cetron,ct3003 cetron,ct3003-112m
+  DEVICE_PACKAGES := kmod-mt7915e kmod-mt7981-firmware mt7981-wo-firmware
+  UBINIZE_OPTS := -E 5
+  BLOCKSIZE := 128k
+  PAGESIZE := 2048
+  IMAGE_SIZE := 114816k
+  KERNEL_IN_UBI := 1
+  IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
+  IMAGES += factory.bin
+  IMAGE/factory.bin := append-ubi | check-size $$$$(IMAGE_SIZE)
+endef
+TARGET_DEVICES += cetron_ct3003-112m
+
 define Device/cetron_ct3003-ubootmod
   DEVICE_VENDOR := Cetron
   DEVICE_MODEL := CT3003
