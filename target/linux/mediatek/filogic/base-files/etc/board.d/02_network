@@ -57,6 +57,7 @@ mediatek_setup_interfaces()
 	asus,zenwifi-bt8|\
 	asus,zenwifi-bt8-ubootmod|\
 	cetron,ct3003|\
+	cetron,ct3003-112m|\
 	cetron,ct3003-ubootmod|\
 	cmcc,a10-stock|\
 	cmcc,a10-ubootmod|\

@@ -72,3 +72,33 @@ msgstr "覆盖默认 MAC 地址 - 可用地址的范围可能受限于驱动"
 
 msgid "Enables The 802.11k standard provides information to discover the best available access point"
 msgstr "启用 802.11k 自动寻找发现最佳可用接入点的信息"
+
+msgid "802.11k (RRM)"
+msgstr "802.11k (射频资源测量 RRM)"
+
+msgid "802.11v (WNM/BTM)"
+msgstr "802.11v (无线网络管理 WNM/BTM)"
+
+msgid "802.11r (Fast Transition)"
+msgstr "802.11r (快速漫游 FT)"
+
+msgid "2.4G/5G Band Steering"
+msgstr "双频合一 (2.4G/5G 频段引导)"
+
+msgid "Automatically steer dual-band clients to the 5GHz band for better performance. Requires matching SSID and encryption on both 2.4G and 5G bands."
+msgstr "自动将支持双频的客户端引导至 5GHz 频段以提升传输性能。需确保 2.4G 与 5G 的无线名称 (SSID) 和密码保持一致。"
+
+msgid "Enables 802.11k Radio Resource Measurement to discover the best available access point"
+msgstr "启用 802.11k 射频资源测量以协助客户端发现最佳接入点"
+
+msgid "Enables 802.11v Wireless Network Management and BSS Transition Management for client roaming"
+msgstr "启用 802.11v 无线网络管理与 BSS Transition 漫游引导"
+
+msgid "Enables 802.11r Fast BSS Transition for seamless fast roaming"
+msgstr "启用 802.11r 快速 BSS 切换实现无缝漫游"
+
+msgid "802.11v roam steering threshold"
+msgstr "802.11v 漫游引导信号阈值"
+
+msgid "802.11v roam target bssid"
+msgstr "802.11v 漫游目标 BSSID 列表"

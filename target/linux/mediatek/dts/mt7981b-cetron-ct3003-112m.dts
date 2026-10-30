@@ -1,16 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later OR MIT
 
-/dts-v1/;
-#include "mt7981b-cetron-ct3003.dtsi"
+/dts-v1/;\n#include "mt7981b-cetron-ct3003.dtsi"
 
-/ {
-	model = "Cetron CT3003 (112M UBI layout)";
-	compatible = "cetron,ct3003", "mediatek,mt7981";
-};
-
-&partitions {
-	partition@580000 {
-		label = "ubi";
-		reg = <0x0580000 0x6e80000>;
-	};
-};
+/ {\n\tmodel = "Cetron CT3003 (112M UBI layout)";\n\tcompatible = "cetron,ct3003-112m", "cetron,ct3003", "mediatek,mt7981";\n};\n\n&partitions {\n\tpartition@580000 {\n\t\tlabel = "ubi";\n\t\treg = <0x0580000 0x6e80000>;\n\t};\n};\n\n&spi_nand {\n\tspi-cal-enable;\n\tspi-cal-mode = "read-data";\n\tspi-cal-datalen = <7>;\n\tspi-cal-data = /bits/ 8 <0x53 0x50 0x49 0x4E 0x41 0x4E 0x44>;\n\tspi-cal-addrlen = <5>;\n\tspi-cal-addr = /bits/ 32 <0x0 0x0 0x0 0x0 0x0>;\n\n\tmediatek,nmbm;\n\tmediatek,bmt-max-ratio = <1>;\n\tmediatek,bmt-max-reserved-blocks = <64>;\n};

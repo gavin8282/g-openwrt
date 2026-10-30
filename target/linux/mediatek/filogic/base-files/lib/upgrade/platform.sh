@@ -110,6 +110,27 @@ platform_do_upgrade() {
 	local board=$(board_name)
 
 	case "$board" in
+	netcore,n60-pro|\
+	tplink,tl-xdr4288|\
+    tplink,tl-xdr6086|\
+    tplink,tl-xdr6088|\
+	tplink,wma301|\
+	tplink,wma301-stock|\
+	xiaomi,redmi-router-ax6000-ubootmod|\
+	xiaomi,mi-router-ax3000t-ubootmod|\
+    xiaomi,mi-router-wr30u-ubootmod|\
+	cetron,ct3003|\
+	cetron,ct3003-112m|\
+	creatlentem,clt-r30b1|\
+	creatlentem,clt-r30b1-112m|\
+	h3c,magic-nx30-pro|\
+	jcg,q30-pro|\
+    qihoo,360t7)
+		CI_UBIPART="ubi"
+    		CI_KERNPART="kernel"
+      		CI_ROOTPART="rootfs"
+    		nand_do_upgrade "$1"
+    		;;
 	abt,asr3000|\
 	acer,predator-w6x-ubootmod|\
 	aigo,ags21|\
@@ -435,6 +456,8 @@ platform_check_image() {
 		fit_check_image "$1"
 		return $?
 		;;
+	cetron,ct3003|\
+	cetron,ct3003-112m|\
 	creatlentem,clt-r30b1|\
 	creatlentem,clt-r30b1-112m|\
 	hiveton,h5000m|\

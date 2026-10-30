@@ -48,6 +48,7 @@ detect_mtwifi() {
 					set wireless.${dev}.mu_beamformer=1
 					set wireless.${dev}.noscan=${htbsscoex}
 					set wireless.${dev}.wapp=0
+					set wireless.${dev}.bandsteering=0
 					set wireless.${dev}.serialize=1
 					
 					set wireless.default_${dev}=wifi-iface
@@ -56,6 +57,9 @@ detect_mtwifi() {
 					set wireless.default_${dev}.mode=ap
 					set wireless.default_${dev}.ssid=${ssid}
 					set wireless.default_${dev}.encryption=none
+					set wireless.default_${dev}.ieee80211k=1
+					set wireless.default_${dev}.ieee80211v=1
+					set wireless.default_${dev}.ieee80211r=0
 EOF
 				uci -q commit wireless
 			}
