@@ -53,4 +53,7 @@ uci -q batch <<-EOF >"/dev/null"
 	commit ucitrack
 EOF
 
+/etc/init.d/turboacc enable 2>/dev/null || true
+/etc/init.d/turboacc start 2>/dev/null || true
+
 exit 0
