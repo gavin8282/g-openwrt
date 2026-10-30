@@ -1,0 +1,5 @@
+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+/*
+ * Compatibility wrapper for upstream MT7981 DTS includes
+ */
+#include "mt7981b.dtsi"
