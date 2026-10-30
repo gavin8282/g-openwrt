@@ -35,7 +35,7 @@ const methods = {
 				hasFLOWOFFLOADING: false, // Explicitly disabled for mt798x
 				hasFASTCLASSIFIER: access(`${mod_path}fast-classifier.ko`),
 				hasSHORTCUTFECM:   access(`${mod_path}shortcut-fe-cm.ko`),
-				hasMEDIATEKHNAT:   access(`${mod_path}mtkhnat.ko`),
+				hasMEDIATEKHNAT:   access('/sys/module/mtkhnat') || stat('/sys/kernel/debug/hnat')?.type === 'directory' || access(`${mod_path}mtkhnat.ko`),
 				hasGMAC2:          access('/sys/class/net/eth1'),
 				hasTCPCCA:         read_trimmed('/proc/sys/net/ipv4/tcp_available_congestion_control')
 			};
@@ -54,9 +54,16 @@ const methods = {
 				fptype = 'Fast classifier';
 			} else if (stat('/sys/module/shortcut_fe_cm')?.type === 'directory') {
 				fptype = 'Shortcut-FE CM';
-			} else if (stat('/sys/kernel/debug/hnat')?.type === 'directory') {
+			} else if (stat('/sys/kernel/debug/hnat')?.type === 'directory' || access('/sys/module/mtkhnat')) {
+				if (stat('/sys/kernel/debug/hnat')?.type !== 'directory') {
+					system('mount | grep -q " /sys/kernel/debug " || mount -t debugfs none /sys/kernel/debug 2>/dev/null');
+				}
 				let hnat_toggle = read_trimmed('/sys/kernel/debug/hnat/hook_toggle');
-				if (hnat_toggle === 'enabled') {
+				if (hnat_toggle === 'enabled' || hnat_toggle === '1') {
+					fptype = 'MediaTek HNAT';
+				} else if (hnat_toggle === 'disabled' || hnat_toggle === '0') {
+					fptype = 'MediaTek HNAT / Ethernet HNAT Disabled';
+				} else if (access('/sys/module/mtkhnat')) {
 					fptype = 'MediaTek HNAT';
 				}
 			}

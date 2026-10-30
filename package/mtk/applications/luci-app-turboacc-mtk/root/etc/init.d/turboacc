@@ -49,9 +49,14 @@ start_service() {
 		lsmod |grep -q "shortcut_fe_cm" || modprobe "shortcut_fe_cm" 2>"/dev/null"
 		;;
 	"mediatek_hnat")
-		[ -d "/sys/kernel/debug" ] || mount -t debugfs none /sys/kernel/debug 2>/dev/null
+		mount | grep -q " /sys/kernel/debug " || mount -t debugfs none /sys/kernel/debug 2>/dev/null
 		lsmod | grep -q "mtkhnat" || modprobe "mtkhnat" 2>/dev/null
 		local hnat_path="/sys/kernel/debug/hnat"
+		local retries=5
+		while [ ! -d "$hnat_path" ] && [ $retries -gt 0 ]; do
+			sleep 0.1
+			retries=$((retries - 1))
+		done
 		if [ -d "$hnat_path" ]; then
 			local eth_hnat eth_hnat_v6 bind_rate update_nfct
 			config_get_bool eth_hnat "config" "fastpath_mh_eth_hnat" "1"
@@ -75,4 +80,18 @@ start_service() {
 	local tcpcca
 	config_get "tcpcca" "config" "tcpcca" "cubic"
 	sysctl -w net.ipv4.tcp_congestion_control="$tcpcca" >"/dev/null"
+}
+
+stop_service() {
+	if [ -e "/sys/kernel/debug/hnat/hook_toggle" ]; then
+		echo "0" > "/sys/kernel/debug/hnat/hook_toggle" 2>"/dev/null"
+	fi
+	if lsmod | grep -q "fast_classifier"; then
+		echo "0" > "/sys/fast_classifier/skip_to_bridge_ingress" 2>"/dev/null"
+		rm -f "/dev/sfe_ipv6"
+		rmmod "fast_classifier" 2>"/dev/null"
+	fi
+	if lsmod | grep -q "shortcut_fe_cm"; then
+		rmmod "shortcut_fe_cm" 2>"/dev/null"
+	fi
 }
