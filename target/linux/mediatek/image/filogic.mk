@@ -2027,10 +2027,33 @@ define Device/imou_hx21
   IMAGE/sysupgrade.itb := append-kernel | \
 	fit gzip $$(KDIR)/image-$$(firstword $$(DEVICE_DTS)).dtb external-static-with-rootfs | append-metadata
   ARTIFACTS := preloader.bin bl31-uboot.fip
-  ARTIFACT/preloader.bin := mt7981-bl2 spim-nand-ddr3
+  ARTIFACT/preloader.bin := mt7981-bl2 spim-nand-ubi-ddr3-1866
   ARTIFACT/bl31-uboot.fip := mt7981-bl31-uboot imou_hx21
 endef
 TARGET_DEVICES += imou_hx21
+
+define Device/imou_lc-hx3001
+  $(call Device/imou_hx21)
+endef
+TARGET_DEVICES += imou_lc-hx3001
+
+define Device/cmcc_xr30-stock
+  DEVICE_VENDOR := CMCC
+  DEVICE_MODEL := XR30 NAND
+  DEVICE_VARIANT := (H layout)
+  DEVICE_DTS := mt7981b-cmcc-xr30-stock
+  DEVICE_DTS_DIR := ../dts
+  SUPPORTED_DEVICES := cmcc,xr30
+  UBINIZE_OPTS := -E 5
+  BLOCKSIZE := 128k
+  PAGESIZE := 2048
+  IMAGE_SIZE := 116736k
+  KERNEL_IN_UBI := 1
+  IMAGES += factory.bin
+  IMAGE/factory.bin := append-ubi | check-size $$$$(IMAGE_SIZE)
+  IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
+endef
+TARGET_DEVICES += cmcc_xr30-stock
 
 define Device/iptime_ax3000q
   DEVICE_VENDOR := ipTIME
