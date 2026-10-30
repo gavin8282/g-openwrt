@@ -1,16 +1,14 @@
 #!/bin/sh
 
 
-kernel_ver="$(uname -r)"
-
-if [ -e "/lib/modules/$kernel_ver/mtkhnat.ko" ]; then
+if ls /lib/modules/*/mtkhnat.ko >/dev/null 2>&1 || [ -d "/sys/kernel/debug/hnat" ] || lsmod | grep -q "mtkhnat"; then
 	uci -q set "turboacc.config.fastpath"="mediatek_hnat"
 	uci -q set "turboacc.config.fastpath_mh_eth_hnat"="1"
 	uci -q set "turboacc.config.fastpath_mh_eth_hnat_v6"="1"
 	uci -q set "turboacc.config.fastpath_mh_eth_hnat_macvlan"="0"
 	uci -q set "turboacc.config.fastpath_mh_eth_hnat_bind_rate"="30"
 	uci -q set "turboacc.config.fastpath_mh_eth_hnat_ppenum"="2"
-elif [ -e "/lib/modules/$kernel_ver/fast-classifier.ko" ]; then
+elif ls /lib/modules/*/fast-classifier.ko >/dev/null 2>&1; then
 	uci -q set "turboacc.config.fastpath"="fast_classifier"
 	uci -q set "turboacc.config.fastpath_fc_br"="1"
 	if [ -d "/proc/sys/net/ipv6" ]; then

@@ -124,8 +124,9 @@ return view.extend({
 						var ppe_num = parseInt(res[0].PPE_NUM);
 						for (var i=0; i<ppe_num; i++) {
 							var ppe_bar = document.getElementById(`ppe${i}_entry`);
-							ppe_bar.innerHTML = E('td', {},
-							progressbar(res[0][`BIND_PPE${i}`], res[0][`ALL_PPE${i}`])).innerHTML;
+							if (ppe_bar)
+								ppe_bar.innerHTML = E('td', {},
+								progressbar(res[0][`BIND_PPE${i}`], res[0][`ALL_PPE${i}`])).innerHTML;
 						}
 					});
 				}, 3);

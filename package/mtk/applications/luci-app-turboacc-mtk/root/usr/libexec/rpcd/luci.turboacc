@@ -21,9 +21,9 @@ local methods = {
 				hasIPV6           = fs.access("/proc/net/ipv6_route"),
 				-- disable FLOWOFFLOADING for mt798x
 				hasFLOWOFFLOADING = false,
-				hasFASTCLASSIFIER = fs.access("/lib/modules/" .. boardinfo.kernel .. "/fast-classifier.ko"),
-				hasSHORTCUTFECM   = fs.access("/lib/modules/" .. boardinfo.kernel .. "/shortcut-fe-cm.ko"),
-				hasMEDIATEKHNAT   = fs.access("/lib/modules/" .. boardinfo.kernel .. "/mtkhnat.ko"),
+				hasFASTCLASSIFIER = fs.access("/lib/modules/" .. (boardinfo.kernel or "") .. "/fast-classifier.ko"),
+				hasSHORTCUTFECM   = fs.access("/lib/modules/" .. (boardinfo.kernel or "") .. "/shortcut-fe-cm.ko"),
+				hasMEDIATEKHNAT   = fs.access("/sys/module/mtkhnat") or fs.stat("/sys/kernel/debug/hnat", "type") == "dir" or (sys.call("ls /lib/modules/*/mtkhnat.ko >/dev/null 2>&1") == 0),
 				hasTCPCCA         = readfile("/proc/sys/net/ipv4/tcp_available_congestion_control")
 			}
 			print(json.stringify(features))
@@ -39,15 +39,21 @@ local methods = {
 				fptype = "Fast classifier"
 			elseif fs.stat("/sys/module/shortcut_fe_cm", "type") == "dir" then
 				fptype = "Shortcut-FE CM"
-			elseif fs.stat("/sys/kernel/debug/hnat", "type") == "dir" then
+			elseif fs.stat("/sys/kernel/debug/hnat", "type") == "dir" or fs.access("/sys/module/mtkhnat") then
+				if not fs.access("/sys/kernel/debug/hnat") then
+					sys.call("mount | grep -q ' /sys/kernel/debug ' || mount -t debugfs none /sys/kernel/debug 2>/dev/null")
+				end
 				local hook = readfile("/sys/kernel/debug/hnat/hook_toggle")
-				local ethernet_hnat = (hook == "enabled" or hook == "1") and "" or " / Ethernet HNAT Disabled"
-
-				local wireless_hnat = (sys.call("grep -sq 'WHNAT=1' /etc/wireless/mediatek/*.dat") ~= 0) and " / Wireless HNAT Disabled" or ""
-				if (ethernet_hnat == "") or (wireless_hnat == "") then
-					fptype = "MediaTek HNAT" .. ethernet_hnat .. wireless_hnat
+				if hook == "enabled" or hook == "1" then
+					local wireless_hnat = ""
+					if fs.access("/etc/wireless/mediatek") then
+						wireless_hnat = (sys.call("grep -sq 'WHNAT=1' /etc/wireless/mediatek/*.dat 2>/dev/null") ~= 0) and " / Wireless HNAT Disabled" or ""
+					end
+					fptype = "MediaTek HNAT" .. wireless_hnat
 				elseif hook == "disabled" or hook == "0" then
 					fptype = "MediaTek HNAT / Ethernet HNAT Disabled"
+				elseif fs.access("/sys/module/mtkhnat") then
+					fptype = "MediaTek HNAT"
 				end
 			end
 			print(json.stringify({ type = fptype }))
