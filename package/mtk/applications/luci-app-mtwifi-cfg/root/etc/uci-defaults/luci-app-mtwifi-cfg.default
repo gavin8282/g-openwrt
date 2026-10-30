@@ -1,7 +1,8 @@
 #!/bin/sh
 
-if [ -d /www/luci-static/resources/view/network ]; then
-	mv -f /usr/share/luci-app-mtwifi-cfg/wireless-mtk.js /www/luci-static/resources/view/network/wireless.js
+mkdir -p /www/luci-static/resources/view/network
+if [ -f /usr/share/luci-app-mtwifi-cfg/wireless-mtk.js ]; then
+	cp -f /usr/share/luci-app-mtwifi-cfg/wireless-mtk.js /www/luci-static/resources/view/network/wireless.js
 fi
 
 luci_network_js="/www/luci-static/resources/network.js"
