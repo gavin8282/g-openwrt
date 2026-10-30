@@ -1157,6 +1157,16 @@ define Device/creatlentem_clt-r30b1
 endef
 TARGET_DEVICES += creatlentem_clt-r30b1
 
+define Device/mt7981-clt-r30b1-112M
+  $(call Device/creatlentem_clt-r30b1-112m)
+endef
+TARGET_DEVICES += mt7981-clt-r30b1-112M
+
+define Device/mt7981-clt-r30b1
+  $(call Device/creatlentem_clt-r30b1)
+endef
+TARGET_DEVICES += mt7981-clt-r30b1
+
 define Device/creatlentem_clt-r30b1-ubi
   DEVICE_VARIANT := (UBI)
   DEVICE_ALT0_VARIANT := (UBI)
