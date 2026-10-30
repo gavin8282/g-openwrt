@@ -54,9 +54,10 @@ wapp_enabled=0
 for dev in $(uci -q show wireless | sed -n 's/^wireless\.\([^.]*\)=wifi-device$/\1/p'); do
     dev_type="$(uci_get_default wireless.${dev}.type "")"
     dev_wapp="$(uci_get_default wireless.${dev}.wapp 0)"
-    log_i "check device=${dev} type=${dev_type} wapp=${dev_wapp}"
+    dev_bs="$(uci_get_default wireless.${dev}.bandsteering 0)"
+    log_i "check device=${dev} type=${dev_type} wapp=${dev_wapp} bs=${dev_bs}"
     [ "$dev_type" = "mtwifi" ] || continue
-    if [ "$(uci_get_default wireless.${dev}.wapp 0)" -eq "1" ]; then
+    if [ "$dev_wapp" -eq "1" ] || [ "$dev_bs" -eq "1" ]; then
         wapp_enabled=1
         break
     fi
@@ -74,6 +75,13 @@ sleep 2
 run_cmd sed -i "s/map_controller_alid=.*/map_controller_alid=${ctrlr_al_mac}/g" /etc/map/1905d.cfg
 run_cmd sed -i "s/map_agent_alid=.*/map_agent_alid=${agent_al_mac}/g" /etc/map/1905d.cfg
 
+    for dev in $(uci -q show wireless | sed -n 's/^wireless\.\([^.]*\)=wifi-device$/\1/p'); do
+        if [ "$(uci_get_default wireless.${dev}.bandsteering 0)" -eq "1" ]; then
+            ra0=1
+            rax0=1
+            break
+        fi
+    done
     ra0_7981="$(uci_get_default wireless.MT7981_1_1.bandsteering 0)"
     ra0_7986="$(uci_get_default wireless.MT7986_1_1.bandsteering 0)"
     if [ "$ra0_7981" -eq "1" ] || [ "$ra0_7986" -eq "1" ]; then
