@@ -49,6 +49,7 @@ mediatek_setup_interfaces()
 	asus,rt-ax52|\
 	asus,rt-ax59u|\
 	cetron,ct3003|\
+	cetron,ct3003-112m|\
 	cetron,ct3003-ubootmod|\
 	cmcc,a10-stock|\
 	cmcc,a10-ubootmod|\

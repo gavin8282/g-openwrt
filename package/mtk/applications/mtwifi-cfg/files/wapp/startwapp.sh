@@ -64,6 +64,18 @@ for dev in $(uci -q show wireless | sed -n 's/^wireless\.\([^.]*\)=wifi-device$/
 done
 
 if [ "$wapp_enabled" -ne "1" ]; then
+    for iface in $(uci -q show wireless | sed -n 's/^wireless\.\([^.]*\)=wifi-iface$/\1/p'); do
+        if_11v="$(uci_get_default wireless.${iface}.ieee80211v 0)"
+        if_11r="$(uci_get_default wireless.${iface}.ieee80211r 0)"
+        if_steer="$(uci_get_default wireless.${iface}.steeringthresold 0)"
+        if [ "$if_11v" -eq "1" ] || [ "$if_11r" -eq "1" ] || [ "$if_steer" -lt "0" ]; then
+            wapp_enabled=1
+            break
+        fi
+    done
+fi
+
+if [ "$wapp_enabled" -ne "1" ]; then
     log_i "wapp switch disabled, exit"
     exit 0
 fi
@@ -89,6 +101,9 @@ run_cmd sed -i "s/map_agent_alid=.*/map_agent_alid=${agent_al_mac}/g" /etc/map/1
     rax0=1
     fi
     
+    ra0_7981="$(uci_get_default wireless.default_MT7981_1_1.ieee80211r 0)"
+    ra0_7986="$(uci_get_default wireless.default_MT7986_1_1.ieee80211r 0)"
+    [ "$ra0_7981" -eq "1" ] || [ "$ra0_7986" -eq "1" ] || \
     ra0_7981="$(uci_get_default wireless.MT7981_1_1.ieee80211r 0)"
     ra0_7986="$(uci_get_default wireless.MT7986_1_1.ieee80211r 0)"
     if [ "$ra0_7981" -eq "1" ] || [ "$ra0_7986" -eq "1" ]; then
@@ -113,6 +128,9 @@ run_cmd sed -i "s/map_agent_alid=.*/map_agent_alid=${agent_al_mac}/g" /etc/map/1
     ra0=0
     fi
     
+    rax0_7981="$(uci_get_default wireless.default_MT7981_1_2.ieee80211r 0)"
+    rax0_7986="$(uci_get_default wireless.default_MT7986_1_2.ieee80211r 0)"
+    [ "$rax0_7981" -eq "1" ] || [ "$rax0_7986" -eq "1" ] || \
     rax0_7981="$(uci_get_default wireless.MT7981_1_2.ieee80211r 0)"
     rax0_7986="$(uci_get_default wireless.MT7986_1_2.ieee80211r 0)"
     if [ "$rax0_7981" -eq "1" ] || [ "$rax0_7986" -eq "1" ]; then

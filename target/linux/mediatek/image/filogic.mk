@@ -520,7 +520,7 @@ define Device/cetron_ct3003-112m
   UBINIZE_OPTS := -E 5
   BLOCKSIZE := 128k
   PAGESIZE := 2048
-  IMAGE_SIZE := 114816k
+  IMAGE_SIZE := 113152k
   KERNEL_IN_UBI := 1
   IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
   IMAGES += factory.bin

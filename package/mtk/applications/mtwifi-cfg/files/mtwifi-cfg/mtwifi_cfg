@@ -313,7 +313,8 @@ function set_chip_cfg(cfg, dats)
     local uci
     local dat_key
 
-    if not cfg.config.dbdc_main then return end
+    local is_main = (cfg.config.dbdc_main == "1" or cfg.config.dbdc_main == 1 or cfg.config.band == "2g" or (cfg.device and cfg.device:match("_1$")))
+    if not is_main then return end
 
     for k,v in pairs(defs.chip_cfgs) do
         uci = k
