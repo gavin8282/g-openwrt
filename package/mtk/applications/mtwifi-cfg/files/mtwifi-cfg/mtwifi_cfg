@@ -427,9 +427,13 @@ function mtwifi_cfg_setup(argv)
 
     if type(cfg.config.country) == type("") and #cfg.config.country == 2 then
         dats.CountryCode = cfg.config.country
-        if cfg.config.band == "2g" then
+        local band = cfg.config.band
+        if not band and cfg.config.hwmode then
+            band = (cfg.config.hwmode == "11g" or cfg.config.hwmode == "11b") and "2g" or "5g"
+        end
+        if band == "2g" then
             dats.CountryRegion = defs.countryRegions[cfg.config.country][1]
-        elseif cfg.config.band == "5g" then
+        elseif band == "5g" then
             dats.CountryRegionABand = defs.countryRegions[cfg.config.country][2]
         end
     end
@@ -484,7 +488,11 @@ function mtwifi_cfg_setup(argv)
     end
 
     local WirelessMode
-    if cfg.config.band == "2g" then
+    local band = cfg.config.band
+    if not band and cfg.config.hwmode then
+        band = (cfg.config.hwmode == "11g" or cfg.config.hwmode == "11b") and "2g" or "5g"
+    end
+    if band == "2g" then
         if string.sub(cfg.config.htmode,1,2) == "HE" then
             WirelessMode = 16 -- PHY_11AX_24G
         else

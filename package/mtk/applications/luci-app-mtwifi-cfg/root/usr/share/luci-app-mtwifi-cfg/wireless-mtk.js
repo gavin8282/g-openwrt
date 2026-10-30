@@ -565,12 +565,8 @@ var CBIWifiFrequencyValue = form.Value.extend({
 
 	write: function(section_id, value) {
 		uci.set('wireless', section_id, 'htmode', value[0] || null);
-
-		if (this.useBandOption)
-			uci.set('wireless', section_id, 'band', value[1]);
-		else
-			uci.set('wireless', section_id, 'hwmode', (value[1] == '2g') ? '11g' : '11a');
-
+		uci.set('wireless', section_id, 'band', value[1]);
+		uci.set('wireless', section_id, 'hwmode', (value[1] == '2g') ? '11g' : '11a');
 		uci.set('wireless', section_id, 'channel', value[2]);
 	}
 });

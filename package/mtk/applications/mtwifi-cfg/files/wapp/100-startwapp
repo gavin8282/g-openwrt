@@ -1,5 +1,7 @@
 #!/bin/sh
 
+[ "$ACTION" = "ifup" ] && [ "$INTERFACE" = "lan" ] || exit 0
+
 logger -t wapp-hotplug "INFO: hotplug trigger action=${ACTION:-unknown} interface=${INTERFACE:-unknown}, invoke /sbin/startwapp.sh"
 
 /sbin/startwapp.sh

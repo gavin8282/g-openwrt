@@ -17,7 +17,7 @@ define Package/mtwifi-cfg
   CATEGORY:=MTK Properties
   SUBMENU:=Applications
   TITLE:=mtwifi configure scripts for mt798x
-  DEPENDS:=+iwinfo +wifi-dats +lua-cjson +datconf-lua  
+  DEPENDS:=+iwinfo +wifi-dats +lua +lua-cjson +datconf-lua +luci-lib-nixio  
 endef
 
 define Package/mtwifi-wapp
