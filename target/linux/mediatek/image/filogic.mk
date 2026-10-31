@@ -653,7 +653,7 @@ define Device/cmcc_rax3000m_common
   DEVICE_DTS_DIR := ../dts
   DEVICE_DTC_FLAGS := --pad 4096
   DEVICE_DTS_LOADADDR := 0x43f00000
-  DEVICE_PACKAGES := kmod-mt7915e kmod-mt7981-firmware mt7981-wo-firmware kmod-usb3 \
+  DEVICE_PACKAGES := kmod-usb3 \
 	automount f2fsck mkf2fs
   KERNEL_LOADADDR := 0x44000000
   KERNEL := kernel-bin | gzip
@@ -817,7 +817,7 @@ define Device/cmcc_xr30-stock
   DEVICE_VARIANT := (H layout)
   DEVICE_DTS := mt7981b-cmcc-xr30-stock
   DEVICE_DTS_DIR := ../dts
-  DEVICE_PACKAGES := kmod-mt7915e kmod-mt7981-firmware mt7981-wo-firmware kmod-usb3 \
+  DEVICE_PACKAGES := kmod-usb3 \
 	automount f2fsck mkf2fs
   SUPPORTED_DEVICES := cmcc,xr30
   UBINIZE_OPTS := -E 5
@@ -1844,7 +1844,7 @@ define Device/netis_nx32u
   IMAGE/sysupgrade.itb := append-kernel | \
 	fit gzip $$(KDIR)/image-$$(firstword $$(DEVICE_DTS)).dtb external-static-with-rootfs | \
 	append-metadata
-  DEVICE_PACKAGES := kmod-mt7915e kmod-mt7981-firmware mt7981-wo-firmware kmod-usb3
+  DEVICE_PACKAGES := kmod-usb3
   ARTIFACTS := preloader.bin bl31-uboot.fip
   ARTIFACT/preloader.bin := mt7981-bl2 spim-nand-ddr3
   ARTIFACT/bl31-uboot.fip := mt7981-bl31-uboot netis_nx32u
@@ -1962,7 +1962,7 @@ define Device/routerich_ax3000
   DEVICE_MODEL := AX3000
   DEVICE_DTS := mt7981b-routerich-ax3000
   DEVICE_DTS_DIR := ../dts
-  DEVICE_PACKAGES := kmod-mt7915e kmod-mt7981-firmware mt7981-wo-firmware kmod-usb3 automount
+  DEVICE_PACKAGES := kmod-usb3 automount
   IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
   SUPPORTED_DEVICES += mediatek,mt7981-spim-snand-rfb
   DEVICE_COMPAT_VERSION := 1.1
@@ -2228,7 +2228,7 @@ define Device/bt_r320
   DEVICE_MODEL := BT-R320
   DEVICE_DTS := mt7981b-bt-r320
   DEVICE_DTS_DIR := ../dts
-  DEVICE_PACKAGES := kmod-mt7915e kmod-mt7981-firmware mt7981-wo-firmware kmod-usb3 automount e2fsprogs f2fsck mkf2fs
+  DEVICE_PACKAGES := kmod-usb3 automount e2fsprogs f2fsck mkf2fs
   KERNEL := kernel-bin | lzma | fit lzma $$(KDIR)/image-$$(firstword $$(DEVICE_DTS)).dtb
   KERNEL_INITRAMFS := kernel-bin | lzma | \
 	fit lzma $$(KDIR)/image-$$(firstword $$(DEVICE_DTS)).dtb with-initrd | pad-to 64k
@@ -2457,7 +2457,7 @@ define Device/unielec_u7981-01
   DEVICE_VENDOR := Unielec
   DEVICE_MODEL := U7981-01
   DEVICE_DTS_DIR := ../dts
-  DEVICE_PACKAGES := kmod-mt7915e kmod-mt7981-firmware mt7981-wo-firmware kmod-usb3 f2fsck mkf2fs fdisk partx-utils automount
+  DEVICE_PACKAGES := kmod-usb3 f2fsck mkf2fs fdisk partx-utils automount
   IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
 endef
 
@@ -2661,7 +2661,7 @@ define Device/zbtlink_zbt-z8102ax
   DEVICE_MODEL := ZBT-Z8102AX
   DEVICE_DTS := mt7981b-zbtlink-zbt-z8102ax
   DEVICE_DTS_DIR := ../dts
-  DEVICE_PACKAGES := kmod-mt7915e kmod-mt7981-firmware mt7981-wo-firmware kmod-usb3 \
+  DEVICE_PACKAGES := kmod-usb3 \
 	kmod-usb-net-qmi-wwan kmod-usb-serial-option automount
   KERNEL_IN_UBI := 1
   UBINIZE_OPTS := -E 5
@@ -2696,7 +2696,7 @@ define Device/zbtlink_zbt-z8103ax-c
   DEVICE_MODEL := ZBT-Z8103AX-C
   DEVICE_DTS := mt7981b-zbtlink-zbt-z8103ax-c
   DEVICE_DTS_DIR := ../dts
-  DEVICE_PACKAGES := kmod-mt7915e kmod-mt7981-firmware mt7981-wo-firmware kmod-usb3 \
+  DEVICE_PACKAGES := kmod-usb3 \
     kmod-usb-serial-option kmod-usb-storage kmod-usb-net-qmi-wwan uqmi automount
   KERNEL_IN_UBI := 1
   UBINIZE_OPTS := -E 5
@@ -2714,7 +2714,7 @@ define Device/zbtlink_zbt-z8103ax-c-nmbm
   DEVICE_MODEL := ZBT-Z8103AX-C (NMBM)
   DEVICE_DTS := mt7981b-zbtlink-zbt-z8103ax-c-nmbm
   DEVICE_DTS_DIR := ../dts
-  DEVICE_PACKAGES := kmod-mt7915e kmod-mt7981-firmware mt7981-wo-firmware kmod-usb3 \
+  DEVICE_PACKAGES := kmod-usb3 \
     kmod-usb-serial-option kmod-usb-storage kmod-usb-net-qmi-wwan uqmi automount
   KERNEL_IN_UBI := 1
   UBINIZE_OPTS := -E 5
@@ -2733,7 +2733,7 @@ define Device/zbtlink_zbt-z8103ax-c-ubootmod
   DEVICE_VARIANT := (OpenWrt U-Boot layout)
   DEVICE_DTS := mt7981b-zbtlink-zbt-z8103ax-c-ubootmod
   DEVICE_DTS_DIR := ../dts
-  DEVICE_PACKAGES := kmod-mt7915e kmod-mt7981-firmware mt7981-wo-firmware kmod-usb3 \
+  DEVICE_PACKAGES := kmod-usb3 \
     kmod-usb-serial-option kmod-usb-storage kmod-usb-net-qmi-wwan uqmi automount
   UBINIZE_OPTS := -E 5
   BLOCKSIZE := 128k
@@ -2888,7 +2888,7 @@ define Device/wirelesstag_zx7981pd-ubootmod
   DEVICE_VARIANT := (OpenWrt U-Boot layout)
   DEVICE_DTS := mt7981b-wirelesstag-zx7981pd-ubootmod
   DEVICE_DTS_DIR := ../dts
-  DEVICE_PACKAGES := kmod-mt7915e kmod-mt7981-firmware mt7981-wo-firmware kmod-usb3
+  DEVICE_PACKAGES := kmod-usb3
   KERNEL_INITRAMFS_SUFFIX := -recovery.itb
   IMAGES := sysupgrade.itb
   UBINIZE_OPTS := -E 5
