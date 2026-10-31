@@ -221,7 +221,7 @@ return view.extend({
 		o.rmempty = false;
 		o.value(1);
 		o.value(2);
-		o.default = 2;
+		o.default = (ppe_stats && ppe_stats.PPE_NUM) ? parseInt(ppe_stats.PPE_NUM) : 1;
 		o.depends('fastpath_mh_eth_hnat', '1');
 
 		o = s.option(form.ListValue, 'tcpcca', _('TCP CCA'),

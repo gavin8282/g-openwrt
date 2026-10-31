@@ -7,7 +7,13 @@ if ls /lib/modules/*/mtkhnat.ko >/dev/null 2>&1 || [ -d "/sys/kernel/debug/hnat"
 	uci -q set "turboacc.config.fastpath_mh_eth_hnat_v6"="1"
 	uci -q set "turboacc.config.fastpath_mh_eth_hnat_macvlan"="0"
 	uci -q set "turboacc.config.fastpath_mh_eth_hnat_bind_rate"="30"
-	uci -q set "turboacc.config.fastpath_mh_eth_hnat_ppenum"="2"
+	local ppe_cnt=1
+	mount | grep -q " /sys/kernel/debug " || mount -t debugfs none /sys/kernel/debug 2>/dev/null
+	if [ -f "/sys/kernel/debug/hnat/hnat_stats" ]; then
+		ppe_cnt=$(awk -F'=' '/PPE[ _][nN][uU][mM]/ {print $2; exit}' /sys/kernel/debug/hnat/hnat_stats 2>/dev/null | tr -cd '0-9')
+		[ -z "$ppe_cnt" ] && ppe_cnt=1
+	fi
+	uci -q set "turboacc.config.fastpath_mh_eth_hnat_ppenum"="$ppe_cnt"
 elif ls /lib/modules/*/fast-classifier.ko >/dev/null 2>&1; then
 	uci -q set "turboacc.config.fastpath"="fast_classifier"
 	uci -q set "turboacc.config.fastpath_fc_br"="1"
