@@ -87,20 +87,21 @@ const methods = {
 
 			for (let line = fd.read('line'); length(line); line = fd.read('line')) {
 				line = trim(line);
-				// Match "PPE0: k=v, k=v"
-				let m_sub = match(line, /^(.+):\s*(.+)$/);
-				if (m_sub) {
-					let prefix = m_sub[1];
-					ppe_stat[prefix] = {};
-					let pairs = split(m_sub[2], ',');
-					for (let p in pairs) {
-						let kv = split(trim(p), '=');
-						if (length(kv) == 2) ppe_stat[prefix][kv[0]] = kv[1];
-					}
-				} else {
-					// Match "Key=Value"
-					let kv = split(line, '=');
-					if (length(kv) == 2) ppe_stat[trim(kv[0])] = trim(kv[1]);
+				let m_num = match(line, /PPE[ _][nN][uU][mM]=([0-9]+)/);
+				if (m_num) {
+					ppe_stat["PPE_NUM"] = m_num[1];
+				}
+				let m_entry = match(line, /PPE([0-9]+):\s*entry\s*num=([0-9]+),\s*BIND\s*state\s*num=([0-9]+)/);
+				if (m_entry) {
+					ppe_stat[`ALL_PPE${m_entry[1]}`] = m_entry[2];
+					ppe_stat[`BIND_PPE${m_entry[1]}`] = m_entry[3];
+				}
+				let kv = split(line, '=');
+				if (length(kv) == 2) {
+					let k = trim(kv[0]);
+					let v = trim(kv[1]);
+					if (k == 'PPE num' || k == 'PPE_NUM') ppe_stat['PPE_NUM'] = v;
+					else if (!ppe_stat[k]) ppe_stat[k] = v;
 				}
 			}
 			fd.close();
