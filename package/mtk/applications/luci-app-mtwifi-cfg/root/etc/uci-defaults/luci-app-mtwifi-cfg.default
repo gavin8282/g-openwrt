@@ -1,13 +1,11 @@
 #!/bin/sh
 
-mkdir -p /www/luci-static/resources/view/network
-if [ -f /usr/share/luci-app-mtwifi-cfg/wireless-mtk.js ]; then
-	cp -f /usr/share/luci-app-mtwifi-cfg/wireless-mtk.js /www/luci-static/resources/view/network/wireless.js
+if [ -d /www/luci-static/resources/view/network ]; then
+	mv -f /usr/share/luci-app-mtwifi-cfg/wireless-mtk.js /www/luci-static/resources/view/network/wireless.js
 fi
 
-if [ -f /usr/share/luci-app-mtwifi-cfg/luci-mod-status.json ]; then
-	mkdir -p /usr/share/luci/menu.d
-	cp -f /usr/share/luci-app-mtwifi-cfg/luci-mod-status.json /usr/share/luci/menu.d/luci-mod-status.json
+if [ -d /usr/share/luci/menu.d ]; then
+	mv -f /usr/share/luci-app-mtwifi-cfg/luci-mod-status.json /usr/share/luci/menu.d/luci-mod-status.json
 fi
 
 luci_network_js="/www/luci-static/resources/network.js"
