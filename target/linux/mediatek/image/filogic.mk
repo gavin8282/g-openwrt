@@ -516,7 +516,7 @@ define Device/cetron_ct3003-112m
   DEVICE_DTS := mt7981b-cetron-ct3003-112m
   DEVICE_DTS_DIR := ../dts
   SUPPORTED_DEVICES += cetron,ct3003 cetron,ct3003-112m
-  DEVICE_PACKAGES := kmod-mt7915e kmod-mt7981-firmware mt7981-wo-firmware
+  DEVICE_PACKAGES := 
   UBINIZE_OPTS := -E 5
   BLOCKSIZE := 128k
   PAGESIZE := 2048
