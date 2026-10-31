@@ -74,9 +74,24 @@ local methods = {
 		
 			if fd then
 				for line in fd:lines() do
+					local ppe_num = line:match("PPE[ _][nN][uU][mM]%s*=%s*(%d+)")
+					if ppe_num then
+						ppe_stat["PPE_NUM"] = ppe_num
+					end
+					local idx, total, bind = line:match("PPE(%d+)%s*:%s*entry%s*num%s*=%s*(%d+)%s*,%s*BIND%s*state%s*num%s*=%s*(%d+)")
+					if idx and total and bind then
+						ppe_stat["ALL_PPE" .. idx] = total
+						ppe_stat["BIND_PPE" .. idx] = bind
+					end
 					local i = string.find(line, "=")
 					if i then
-						ppe_stat[string.sub(line,1,i-1)] = string.sub(line,i+1)
+						local k = string.gsub(string.sub(line, 1, i - 1), "%s+", "")
+						local v = string.gsub(string.sub(line, i + 1), "%s+", "")
+						if k == "PPEnum" or k == "PPE_NUM" then
+							ppe_stat["PPE_NUM"] = v
+						elseif not ppe_stat[k] then
+							ppe_stat[k] = v
+						end
 					end
 				end
 				fd:close()
