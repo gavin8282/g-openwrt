@@ -97,13 +97,12 @@ local methods = {
 				fd:close()
 			end
 
-			local compat = readfile("/proc/device-tree/compatible") or ""
 			local boardinfo = util.ubus("system", "board") or {}
 			local model = (boardinfo.model or "") .. " " .. (boardinfo.board_name or "")
 
-			-- MT7981 (Filogic 820) only routes via single GMAC1, so only PPE0 is physically used.
-			-- MT7986 (Filogic 830) and MT7988 (Filogic 880) have dual GMACs with 2+ active PPEs.
-			if compat:find("mt7981") or model:lower():find("mt7981") or model:lower():find("ct3003") then
+			-- CT3003 uses single GMAC0 layout (PPE0 only).
+			-- Devices like RAX3000M have dual GMACs (gmac0 + gmac1) and support dual PPEs (PPE0 + PPE1).
+			if model:lower():find("ct3003") then
 				ppe_stat["PPE_NUM"] = 1
 			end
 
