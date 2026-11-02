@@ -732,7 +732,18 @@ static int hnat_probe(struct platform_device *pdev)
 		dev_info(&pdev->dev, "wan dsa port = %d\n", hnat_priv->wan_dsa_port);
 	}
 
-	hnat_priv->ppe_num = ppe_cnt;
+	{
+		struct device_node *gmac1_node = of_find_node_by_name(NULL, "mac@1");
+		if (!gmac1_node || !of_device_is_available(gmac1_node))
+			gmac1_node = of_find_node_by_name(NULL, "gmac1");
+
+		if (!gmac1_node || !of_device_is_available(gmac1_node))
+			hnat_priv->ppe_num = 1;
+		else
+			hnat_priv->ppe_num = ppe_cnt;
+
+		of_node_put(gmac1_node);
+	}
 
 	dev_info(&pdev->dev, "ppe num = %d\n", hnat_priv->ppe_num);
 
