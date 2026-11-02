@@ -216,14 +216,6 @@ return view.extend({
 		o.placeholder = 30;
 		o.depends('fastpath_mh_eth_hnat', '1');
 
-		o = s.option(form.ListValue, 'fastpath_mh_eth_hnat_ppenum', _('Number of HNAT PPE'),
-			_('Apply this setting after reboot.'));
-		o.rmempty = false;
-		o.value(1);
-		o.value(2);
-		o.default = (ppe_stats && ppe_stats.PPE_NUM) ? parseInt(ppe_stats.PPE_NUM) : 1;
-		o.depends('fastpath_mh_eth_hnat', '1');
-
 		o = s.option(form.ListValue, 'tcpcca', _('TCP CCA'),
 			_('TCP congestion control algorithm.'));
 		for (var i of features.hasTCPCCA.split(' ').sort())
