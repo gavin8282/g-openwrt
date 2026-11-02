@@ -97,12 +97,27 @@ local methods = {
 				fd:close()
 			end
 
+			-- Dynamically check physical hardware GMAC capability:
+			-- Dual GMAC devices (e.g. RAX3000M, NX30 Pro) register both eth0 and eth1 hardware netdevices.
+			-- Single GMAC devices (e.g. CT3003, 360T7, AX3000T) only have eth0 hardware.
+			local has_dual_gmac = fs.access("/sys/class/net/eth1/device") or fs.access("/sys/class/net/eth1")
 			local boardinfo = util.ubus("system", "board") or {}
-			local model = (boardinfo.model or "") .. " " .. (boardinfo.board_name or "")
+			local model = ((boardinfo.model or "") .. " " .. (boardinfo.board_name or "")):lower()
 
-			-- CT3003 uses single GMAC0 layout (PPE0 only).
-			-- Devices like RAX3000M have dual GMACs (gmac0 + gmac1) and support dual PPEs (PPE0 + PPE1).
-			if model:lower():find("ct3003") then
+			local single_ppe_boards = {
+				"ct3003", "360t7", "ax3000t", "wr30u", "a10", "rax3000me",
+				"komi-a31", "zr-3020", "clt-r30b1", "wma301", "q30-pro",
+				"asr3000", "ea0326gmp", "nx31", "sn-r1", "zn-m5", "ax835"
+			}
+			local is_single_gmac = false
+			for _, b in ipairs(single_ppe_boards) do
+				if model:find(b) then
+					is_single_gmac = true
+					break
+				end
+			end
+
+			if is_single_gmac or not has_dual_gmac then
 				ppe_stat["PPE_NUM"] = 1
 			end
 
