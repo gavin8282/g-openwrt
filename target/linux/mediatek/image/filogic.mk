@@ -534,7 +534,7 @@ define Device/cetron_ct3003-ubootmod
   DEVICE_VARIANT := (OpenWrt U-Boot layout)
   DEVICE_DTS := mt7981b-cetron-ct3003-ubootmod
   DEVICE_DTS_DIR := ../dts
-  DEVICE_PACKAGES := kmod-mt7915e kmod-mt7981-firmware mt7981-wo-firmware
+  DEVICE_PACKAGES :=
   UBINIZE_OPTS := -E 5
   BLOCKSIZE := 128k
   PAGESIZE := 2048
