@@ -32,7 +32,7 @@ log_i "startwapp.sh start"
 
 run_cmd sh -c "killall bs20 2>/dev/null || true"
 run_cmd sh -c "killall wapp 2>/dev/null || true"
-br0_mac=$(cat /sys/class/net/br-lan/address 2>/dev/null || cat /sys/class/net/eth0/address 2>/dev/null || echo "00:11:22:33:44:55")
+br0_mac=$(cat /sys/class/net/br-lan/address)
 ctrlr_al_mac=$br0_mac
 agent_al_mac=$br0_mac
 ra0=0
@@ -54,26 +54,13 @@ wapp_enabled=0
 for dev in $(uci -q show wireless | sed -n 's/^wireless\.\([^.]*\)=wifi-device$/\1/p'); do
     dev_type="$(uci_get_default wireless.${dev}.type "")"
     dev_wapp="$(uci_get_default wireless.${dev}.wapp 0)"
-    dev_bs="$(uci_get_default wireless.${dev}.bandsteering 0)"
-    log_i "check device=${dev} type=${dev_type} wapp=${dev_wapp} bs=${dev_bs}"
+    log_i "check device=${dev} type=${dev_type} wapp=${dev_wapp}"
     [ "$dev_type" = "mtwifi" ] || continue
-    if [ "$dev_wapp" -eq "1" ] || [ "$dev_bs" -eq "1" ]; then
+    if [ "$(uci_get_default wireless.${dev}.wapp 0)" -eq "1" ]; then
         wapp_enabled=1
         break
     fi
 done
-
-if [ "$wapp_enabled" -ne "1" ]; then
-    for iface in $(uci -q show wireless | sed -n 's/^wireless\.\([^.]*\)=wifi-iface$/\1/p'); do
-        if_11v="$(uci_get_default wireless.${iface}.ieee80211v 0)"
-        if_11r="$(uci_get_default wireless.${iface}.ieee80211r 0)"
-        if_steer="$(uci_get_default wireless.${iface}.steeringthresold 0)"
-        if [ "$if_11v" -eq "1" ] || [ "$if_11r" -eq "1" ] || [ "$if_steer" -lt "0" ]; then
-            wapp_enabled=1
-            break
-        fi
-    done
-fi
 
 if [ "$wapp_enabled" -ne "1" ]; then
     log_i "wapp switch disabled, exit"
@@ -87,13 +74,6 @@ sleep 2
 run_cmd sed -i "s/map_controller_alid=.*/map_controller_alid=${ctrlr_al_mac}/g" /etc/map/1905d.cfg
 run_cmd sed -i "s/map_agent_alid=.*/map_agent_alid=${agent_al_mac}/g" /etc/map/1905d.cfg
 
-    for dev in $(uci -q show wireless | sed -n 's/^wireless\.\([^.]*\)=wifi-device$/\1/p'); do
-        if [ "$(uci_get_default wireless.${dev}.bandsteering 0)" -eq "1" ]; then
-            ra0=1
-            rax0=1
-            break
-        fi
-    done
     ra0_7981="$(uci_get_default wireless.MT7981_1_1.bandsteering 0)"
     ra0_7986="$(uci_get_default wireless.MT7986_1_1.bandsteering 0)"
     if [ "$ra0_7981" -eq "1" ] || [ "$ra0_7986" -eq "1" ]; then
@@ -101,23 +81,14 @@ run_cmd sed -i "s/map_agent_alid=.*/map_agent_alid=${agent_al_mac}/g" /etc/map/1
     rax0=1
     fi
     
-    ra0_7981="$(uci_get_default wireless.default_MT7981_1_1.ieee80211r 0)"
-    ra0_7986="$(uci_get_default wireless.default_MT7986_1_1.ieee80211r 0)"
-    [ "$ra0_7981" -eq "1" ] || [ "$ra0_7986" -eq "1" ] || \
     ra0_7981="$(uci_get_default wireless.MT7981_1_1.ieee80211r 0)"
     ra0_7986="$(uci_get_default wireless.MT7986_1_1.ieee80211r 0)"
     if [ "$ra0_7981" -eq "1" ] || [ "$ra0_7986" -eq "1" ]; then
     ra0=1
     fi
-
-    ra0_v_7981="$(uci_get_default wireless.default_MT7981_1_1.ieee80211v 0)"
-    ra0_v_7986="$(uci_get_default wireless.default_MT7986_1_1.ieee80211v 0)"
-    if [ "$ra0_v_7981" -eq "1" ] || [ "$ra0_v_7986" -eq "1" ]; then
-    ra0=1
-    fi
     
-    ra0_7981="$(uci_get_default wireless.default_MT7981_1_1.steeringthresold 0)"
-    ra0_7986="$(uci_get_default wireless.default_MT7986_1_1.steeringthresold 0)"
+    ra0_7981="$(uci_get_default wireless.default_MT7981_1_2.steeringthresold 0)"
+    ra0_7986="$(uci_get_default wireless.default_MT7986_1_2.steeringthresold 0)"
     if [ "$ra0_7981" -lt "0" ] || [ "$ra0_7986" -lt "0" ]; then
     ra0=1
     fi
@@ -126,20 +97,12 @@ run_cmd sed -i "s/map_agent_alid=.*/map_agent_alid=${agent_al_mac}/g" /etc/map/1
     ra0_7986="$(uci_get_default wireless.default_MT7986_1_1.disabled 0)"
     if [ "$ra0_7981" -eq "1" ] || [ "$ra0_7986" -eq "1" ]; then
     ra0=0
+    rax0=0
     fi
     
-    rax0_7981="$(uci_get_default wireless.default_MT7981_1_2.ieee80211r 0)"
-    rax0_7986="$(uci_get_default wireless.default_MT7986_1_2.ieee80211r 0)"
-    [ "$rax0_7981" -eq "1" ] || [ "$rax0_7986" -eq "1" ] || \
     rax0_7981="$(uci_get_default wireless.MT7981_1_2.ieee80211r 0)"
     rax0_7986="$(uci_get_default wireless.MT7986_1_2.ieee80211r 0)"
     if [ "$rax0_7981" -eq "1" ] || [ "$rax0_7986" -eq "1" ]; then
-    rax0=1
-    fi
-
-    rax0_v_7981="$(uci_get_default wireless.default_MT7981_1_2.ieee80211v 0)"
-    rax0_v_7986="$(uci_get_default wireless.default_MT7986_1_2.ieee80211v 0)"
-    if [ "$rax0_v_7981" -eq "1" ] || [ "$rax0_v_7986" -eq "1" ]; then
     rax0=1
     fi
    

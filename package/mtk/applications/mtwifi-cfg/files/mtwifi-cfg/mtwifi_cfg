@@ -313,8 +313,7 @@ function set_chip_cfg(cfg, dats)
     local uci
     local dat_key
 
-    local is_main = (cfg.config.dbdc_main == "1" or cfg.config.dbdc_main == 1 or cfg.config.band == "2g" or (cfg.device and cfg.device:match("_1$")))
-    if not is_main then return end
+    if not cfg.config.dbdc_main then return end
 
     for k,v in pairs(defs.chip_cfgs) do
         uci = k
@@ -428,13 +427,9 @@ function mtwifi_cfg_setup(argv)
 
     if type(cfg.config.country) == type("") and #cfg.config.country == 2 then
         dats.CountryCode = cfg.config.country
-        local band = cfg.config.band
-        if not band and cfg.config.hwmode then
-            band = (cfg.config.hwmode == "11g" or cfg.config.hwmode == "11b") and "2g" or "5g"
-        end
-        if band == "2g" then
+        if cfg.config.band == "2g" then
             dats.CountryRegion = defs.countryRegions[cfg.config.country][1]
-        elseif band == "5g" then
+        elseif cfg.config.band == "5g" then
             dats.CountryRegionABand = defs.countryRegions[cfg.config.country][2]
         end
     end
@@ -489,11 +484,7 @@ function mtwifi_cfg_setup(argv)
     end
 
     local WirelessMode
-    local band = cfg.config.band
-    if not band and cfg.config.hwmode then
-        band = (cfg.config.hwmode == "11g" or cfg.config.hwmode == "11b") and "2g" or "5g"
-    end
-    if band == "2g" then
+    if cfg.config.band == "2g" then
         if string.sub(cfg.config.htmode,1,2) == "HE" then
             WirelessMode = 16 -- PHY_11AX_24G
         else
@@ -566,8 +557,6 @@ function mtwifi_cfg_setup(argv)
             set_dat(dats, apidx, "HideSSID", v.config.hidden)
             set_dat(dats, apidx, "WmmCapable", v.config.wmm)
             set_dat(dats, apidx, "RRMEnable", v.config.ieee80211k)
-            set_dat(dats, apidx, "WNMEnable", v.config.ieee80211v)
-            set_dat(dats, apidx, "Dot11vMbssid", v.config.ieee80211v)
             set_dat(dats, apidx, "FtSupport", v.config.ieee80211r)
             set_dat(dats, apidx, "RekeyInterval", v.config.wpa_group_rekey)
             set_dat(dats, apidx, "MuMimoDlEnable",0)

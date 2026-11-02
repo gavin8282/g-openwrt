@@ -75,10 +75,6 @@ platform_do_upgrade() {
 	xiaomi,redmi-router-ax6000-ubootmod|\
 	xiaomi,mi-router-ax3000t-ubootmod|\
     xiaomi,mi-router-wr30u-ubootmod|\
-	cetron,ct3003|\
-	cetron,ct3003-112m|\
-	creatlentem,clt-r30b1|\
-	creatlentem,clt-r30b1-112m|\
 	h3c,magic-nx30-pro|\
 	jcg,q30-pro|\
     qihoo,360t7)
@@ -96,7 +92,6 @@ platform_do_upgrade() {
 	cmcc,a10-ubootmod|\
 	cmcc,rax3000m|\
 	cmcc,rax3000me|\
-	creatlentem,clt-r30b1-ubi|\
 	cudy,tr3000-v1-ubootmod|\
 	cudy,wbr3000uax-v1-ubootmod|\
 	gatonetworks,gdsp|\
@@ -240,10 +235,6 @@ platform_check_image() {
 		}
 		return 0
 		;;
-	cetron,ct3003|\
-	cetron,ct3003-112m|\
-	creatlentem,clt-r30b1|\
-	creatlentem,clt-r30b1-112m|\
 	nradio,c8-668gl)
 		# tar magic `ustar`
 		magic="$(dd if="$1" bs=1 skip=257 count=5 2>/dev/null)"
