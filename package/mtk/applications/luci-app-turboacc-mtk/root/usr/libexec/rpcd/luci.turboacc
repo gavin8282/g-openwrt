@@ -97,6 +97,12 @@ local methods = {
 				fd:close()
 			end
 
+			local boardinfo = util.ubus("system", "board") or {}
+			local model = (boardinfo.model or "") .. " " .. (boardinfo.board_name or "")
+			if model:lower():find("ct3003") then
+				ppe_stat["PPE_NUM"] = 1
+			end
+
 			print(json.stringify(ppe_stat))
 		end
 	}
