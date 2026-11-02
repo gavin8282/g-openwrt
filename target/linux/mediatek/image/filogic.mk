@@ -1,3 +1,9 @@
+DEVICE_PACKAGES_NO_USB := -automount -block-mount -e2fsprogs \
+	-kmod-fs-ext4 -kmod-fs-vfat -kmod-fs-exfat -kmod-fs-ntfs3 \
+	-kmod-usb-core -kmod-usb2 -kmod-usb3 -kmod-usb-ehci \
+	-kmod-usb-storage -kmod-usb-storage-extras -kmod-usb-storage-uas \
+	-kmod-usb-xhci-hcd -kmod-usb-xhci-mtk -f2fsck -mkf2fs
+
 DTS_DIR := $(DTS_DIR)/mediatek
 
 define Image/Prepare
@@ -110,7 +116,7 @@ define Device/abt_asr3000
   DEVICE_MODEL := ASR3000
   DEVICE_DTS := mt7981b-abt-asr3000
   DEVICE_DTS_DIR := ../dts
-  DEVICE_PACKAGES := kmod-mt7915e kmod-mt7981-firmware mt7981-wo-firmware
+  DEVICE_PACKAGES := $(DEVICE_PACKAGES_NO_USB)
   UBINIZE_OPTS := -E 5
   BLOCKSIZE := 128k
   PAGESIZE := 2048
@@ -497,7 +503,7 @@ define Device/cetron_ct3003
   DEVICE_DTS := mt7981b-cetron-ct3003
   DEVICE_DTS_DIR := ../dts
   SUPPORTED_DEVICES += cetron,ct3003-stock mediatek,mt7981-spim-snand-rfb
-  DEVICE_PACKAGES := kmod-mt7915e kmod-mt7981-firmware mt7981-wo-firmware
+  DEVICE_PACKAGES := $(DEVICE_PACKAGES_NO_USB)
   UBINIZE_OPTS := -E 5
   BLOCKSIZE := 128k
   PAGESIZE := 2048
@@ -516,7 +522,7 @@ define Device/cetron_ct3003-112m
   DEVICE_DTS := mt7981b-cetron-ct3003-112m
   DEVICE_DTS_DIR := ../dts
   SUPPORTED_DEVICES += cetron,ct3003 cetron,ct3003-112m
-  DEVICE_PACKAGES := 
+  DEVICE_PACKAGES := $(DEVICE_PACKAGES_NO_USB)
   UBINIZE_OPTS := -E 5
   BLOCKSIZE := 128k
   PAGESIZE := 2048
@@ -534,11 +540,7 @@ define Device/cetron_ct3003-ubootmod
   DEVICE_VARIANT := (OpenWrt U-Boot layout)
   DEVICE_DTS := mt7981b-cetron-ct3003-ubootmod
   DEVICE_DTS_DIR := ../dts
-  DEVICE_PACKAGES := -automount -block-mount -e2fsprogs \
-	-kmod-fs-ext4 -kmod-fs-vfat -kmod-fs-exfat -kmod-fs-ntfs3 \
-	-kmod-usb-core -kmod-usb2 -kmod-usb3 -kmod-usb-ehci \
-	-kmod-usb-storage -kmod-usb-storage-extras -kmod-usb-storage-uas \
-	-kmod-usb-xhci-hcd -kmod-usb-xhci-mtk
+  DEVICE_PACKAGES := $(DEVICE_PACKAGES_NO_USB)
   UBINIZE_OPTS := -E 5
   BLOCKSIZE := 128k
   PAGESIZE := 2048
@@ -565,7 +567,7 @@ define Device/cmcc_a10
   DEVICE_DTS := mt7981b-cmcc-a10
   DEVICE_DTS_DIR := ../dts
   SUPPORTED_DEVICES += mediatek,mt7981-spim-snand-rfb
-  DEVICE_PACKAGES := kmod-mt7915e kmod-mt7981-firmware mt7981-wo-firmware
+  DEVICE_PACKAGES := $(DEVICE_PACKAGES_NO_USB)
   UBINIZE_OPTS := -E 5
   BLOCKSIZE := 128k
   PAGESIZE := 2048
@@ -588,7 +590,7 @@ define Device/cmcc_a10-stock
   DEVICE_DTS := mt7981b-cmcc-a10-stock
   DEVICE_DTS_DIR := ../dts
   SUPPORTED_DEVICES += mediatek,mt7981-spim-snand-rfb
-  DEVICE_PACKAGES := kmod-mt7915e kmod-mt7981-firmware mt7981-wo-firmware
+  DEVICE_PACKAGES := $(DEVICE_PACKAGES_NO_USB)
   UBINIZE_OPTS := -E 5
   BLOCKSIZE := 128k
   PAGESIZE := 2048
@@ -617,7 +619,7 @@ define Device/cmcc_a10-ubootmod
   DEVICE_DTS := mt7981b-cmcc-a10-ubootmod
   DEVICE_DTS_DIR := ../dts
   SUPPORTED_DEVICES += cmcc,a10
-  DEVICE_PACKAGES := kmod-mt7915e kmod-mt7981-firmware mt7981-wo-firmware
+  DEVICE_PACKAGES := $(DEVICE_PACKAGES_NO_USB)
   UBINIZE_OPTS := -E 5
   BLOCKSIZE := 128k
   PAGESIZE := 2048
@@ -725,6 +727,7 @@ define Device/cmcc_rax3000me
   ARTIFACT/nand-ddr3-bl31-uboot.fip := mt7981-bl31-uboot cmcc_rax3000me-nand-ddr3
   ARTIFACT/nand-ddr4-preloader.bin := mt7981-bl2 spim-nand-ddr4
   ARTIFACT/nand-ddr4-bl31-uboot.fip := mt7981-bl31-uboot cmcc_rax3000me-nand-ddr4
+  DEVICE_PACKAGES := $(DEVICE_PACKAGES_NO_USB)
 endef
 TARGET_DEVICES += cmcc_rax3000me
 
@@ -742,6 +745,7 @@ define Device/creatlentem_clt-r30b1-common
   BLOCKSIZE := 128k
   PAGESIZE := 2048
   KERNEL_IN_UBI := 1
+  DEVICE_PACKAGES := $(DEVICE_PACKAGES_NO_USB)
 endef
 
 define Device/creatlentem_clt-r30b1-112m
@@ -803,7 +807,7 @@ define Device/cmcc_xr30-nand
   DEVICE_VARIANT := (U-Boot mod)
   DEVICE_DTS := mt7981b-cmcc-xr30-nand
   DEVICE_DTS_DIR := ../dts
-  DEVICE_PACKAGES := kmod-mt7981-firmware mt7981-wo-firmware kmod-usb3
+  DEVICE_PACKAGES := $(DEVICE_PACKAGES_NO_USB)
   UBINIZE_OPTS := -E 5
   BLOCKSIZE := 128k
   PAGESIZE := 2048
@@ -1259,7 +1263,7 @@ define Device/h3c_magic-nx30-pro
         fit lzma $$(KDIR)/image-$$(firstword $$(DEVICE_DTS)).dtb with-initrd | pad-to 64k
   IMAGE/sysupgrade.itb := append-kernel | \
         fit gzip $$(KDIR)/image-$$(firstword $$(DEVICE_DTS)).dtb external-static-with-rootfs | append-metadata
-  DEVICE_PACKAGES := kmod-mt7915e kmod-mt7981-firmware mt7981-wo-firmware
+  DEVICE_PACKAGES := $(DEVICE_PACKAGES_NO_USB)
   ARTIFACTS := preloader.bin bl31-uboot.fip
   ARTIFACT/preloader.bin := mt7981-bl2 spim-nand-ddr3
   ARTIFACT/bl31-uboot.fip := mt7981-bl31-uboot h3c_magic-nx30-pro
@@ -1367,6 +1371,7 @@ define Device/imou_lc-hx3001
   ARTIFACTS := preloader.bin bl31-uboot.fip
   ARTIFACT/preloader.bin := mt7981-bl2 spim-nand-ddr3
   ARTIFACT/bl31-uboot.fip := mt7981-bl31-uboot imou_lc-hx3001
+  DEVICE_PACKAGES := $(DEVICE_PACKAGES_NO_USB)
 endef
 TARGET_DEVICES += imou_lc-hx3001
 
@@ -1378,6 +1383,7 @@ define Device/jcg_q30-pro
   BLOCKSIZE := 128k
   PAGESIZE := 2048
   IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
+  DEVICE_PACKAGES := $(DEVICE_PACKAGES_NO_USB)
 endef
 TARGET_DEVICES += jcg_q30-pro
 
@@ -1467,6 +1473,7 @@ define Device/konka_komi-a31
   ARTIFACT/emmc-bl31-uboot.fip := mt7981-bl31-uboot konka_komi-a31-emmc
   ARTIFACT/nor-preloader.bin := mt7981-bl2 nor-ddr3
   ARTIFACT/nor-bl31-uboot.fip := mt7981-bl31-uboot konka_komi-a31-nor
+  DEVICE_PACKAGES := $(DEVICE_PACKAGES_NO_USB)
 endef
 TARGET_DEVICES += konka_komi-a31
 
@@ -1489,6 +1496,7 @@ define Device/livinet_zr-3020
 	fit lzma $$(KDIR)/image-$$(firstword $$(DEVICE_DTS)).dtb
   KERNEL_INITRAMFS = kernel-bin | lzma | \
 	fit lzma $$(KDIR)/image-$$(firstword $$(DEVICE_DTS)).dtb with-initrd
+  DEVICE_PACKAGES := $(DEVICE_PACKAGES_NO_USB)
 endef
 TARGET_DEVICES += livinet_zr-3020
 
@@ -1958,6 +1966,7 @@ define Device/qihoo_360t7
   BLOCKSIZE := 128k
   PAGESIZE := 2048
   IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
+  DEVICE_PACKAGES := $(DEVICE_PACKAGES_NO_USB)
 endef
 TARGET_DEVICES += qihoo_360t7
 
@@ -2517,7 +2526,7 @@ define Device/xiaomi_mi-router-ax3000t
   UBINIZE_OPTS := -E 5
   BLOCKSIZE := 128k
   PAGESIZE := 2048
-  DEVICE_PACKAGES := kmod-mt7915e kmod-mt7981-firmware mt7981-wo-firmware
+  DEVICE_PACKAGES := $(DEVICE_PACKAGES_NO_USB)
 ifneq ($(CONFIG_TARGET_ROOTFS_INITRAMFS),)
   ARTIFACTS := initramfs-factory.ubi
   ARTIFACT/initramfs-factory.ubi := append-image-stage initramfs-kernel.bin | ubinize-kernel
@@ -2581,7 +2590,7 @@ define Device/xiaomi_mi-router-wr30u-stock
   UBINIZE_OPTS := -E 5
   BLOCKSIZE := 128k
   PAGESIZE := 2048
-  DEVICE_PACKAGES := kmod-mt7915e kmod-mt7981-firmware mt7981-wo-firmware
+  DEVICE_PACKAGES := $(DEVICE_PACKAGES_NO_USB)
 ifneq ($(CONFIG_TARGET_ROOTFS_INITRAMFS),)
   ARTIFACTS := initramfs-factory.ubi
   ARTIFACT/initramfs-factory.ubi := append-image-stage initramfs-kernel.bin | ubinize-kernel
@@ -2598,7 +2607,7 @@ define Device/xiaomi_mi-router-wr30u-ubootmod
   UBINIZE_OPTS := -E 5
   BLOCKSIZE := 128k
   PAGESIZE := 2048
-  DEVICE_PACKAGES := kmod-mt7915e kmod-mt7981-firmware mt7981-wo-firmware
+  DEVICE_PACKAGES := $(DEVICE_PACKAGES_NO_USB)
 ifneq ($(CONFIG_TARGET_ROOTFS_INITRAMFS),)
   ARTIFACTS := initramfs-factory.ubi
   ARTIFACT/initramfs-factory.ubi := append-image-stage initramfs-kernel.bin | ubinize-kernel
