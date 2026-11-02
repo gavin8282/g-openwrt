@@ -21,9 +21,10 @@ local methods = {
 				hasIPV6           = fs.access("/proc/net/ipv6_route"),
 				-- disable FLOWOFFLOADING for mt798x
 				hasFLOWOFFLOADING = false,
-				hasFASTCLASSIFIER = fs.access("/lib/modules/" .. (boardinfo.kernel or "") .. "/fast-classifier.ko"),
-				hasSHORTCUTFECM   = fs.access("/lib/modules/" .. (boardinfo.kernel or "") .. "/shortcut-fe-cm.ko"),
-				hasMEDIATEKHNAT   = fs.access("/sys/module/mtkhnat") or fs.stat("/sys/kernel/debug/hnat", "type") == "dir" or (sys.call("ls /lib/modules/*/mtkhnat.ko >/dev/null 2>&1") == 0),
+				hasFASTCLASSIFIER = fs.access("/lib/modules/" .. boardinfo.kernel .. "/fast-classifier.ko"),
+				hasSHORTCUTFECM   = fs.access("/lib/modules/" .. boardinfo.kernel .. "/shortcut-fe-cm.ko"),
+				hasMEDIATEKHNAT   = fs.access("/lib/modules/" .. boardinfo.kernel .. "/mtkhnat.ko"),
+				hasXTFULLCONENAT  = fs.access("/lib/modules/" .. boardinfo.kernel .. "/xt_FULLCONENAT.ko"),
 				hasTCPCCA         = readfile("/proc/sys/net/ipv4/tcp_available_congestion_control")
 			}
 			print(json.stringify(features))
@@ -39,24 +40,29 @@ local methods = {
 				fptype = "Fast classifier"
 			elseif fs.stat("/sys/module/shortcut_fe_cm", "type") == "dir" then
 				fptype = "Shortcut-FE CM"
-			elseif fs.stat("/sys/kernel/debug/hnat", "type") == "dir" or fs.access("/sys/module/mtkhnat") then
-				if not fs.access("/sys/kernel/debug/hnat") then
-					sys.call("mount | grep -q ' /sys/kernel/debug ' || mount -t debugfs none /sys/kernel/debug 2>/dev/null")
-				end
-				local hook = readfile("/sys/kernel/debug/hnat/hook_toggle")
-				if hook == "enabled" or hook == "1" then
-					local wireless_hnat = ""
-					if fs.access("/etc/wireless/mediatek") then
-						wireless_hnat = (sys.call("grep -sq 'WHNAT=1' /etc/wireless/mediatek/*.dat 2>/dev/null") ~= 0) and " / Wireless HNAT Disabled" or ""
-					end
-					fptype = "MediaTek HNAT" .. wireless_hnat
-				elseif hook == "disabled" or hook == "0" then
-					fptype = "MediaTek HNAT / Ethernet HNAT Disabled"
-				elseif fs.access("/sys/module/mtkhnat") then
-					fptype = "MediaTek HNAT"
+			elseif fs.stat("/sys/kernel/debug/hnat", "type") == "dir" then
+				local ethernet_hnat = readfile("/sys/kernel/debug/hnat/hook_toggle")
+				ethernet_hnat = (ethernet_hnat ~= "enabled") and " / Ethernet HNAT Disabled" or ""
+
+				local wireless_hnat = (sys.call("grep -q 'WHNAT=1' '/etc/wireless/mediatek/'*_card*.dat") ~= 0) and " / Wireless HNAT Disabled" or ""
+				if (ethernet_hnat == "") or (wireless_hnat == "") then
+					fptype = "MediaTek HNAT" .. ethernet_hnat .. wireless_hnat
 				end
 			end
 			print(json.stringify({ type = fptype }))
+		end
+	},
+	getFullConeStat = {
+		call = function()
+			local fctype
+			if fs.access("/sys/module/xt_FULLCONENAT/refcnt") and
+			(readfile("/sys/module/xt_FULLCONENAT/refcnt") or "0") ~= "0" then
+				fctype = "xt_FULLCONENAT"
+			elseif  fs.access("/proc/sys/net/netfilter/nf_conntrack_nat_mode") and
+				(readfile("/proc/sys/net/netfilter/nf_conntrack_nat_mode") or "0") ~= "0" then
+				fctype = "Boardcom Fullcone"
+			end
+			print(json.stringify({ type = fctype }))
 		end
 	},
 	getTCPCCAStat = {
@@ -74,35 +80,12 @@ local methods = {
 		
 			if fd then
 				for line in fd:lines() do
-					local ppe_num = line:match("PPE[ _][nN][uU][mM]%s*=%s*(%d+)")
-					if ppe_num then
-						ppe_stat["PPE_NUM"] = ppe_num
-					end
-					local idx, total, bind = line:match("PPE(%d+)%s*:%s*entry%s*num%s*=%s*(%d+)%s*,%s*BIND%s*state%s*num%s*=%s*(%d+)")
-					if idx and total and bind then
-						ppe_stat["ALL_PPE" .. idx] = total
-						ppe_stat["BIND_PPE" .. idx] = bind
-					end
 					local i = string.find(line, "=")
 					if i then
-						local k = string.gsub(string.sub(line, 1, i - 1), "%s+", "")
-						local v = string.gsub(string.sub(line, i + 1), "%s+", "")
-						if k == "PPEnum" or k == "PPE_NUM" then
-							ppe_stat["PPE_NUM"] = v
-						elseif not ppe_stat[k] then
-							ppe_stat[k] = v
-						end
+						ppe_stat[string.sub(line,1,i-1)] = string.sub(line,i+1)
 					end
 				end
 				fd:close()
-			end
-
-			-- Pure physical hardware GMAC detection (no model hardcoding):
-			-- Dual GMAC devices (e.g. RAX3000M, NX30 Pro) register both eth0 and eth1 hardware netdevices.
-			-- Single GMAC devices (e.g. CT3003, CLT-R30B1, 360T7, AX3000T) only have eth0 hardware.
-			local is_dual_gmac = fs.access("/sys/class/net/eth1/device")
-			if not is_dual_gmac then
-				ppe_stat["PPE_NUM"] = 1
 			end
 
 			print(json.stringify(ppe_stat))
