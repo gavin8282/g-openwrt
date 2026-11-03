@@ -65,8 +65,7 @@ detect_mtwifi() {
 					set wireless.default_${dev}.ieee80211r=0
 EOF
 				uci -q commit wireless
-			}
-		done
-	fi
-}
+			done
+		fi
+	}
 

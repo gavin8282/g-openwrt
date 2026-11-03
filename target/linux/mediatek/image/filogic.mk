@@ -2,7 +2,7 @@ DEVICE_PACKAGES_NO_USB := -automount -block-mount -e2fsprogs \
 	-kmod-fs-ext4 -kmod-fs-vfat -kmod-fs-exfat -kmod-fs-ntfs3 \
 	-kmod-usb-core -kmod-usb2 -kmod-usb3 -kmod-usb-ehci \
 	-kmod-usb-storage -kmod-usb-storage-extras -kmod-usb-storage-uas \
-	-kmod-usb-xhci-hcd -kmod-usb-xhci-mtk -f2fsck -mkf2fs
+	-kmod-usb-xhci-hcd -kmod-usb-xhci-mtk -f2fsck -mkf2fs -fdisk -usbutils
 
 DTS_DIR := $(DTS_DIR)/mediatek
 
