@@ -1048,6 +1048,9 @@ return view.extend({
 					{
 						o = ss.taboption('advanced', form.Flag, 'whnat', _('Wireless HWNAT'));
 						o.default = o.enabled;
+
+						o = ss.taboption('advanced', form.Flag, 'bandsteering', _('Band Steering'));
+						o.default = o.disabled;
 	
 						o = ss.taboption('advanced', form.Value, 'beacon_int', _('Beacon Interval'));
 						o.optional = true;
@@ -1319,6 +1322,14 @@ return view.extend({
 					o.default = o.enabled;
 					o.depends('mode', 'ap');
 
+					o = ss.taboption('advanced', form.Flag, 'ieee80211v', _('802.11v'), _('Enables 802.11v BSS Transition Management for fast roaming'));
+					o.default = o.enabled;
+					o.depends('mode', 'ap');
+
+					o = ss.taboption('advanced', form.Flag, 'ieee80211r', _('802.11r'), _('only supports mt_wifi driver'));
+					o.default = o.disabled;
+					o.depends('mode', 'ap');
+
 					o = ss.taboption('advanced', form.Value, 'wpa_group_rekey', _('Time interval for rekeying GTK'), _('sec'));
 					o.optional    = true;
 					o.placeholder = 3600;
@@ -1329,6 +1340,18 @@ return view.extend({
 					o.optional    = true;
 					o.placeholder = 0;
 					o.datatype = 'range(-100,0)';
+					o.depends('mode', 'ap');
+
+					o = ss.taboption('advanced', form.Value, 'steeringthresold', _('802.11V roam steering threshold'), _('dBm'));
+					o.optional    = true;
+					o.placeholder = 0;
+					o.datatype = 'range(-100,0)';
+					o.depends('mode', 'ap');
+
+					o = ss.taboption('advanced', form.DynamicList, 'steeringbssid', _('802.11V roam target bssid'), _('MAC-List'));
+					o.datatype = 'macaddr';
+					o.optional    = true;
+					o.placeholder = 0;
 					o.depends('mode', 'ap');
 
 					o = ss.taboption('advanced', form.Value, 'assocthres', _('Station associate threshold'), _('dBm'));
@@ -1355,11 +1378,11 @@ return view.extend({
 
 					o = ss.taboption('advanced', form.Flag, 'mumimo_dl', _('MU-MIMO DL'));
 					o.depends('mode', 'ap');
-					o.default = o.disabled;
+					o.default = o.enabled;
 
 					o = ss.taboption('advanced', form.Flag, 'mumimo_ul', _('MU-MIMO UL'));
 					o.depends('mode', 'ap');
-					o.default = o.disabled;
+					o.default = o.enabled;
 
 					o = ss.taboption('advanced', form.Flag, 'ofdma_dl', _('OFDMA DL'));
 					o.depends('mode', 'ap');

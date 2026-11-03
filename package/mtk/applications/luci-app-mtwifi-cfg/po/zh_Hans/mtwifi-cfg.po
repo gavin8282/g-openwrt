@@ -34,6 +34,30 @@ msgstr "弱信号接入阈值"
 msgid "Wireless HWNAT"
 msgstr "无线硬件加速"
 
+msgid "Band Steering"
+msgstr "引导已连接的强信号双频2.4G设备至5G频段"
+
+msgid "802.11v"
+msgstr "802.11v (BSS 转换)"
+
+msgid "802.11r"
+msgstr "802.11r 快速漫游"
+
+msgid "802.11V roam steering threshold"
+msgstr "802.11V漫游引导阈值"
+
+msgid "802.11V roam target bssid"
+msgstr "802.11V漫游引导目标BSSID"
+
+msgid "only supports mt_wifi driver"
+msgstr "仅支持MTK闭源驱动，漫游域相关参数自动生成无需设置.确认路由器自身lan ip均在同一网段"
+
+msgid "Enables 802.11v BSS Transition Management for fast roaming"
+msgstr "启用 802.11v BSS 转换管理，协助路由器引导终端切换至最佳频段与节点"
+
+msgid "Enables The 802.11k standard provides information to discover the best available access point"
+msgstr "启用 802.11k 协议，向无线终端提供周边最佳 AP 列表，加速漫游扫描"
+
 msgid "Wireless configuration error"
 msgstr "无线网络设置错误"
 

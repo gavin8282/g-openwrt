@@ -26,15 +26,15 @@ detect_mtwifi() {
 				if [ "$band" = "2g" ]; then
 					htmode="HE40"
 					htbsscoex="1"
-					ssid="ImmortalWrt-2.4G"
+					ssid="OpenWrt-2.4G"
 				elif [ "$band" = "5g" ]; then
 					htmode="HE160"
 					htbsscoex="0"
-					ssid="ImmortalWrt-5G"
+					ssid="OpenWrt-5G"
 				elif [ "$band" = "6g" ]; then
 					htmode="HE160"
 					htbsscoex="0"
-					ssid="ImmortalWrt-6G"
+					ssid="OpenWrt-6G"
 				fi
 
 				uci -q batch <<-EOF
@@ -50,6 +50,7 @@ detect_mtwifi() {
 					set wireless.${dev}.mu_beamformer=1
 					set wireless.${dev}.noscan=${htbsscoex}
 					set wireless.${dev}.serialize=1
+					set wireless.${dev}.bandsteering=0
 
 					set wireless.default_${dev}=wifi-iface
 					set wireless.default_${dev}.device=${dev}
@@ -57,6 +58,13 @@ detect_mtwifi() {
 					set wireless.default_${dev}.mode=ap
 					set wireless.default_${dev}.ssid=${ssid}
 					set wireless.default_${dev}.encryption=none
+					set wireless.default_${dev}.ieee80211k=1
+					set wireless.default_${dev}.ieee80211v=1
+					set wireless.default_${dev}.ieee80211r=0
+					set wireless.default_${dev}.mumimo_dl=1
+					set wireless.default_${dev}.mumimo_ul=1
+					set wireless.default_${dev}.ofdma_dl=1
+					set wireless.default_${dev}.ofdma_ul=1
 EOF
 				uci -q commit wireless
 			}
