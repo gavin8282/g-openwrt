@@ -264,7 +264,7 @@ Signed-off-by: chasey-dev <ellenyoung0912@gmail.com>
  
 --- /dev/null
 +++ b/drivers/net/wireless/wifi_utility/mt_wifi_of.c
-@@ -0,0 +1,374 @@
+@@ -0,0 +1,383 @@
 +#include <linux/err.h>
 +#include <linux/kernel.h>
 +#include <linux/nvmem-consumer.h>
