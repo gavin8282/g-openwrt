@@ -84,6 +84,7 @@ define prepare_rootfs
 			IPKG_POSTINST_PATH=./usr/lib/opkg/info/*.postinst; \
 		fi; \
 		for script in $$IPKG_POSTINST_PATH; do \
+			[ -f "$$script" ] || continue; \
 			IPKG_INSTROOT=$(1) $$(command -v bash) $$script; \
 			ret=$$?; \
 			if [ $$ret -ne 0 ]; then \
