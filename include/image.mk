@@ -361,6 +361,7 @@ mkfs_cur_target_dir = $(call mkfs_target_dir,pkg=$(target_params))
 
 opkg_target = \
 	$(call opkg,$(mkfs_cur_target_dir)) \
+		--force-depends \
 		-f $(mkfs_cur_target_dir).conf
 
 apk_target = \
