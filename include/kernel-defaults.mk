@@ -213,7 +213,9 @@ define Kernel/CompileImage/Initramfs
 			}, gen-cpio$(2)); \
 			$(if $(2),,$(KERNEL_MAKE) $(KERNEL_MAKEOPTS_IMAGE) $(if $(KERNELNAME),$(KERNELNAME),all);),\
 			$(KERNEL_MAKE) $(if $(2),-C $(LINUX_DIR)$(2)) $(KERNEL_MAKEOPTS_IMAGE) $(if $(KERNELNAME),$(KERNELNAME),all);) \
-		$(call Kernel/CopyImage,-initramfs,$(2)); \
+		$(if $(and $(CONFIG_TARGET_ROOTFS_INITRAMFS_SEPARATE),$(2)), \
+			$(CP) $(KERNEL_BUILD_DIR)/$(KERNEL_NAME)-initramfs $(KERNEL_BUILD_DIR)/$(KERNEL_NAME)-initramfs$(2); $(CP) $(LINUX_KERNEL) $(LINUX_KERNEL)-initramfs$(2);, \
+			$(call Kernel/CopyImage,-initramfs,$(2));) \
 		$(if $(2),rm -rf $(LINUX_DIR)$(2);) \
 	}, gen-initramfs$(2));
 endef
