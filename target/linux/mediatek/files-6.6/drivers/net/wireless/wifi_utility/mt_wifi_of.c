@@ -52,9 +52,12 @@ static int __mt_of_copy_eeprom(const void *data, size_t size, loff_t from,
 
 	from = __mt_of_normalize_offset(from, base);
 	if (from < 0 || from >= (loff_t)size)
-		return 0;
+		return -ENODATA;
 
 	copy = min_t(size_t, len, size - (size_t)from);
+	if (!copy)
+		return -ENODATA;
+
 	memcpy(buf, (const u8 *)data + (size_t)from, copy);
 
 	return 0;
@@ -84,11 +87,13 @@ static int __mt_of_copy_cell(const void *data, size_t size, loff_t from,
 		return -EINVAL;
 
 	if (req_end <= cell || cell_end <= req)
-		return 0;
+		return -ENODATA;
 
 	start = max(req, cell);
 	end = min(req_end, cell_end);
 	copy = (size_t)(end - start);
+	if (!copy)
+		return -ENODATA;
 
 	memcpy(buf + (size_t)(start - req),
 	       (const u8 *)data + (size_t)(start - cell), copy);
@@ -261,11 +266,15 @@ static int __mt_of_read_nvmem_cell(struct device_node *np, const char *name,
 		goto out_free;
 
 	ret = __mt_of_copy_cell(data, size, from, base, len, buf, &copied);
-	if (!ret)
-		pr_info("%pOF: read nvmem cell %s base=0x%llx size=0x%zx "
-			"from=0x%llx len=0x%zx copied=0x%zx\n",
-			np, name, (unsigned long long)base, size,
-			(unsigned long long)from, len, copied);
+	if (ret || !copied) {
+		ret = ret ? ret : -ENODATA;
+		goto out_free;
+	}
+
+	pr_info("%pOF: read nvmem cell %s base=0x%llx size=0x%zx "
+		"from=0x%llx len=0x%zx copied=0x%zx\n",
+		np, name, (unsigned long long)base, size,
+		(unsigned long long)from, len, copied);
 
 out_free:
 	kfree(data);

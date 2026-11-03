@@ -5,7 +5,7 @@
 #include <dt-bindings/input/input.h>
 #include <dt-bindings/leds/common.h>
 
-#include "mt7981.dtsi"
+#include "mt7981b.dtsi"
 
 / {
 	aliases {
@@ -21,8 +21,9 @@
 		stdout-path = "serial0:115200n8";
 	};
 
-	memory {
+	memory@40000000 {
 		reg = <0 0x40000000 0 0x10000000>;
+		device_type = "memory";
 	};
 
 	gpio-keys {
@@ -138,19 +139,9 @@
 				};
 			};
 
-			partition@280000 {
+			factory: partition@280000 {
 				label = "Factory";
 				reg = <0x280000 0x100000>;
-
-				nvmem-layout {
-					compatible = "fixed-layout";
-					#address-cells = <1>;
-					#size-cells = <1>;
-
-					eeprom_factory_0: eeprom@0 {
-						reg = <0x0 0x1000>;
-					};
-				};
 			};
 
 			partition@380000 {
@@ -235,8 +226,7 @@
 &wifi {
 	#address-cells = <1>;
 	#size-cells = <0>;
-	nvmem-cells = <&eeprom_factory_0>;
-	nvmem-cell-names = "eeprom";
+	mediatek,mtd-eeprom = <&factory 0x0>;
 	status = "okay";
 
 	band@0 {
