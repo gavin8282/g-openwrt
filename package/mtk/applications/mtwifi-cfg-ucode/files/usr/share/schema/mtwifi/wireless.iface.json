@@ -92,6 +92,23 @@
             "type": "boolean",
             "description": "Enable 802.11k support"
         },
+        "ieee80211v": {
+            "type": "boolean",
+            "description": "Enable 802.11v support"
+        },
+        "ieee80211r": {
+            "type": "boolean",
+            "description": "Enable 802.11r support"
+        },
+        "steeringthresold": {
+            "type": "integer",
+            "description": "802.11v roam steering threshold"
+        },
+        "steeringbssid": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "802.11v roam target bssid list"
+        },
         "mumimo_dl": {
             "type": "boolean",
             "description": "Enable MU-MIMO DL"

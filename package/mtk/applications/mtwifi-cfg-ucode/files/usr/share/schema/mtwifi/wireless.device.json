@@ -47,6 +47,10 @@
             "type": "boolean",
             "description": "Enable WHNAT (Hardware NAT for WiFi)"
         },
+        "bandsteering": {
+            "type": "boolean",
+            "description": "Enable Band Steering"
+        },
         "country": {
             "type": "string",
             "description": "Country code (e.g., CN, US)"

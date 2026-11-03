@@ -44,11 +44,11 @@ let all_devnames = l1.list();
 // helper to set default settings by band
 function get_band_defaults(band) {
     if (band == "2g") {
-        return { htmode: "HE40", htbsscoex: 1, ssid: "ImmortalWrt-2.4G" };
+        return { htmode: "HE40", htbsscoex: 1, ssid: "OpenWrt-2.4G" };
     } else if (band == "5g") {
-        return { htmode: "HE160", htbsscoex: 0, ssid: "ImmortalWrt-5G" };
+        return { htmode: "HE160", htbsscoex: 0, ssid: "OpenWrt-5G" };
     } else {
-        return { htmode: "HE160", htbsscoex: 0, ssid: "ImmortalWrt-6G" };
+        return { htmode: "HE160", htbsscoex: 0, ssid: "OpenWrt-6G" };
     }
 }
 
@@ -97,7 +97,8 @@ for (let devname in all_devnames) {
         "country": "CN",
         "mu_beamformer": 1,
         "noscan": defs.htbsscoex,
-        "serialize": 1
+        "serialize": 1,
+        "bandsteering": 0
     });
 
     // create wifi-iface node
@@ -110,7 +111,14 @@ for (let devname in all_devnames) {
         "network": "lan",
         "mode": "ap",
         "ssid": defs.ssid,
-        "encryption": "none"
+        "encryption": "none",
+        "ieee80211k": 1,
+        "ieee80211v": 1,
+        "ieee80211r": 0,
+        "mumimo_dl": 1,
+        "mumimo_ul": 1,
+        "ofdma_dl": 1,
+        "ofdma_ul": 1
     });
 
     need_commit = true;
