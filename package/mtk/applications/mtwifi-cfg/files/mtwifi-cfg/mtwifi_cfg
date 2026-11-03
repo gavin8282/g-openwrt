@@ -196,8 +196,6 @@ end
 function mtwifi_up(devname, cfg, restore_vifs, is_dbdc)
     nixio.syslog("info", "mtwifi-cfg: start "..devname)
     local dev = l1dat.devname_ridx[devname]
-    local dbdc_main_ifname = defs.dbdc_init_ifname
-
     if not dev then return end
 
     if is_dbdc then
@@ -241,7 +239,6 @@ function mtwifi_up(devname, cfg, restore_vifs, is_dbdc)
 
     mtwifi_cfg_foreach_vif(cfg, "ap", start_vif)
     mtwifi_cfg_foreach_vif(cfg, "sta", start_vif)
-    os.execute("startwapp.sh")
 end
 
 function mtwifi_down(devname, cfg)
@@ -260,7 +257,6 @@ function mtwifi_down(devname, cfg)
             end
         end
     end
-    os.execute("startwapp.sh")
     return reset_vifs
 end
 
@@ -336,8 +332,8 @@ function set_chip_cfg(cfg, dats)
     -- setup other dev cfg
     for k,v in pairs(l1dat.devname_ridx) do
         if k ~= cfg.device and 
-        v.INDEX == l1dat.devname_ridx[cfg.device].INDEX and
-        v.mainidx == l1dat.devname_ridx[cfg.device].mainidx then
+        v.INDEX == l1dat.devname_ridx[cfg.device].INDEX and 
+        v.mainidx == l1dat.devname_ridx[cfg.device].mainidx then        
             dev_dats = load_profile(v.profile_path)
             if dev_dats then
                 for _,j in pairs(defs.chip_cfgs) do
@@ -396,7 +392,6 @@ function mtwifi_cfg_setup(argv)
     end
 
     local WirelessMode
-    local ax_feature = false
 
     if cfg.config.band == "2g" then
         WirelessMode = 9 -- PHY_11BGN_MIXED
@@ -563,7 +558,6 @@ function mtwifi_cfg_setup(argv)
             set_dat(dats, apidx, "HideSSID", v.config.hidden)
             set_dat(dats, apidx, "WmmCapable", v.config.wmm)
             set_dat(dats, apidx, "RRMEnable", v.config.ieee80211k)
-            set_dat(dats, apidx, "FtSupport", v.config.ieee80211r)
             set_dat(dats, apidx, "RekeyInterval", v.config.wpa_group_rekey)
             set_dat(dats, apidx, "MuMimoDlEnable", v.config.mumimo_dl)
             set_dat(dats, apidx, "MuMimoUlEnable", v.config.mumimo_ul)

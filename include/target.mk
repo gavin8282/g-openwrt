@@ -37,6 +37,8 @@ endif
 DEFAULT_PACKAGES.basic:=
 # For nas targets
 DEFAULT_PACKAGES.nas:=\
+	block-mount \
+	fdisk \
 	lsblk \
 	mdadm
 # For router targets
@@ -55,6 +57,7 @@ DEFAULT_PACKAGES.tweak:=\
 	kmod-nf-nathelper \
 	kmod-nf-nathelper-extra \
 	luci \
+	luci-app-filetransfer \
 	luci-compat \
 	luci-lib-base \
 	luci-lib-fs \

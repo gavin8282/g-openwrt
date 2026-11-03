@@ -1,0 +1,34 @@
+--- a/mt_wifi/chips/mt7981.c
++++ b/mt_wifi/chips/mt7981.c
+@@ -880,7 +880,13 @@ static VOID cal_free_data_get(RTMP_ADAPT
+ 
+ 	/* A-Die version */
+ 	cal_free_data_get_from_addr(ad, 0x9a0);
+-	kfree_def = &adie_def[ad->EEPROMImage[0x9a0]-1];
++	if (ad->EEPROMImage[0x9a0] == 0 || ad->EEPROMImage[0x9a0] > ARRAY_SIZE(adie_def)) {
++		MTWF_DBG(ad, DBG_CAT_HW, DBG_SUBCAT_ALL, DBG_LVL_WARN,
++			"Unknown or invalid iCal A-die version=%d, skip cal_free_data_get\n",
++			ad->EEPROMImage[0x9a0]);
++		return;
++	}
++	kfree_def = &adie_def[ad->EEPROMImage[0x9a0]-1];
+ 	kfree_cnt = kfree_def->count;
+ 	for (loop = 0; loop < kfree_cnt; loop++) {
+ 		cal_free_data_get_from_addr(ad, kfree_def->offsets[loop]);
+--- a/mt_wifi/chips/mt7916.c
++++ b/mt_wifi/chips/mt7916.c
+@@ -1014,7 +1014,13 @@ static VOID cal_free_data_get(RTMP_ADAPT
+ 
+ 	/* A-Die version */
+ 	cal_free_data_get_from_addr(ad, 0x9a0);
+-	kfree_def = &adie_def[ad->EEPROMImage[0x9a0]-1];
++	if (ad->EEPROMImage[0x9a0] == 0 || ad->EEPROMImage[0x9a0] > ARRAY_SIZE(adie_def)) {
++		MTWF_DBG(ad, DBG_CAT_HW, DBG_SUBCAT_ALL, DBG_LVL_WARN,
++			"Unknown or invalid iCal A-die version=%d, skip cal_free_data_get\n",
++			ad->EEPROMImage[0x9a0]);
++		return;
++	}
++	kfree_def = &adie_def[ad->EEPROMImage[0x9a0]-1];
+ 	kfree_cnt = kfree_def->count;
+ 	for (loop = 0; loop < kfree_cnt; loop++) {
+ 		cal_free_data_get_from_addr(ad, kfree_def->offsets[loop]);

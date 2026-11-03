@@ -15,7 +15,6 @@ KERNEL_TESTING_PATCHVER:=5.4
 include $(INCLUDE_DIR)/target.mk
 
 DEFAULT_PACKAGES += uboot-envtools kmod-gpio-button-hotplug \
-htop ca-bundle wget block-mount e2fsprogs cfdisk kmod-usb-storage-extras kmod-fs-ext4 \
-luci-app-advanced-reboot luci-app-vlmcsd luci-app-upnp autocore-arm
+	autocore-arm
 
 $(eval $(call BuildTarget))
