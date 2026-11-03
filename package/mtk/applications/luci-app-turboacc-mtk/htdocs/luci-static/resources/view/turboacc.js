@@ -20,12 +20,6 @@ var getFastPathStat = rpc.declare({
 	expect: { '': {} }
 });
 
-var getFullConeStat = rpc.declare({
-	object: 'luci.turboacc',
-	method: 'getFullConeStat',
-	expect: { '': {} }
-});
-
 var getTCPCCAStat = rpc.declare({
 	object: 'luci.turboacc',
 	method: 'getTCPCCAStat',
@@ -41,7 +35,6 @@ var getMTKPPEStat = rpc.declare({
 function getServiceStatus() {
 	return Promise.all([
 		L.resolveDefault(getFastPathStat(), {}),
-		L.resolveDefault(getFullConeStat(), {}),
 		L.resolveDefault(getTCPCCAStat(), {})
 	]);
 }
@@ -106,7 +99,7 @@ return view.extend({
 			poll.add(function () {
 				return L.resolveDefault(getServiceStatus()).then(function (res) {
 					var stats = renderStatus(res);
-					var tds = [ 'fastpath_state', 'fullcone_state', 'tcpcca_state' ];
+					var tds = [ 'fastpath_state', 'tcpcca_state' ];
 					for (var i in tds) {
 						var view = document.getElementById(tds[i]);
 						view.innerHTML = stats[i];
@@ -120,10 +113,6 @@ return view.extend({
 					E('td', { 'id': 'fastpath_state' }, E('em', {}, _('Collecting data...')))
 				]),
 				E('tr', {}, [
-					E('td', { 'width': '33%' }, _('Full Cone NAT')),
-					E('td', { 'id': 'fullcone_state' }, E('em', {}, _('Collecting data...')))
-				]),
-				E('tr', {}, [
 					E('td', { 'width': '33%' }, _('TCP CCA')),
 					E('td', { 'id': 'tcpcca_state' }, E('em', {}, _('Collecting data...')))
 				])
@@ -135,8 +124,9 @@ return view.extend({
 						var ppe_num = parseInt(res[0].PPE_NUM);
 						for (var i=0; i<ppe_num; i++) {
 							var ppe_bar = document.getElementById(`ppe${i}_entry`);
-							ppe_bar.innerHTML = E('td', {},
-							progressbar(res[0][`BIND_PPE${i}`], res[0][`ALL_PPE${i}`])).innerHTML;
+							if (ppe_bar)
+								ppe_bar.innerHTML = E('td', {},
+								progressbar(res[0][`BIND_PPE${i}`], res[0][`ALL_PPE${i}`])).innerHTML;
 						}
 					});
 				}, 3);
@@ -218,33 +208,13 @@ return view.extend({
 		o.default = o.enabled;
 		o.rmempty = false;
 		o.depends('fastpath_mh_eth_hnat', '1');
-		
-		o = s.option(form.Value, 'fastpath_mh_eth_hnat_ap', _('Enable AP Mode'),
-			_('Fill in ip to enable AP Mode(reboot needed)'));
-		o.optional = true;
-		o.depends('fastpath_mh_eth_hnat', '1');
-		
+
 		o = s.option(form.Value, 'fastpath_mh_eth_hnat_bind_rate', _('HNAT bind rate threshold (pps)'),
 			_('The smaller the threshold, the easier it is for the connection to be accelerated.'));
 		o.optional = true;
 		o.datatype = 'range(1,30)';
 		o.placeholder = 30;
 		o.depends('fastpath_mh_eth_hnat', '1');
-
-		o = s.option(form.ListValue, 'fastpath_mh_eth_hnat_ppenum', _('Number of HNAT PPE'),
-			_('Apply this setting after reboot.'));
-		o.rmempty = false;
-		o.value(1);
-		o.value(2);
-		o.default = 2;
-		o.depends('fastpath_mh_eth_hnat', '1');
-
-		o = s.option(form.ListValue, 'fullcone', _('Full cone NAT'),
-			_('Full cone NAT (NAT1) can improve gaming performance effectively.'));
-		o.value('0', _('Disable'))
-		o.value('2', _('Boardcom_FULLCONE_NAT'));
-		o.default = '0';
-		o.rmempty = false;
 
 		o = s.option(form.ListValue, 'tcpcca', _('TCP CCA'),
 			_('TCP congestion control algorithm.'));

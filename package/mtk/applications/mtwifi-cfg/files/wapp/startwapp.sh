@@ -32,7 +32,9 @@ log_i "startwapp.sh start"
 
 run_cmd sh -c "killall bs20 2>/dev/null || true"
 run_cmd sh -c "killall wapp 2>/dev/null || true"
-br0_mac=$(cat /sys/class/net/br-lan/address)
+br0_mac=$(cat /sys/class/net/br-lan/address 2>/dev/null)
+[ -z "$br0_mac" ] && br0_mac=$(cat /sys/class/net/eth0/address 2>/dev/null)
+[ -z "$br0_mac" ] && br0_mac="00:0c:43:79:81:00"
 ctrlr_al_mac=$br0_mac
 agent_al_mac=$br0_mac
 ra0=0
@@ -87,8 +89,8 @@ run_cmd sed -i "s/map_agent_alid=.*/map_agent_alid=${agent_al_mac}/g" /etc/map/1
     ra0=1
     fi
     
-    ra0_7981="$(uci_get_default wireless.default_MT7981_1_2.steeringthresold 0)"
-    ra0_7986="$(uci_get_default wireless.default_MT7986_1_2.steeringthresold 0)"
+    ra0_7981="$(uci_get_default wireless.default_MT7981_1_1.steeringthresold 0)"
+    ra0_7986="$(uci_get_default wireless.default_MT7986_1_1.steeringthresold 0)"
     if [ "$ra0_7981" -lt "0" ] || [ "$ra0_7986" -lt "0" ]; then
     ra0=1
     fi
@@ -97,7 +99,6 @@ run_cmd sed -i "s/map_agent_alid=.*/map_agent_alid=${agent_al_mac}/g" /etc/map/1
     ra0_7986="$(uci_get_default wireless.default_MT7986_1_1.disabled 0)"
     if [ "$ra0_7981" -eq "1" ] || [ "$ra0_7986" -eq "1" ]; then
     ra0=0
-    rax0=0
     fi
     
     rax0_7981="$(uci_get_default wireless.MT7981_1_2.ieee80211r 0)"

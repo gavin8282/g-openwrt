@@ -24,7 +24,7 @@ index 70dd8eb..0da39e7 100644
  #include "mtk_wed.h"
 +#include "mtk_eth_reset.h"
  
- #if defined(CONFIG_NET_MEDIASTK_HNAT) || defined(CONFIG_NET_MEDIASTK_HNAT_MODULE)
+ #if defined(CONFIG_NET_MEDIATEK_HNAT) || defined(CONFIG_NET_MEDIATEK_HNAT_MODULE)
  #include "mtk_hnat/nf_hnat_mtk.h"
 -- 
 2.45.2
