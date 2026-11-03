@@ -8,8 +8,10 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=datconf
-PKG_REVISION:=6bb733f7
+PKG_REVISION:=757f9679
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_REVISION).tar.bz2
+PKG_SOURCE_URL:=https://raw.githubusercontent.com/hanwckf/immortalwrt-mt798x/refs/heads/openwrt-21.02/dl
+PKG_HASH:=3cbb7489e3df1be52d184b600129a6081e7225981acdbcc5c2cb7149f11c37f1
 PKG_RELEASE:=1
 PKG_USE_NINJA:=0
 
@@ -50,6 +52,14 @@ define Package/datconf-lua
   TITLE:=Lua plugin for datconf
 endef
 
+define Package/ucode-mod-datconf
+  SECTION:=MTK Properties
+  CATEGORY:=MTK Properties
+  SUBMENU:=Applications
+  DEPENDS:=+datconf +libucode
+  TITLE:=ucode plugin for datconf
+endef
+
 TARGET_CFLAGS += -I$(STAGING_DIR)/usr/include
 TARGET_LDFLAGS += -L$(STAGING_DIR)/usr/lib
 
@@ -77,6 +87,11 @@ define Package/datconf-lua/install
 	$(CP) $(PKG_BUILD_DIR)/datconf/lua/datconf.so $(1)/usr/lib/lua/
 endef
 
+define Package/ucode-mod-datconf/install
+	$(INSTALL_DIR) $(1)/usr/lib/ucode
+	$(CP) $(PKG_BUILD_DIR)/datconf/ucode/datconf.so $(1)/usr/lib/ucode/
+endef
+
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/usr/include
 	$(CP) $(PKG_BUILD_DIR)/kvcutil/libkvcutil.h $(1)/usr/include
@@ -90,3 +105,4 @@ $(eval $(call BuildPackage,libkvcutil))
 $(eval $(call BuildPackage,kvcedit))
 $(eval $(call BuildPackage,datconf))
 $(eval $(call BuildPackage,datconf-lua))
+$(eval $(call BuildPackage,ucode-mod-datconf))

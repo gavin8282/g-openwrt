@@ -8,17 +8,15 @@ include $(INCLUDE_DIR)/kernel.mk
 
 PKG_NAME:=warp
 
-PKG_VERSION:=20221209-3e6ae1
-
-MT7981_NEW_WOFW_DIR := mt7981-fw-20231228
-MT7986_NEW_WOFW_DIR := mt7986-fw-20230808
+PKG_VERSION:=20250408
+PKG_SOURCE:=warp_20250408-5f71ec.tar.xz
+PKG_SOURCE_URL:=https://raw.githubusercontent.com/hanwckf/immortalwrt-mt798x/refs/heads/openwrt-21.02/dl
+PKG_HASH:=0954055e165dcb71cd2703f07b0c2d521ca3e9c8968d2b17b68e8c9a7853f9b2
 
 PKG_BUILD_DIR:=$(KERNEL_BUILD_DIR)/$(PKG_NAME)
 PKG_KCONFIG:= \
 	WARP_VERSION \
-	WARP_ATC_SUPPORT \
 	WARP_DBG_SUPPORT \
-	WARP_WDMA_RECYCLE_SUPPORT \
 	WED_HW_RRO_SUPPORT \
 	MTK_MEMORY_SHRINK \
 	WARP_CHIPSET \
@@ -45,14 +43,6 @@ define KernelPackage/warp/config
 	source "$(SOURCE)/config.in"
 endef
 
-
-ifeq ($(CONFIG_WARP_VERSION), 3)
-MTK_WIFI_DIR:=$(TOPDIR)/../ko_module/wlan_driver/logan
-else
-MTK_WIFI_DIR:=$(TOPDIR)/../ko_module/wlan_driver/jedi
-endif
-USE_BIN_DIR:=$(MTK_WIFI_DIR)/warp_driver/bin
-
 define Build/Compile
 	$(MAKE) -C "$(LINUX_DIR)" V=1 \
 		$(KERNEL_MAKE_FLAGS) \
@@ -73,17 +63,9 @@ MAKE_FLAGS += CONFIG_SUPPORT_OPENWRT=y
 define KernelPackage/warp/install
 	$(INSTALL_DIR) $(1)/lib/firmware
 	if [ "$$(CONFIG_WARP_CHIPSET)" = "mt7981" ]; then \
-		if [ "$$(CONFIG_WARP_NEW_FW)" = "y" ]; then \
-			cp ./files/$$(MT7981_NEW_WOFW_DIR)/7981*WOCPU*_RAM_CODE_release.bin $(1)/lib/firmware/; \
-		else \
-			cp $(PKG_BUILD_DIR)/bin/7981*WOCPU*_RAM_CODE_release.bin $(1)/lib/firmware/; \
-		fi; \
+		cp $(PKG_BUILD_DIR)/bin/7981*WOCPU*_RAM_CODE_release.bin $(1)/lib/firmware/; \
 	elif [ "$$(CONFIG_WARP_CHIPSET)" = "mt7986" ]; then \
-		if [ "$$(CONFIG_WARP_NEW_FW)" = "y" ]; then \
-			cp ./files/$$(MT7986_NEW_WOFW_DIR)/7986*WOCPU*_RAM_CODE_release.bin $(1)/lib/firmware/; \
-		else \
-			cp $(PKG_BUILD_DIR)/bin/7986*WOCPU*_RAM_CODE_release.bin $(1)/lib/firmware/; \
-		fi; \
+		cp $(PKG_BUILD_DIR)/bin/7986*WOCPU*_RAM_CODE_release.bin $(1)/lib/firmware/; \
 	fi
 endef
 
