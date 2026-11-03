@@ -358,9 +358,6 @@ if [ "$$(CONFIG_MTK_WIFI_FW_BIN_LOAD)" = "y" ]; then \
 		fi ; \
 	fi ; \
 	if [ "$$(CONFIG_MTK_CHIP_MT7981)" = "y" ] ; then \
-		$(INSTALL_BIN) ./files/mt7981-default-eeprom/MT7981_iPAiLNA_EEPROM.bin \
-		./files/mt7981-default-eeprom/e2p \
-		./files/mt7981-default-eeprom/MT7981_ePAeLNA_EEPROM.bin $(1)/lib/firmware/; \
 		if [ "$$(CONFIG_MTK_MT_WIFI_FIRMWARE_PATH_MT7981)" != "" ]; then \
 			$(INSTALL_BIN) ./files/$$(CONFIG_MTK_MT_WIFI_FIRMWARE_PATH_MT7981)/* $(1)/lib/firmware/; \
 		else \

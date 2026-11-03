@@ -35,7 +35,7 @@ endef
 
 define Package/mtwifi-cfg-ucode
   $(call Package/mtwifi-cfg-ucode/Default)
-  DEPENDS:=$(UCODE_DEPENDS) +wifi-scripts +ucode-mod-iwinfo
+  DEPENDS:=$(UCODE_DEPENDS) +wifi-scripts +iwinfo-ucode
 endef
 
 define Build/Prepare

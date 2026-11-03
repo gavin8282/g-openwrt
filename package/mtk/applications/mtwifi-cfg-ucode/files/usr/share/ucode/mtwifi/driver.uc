@@ -126,6 +126,11 @@ const DRIVERS = ["mtk_warp_proxy", "mtk_warp", "mt_wifi"];
 // check if drivers were installed as modules
 export function is_kmod() {
 	if (!fs.access(`/sys/module/mt_wifi`)) {
+		system(`modprobe mt_wifi 2>/dev/null`);
+		sleep(500);
+	}
+
+	if (!fs.access(`/sys/module/mt_wifi`)) {
 		log.error(`[Driver] mt_wifi is buit-in. Install as kmod(s)!!`);
 		return false;
 	}
