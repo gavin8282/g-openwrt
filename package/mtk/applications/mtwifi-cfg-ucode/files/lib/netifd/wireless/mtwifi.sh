@@ -234,13 +234,24 @@ function handle_setup(data) {
             // NOTE: shell script checked config.disabled before wireless_add_vif
             if (!config.disabled) {
                 // if previous ifaces were disabled, netifd idx may mismatch with UCI index
-                log.info(`[Setup] Add interface: ${idx} -> ${calc_ifname} (mode: ${mode}, netifd idx: ${netifd_idx.get()})`);
-                // here set vif with real netifd idx
+                log.info(`[Setup] Add interface: ${idx} (${iface_data.name}) -> ${calc_ifname} (mode: ${mode}, netifd idx: ${netifd_idx.get()})`);
+                if (iface_data.name) {
+                    netifd.set_vif(iface_data.name, calc_ifname);
+                }
                 netifd.set_vif(netifd_idx.get(), calc_ifname);
                 // increase the netifd idx
                 netifd_idx.increase();
             } else {
                 log.info(`[Setup] Skipped disabled interface: ${calc_ifname}`);
+            }
+
+            // ensure UCI config has ifname set for iwinfo / LuCI resolution
+            if (iface_data.name && cursor) {
+                let cur_ifname = cursor.get("wireless", iface_data.name, "ifname");
+                if (!cur_ifname) {
+                    cursor.set("wireless", iface_data.name, "ifname", calc_ifname);
+                    cursor.commit("wireless");
+                }
             }
         }
     }
