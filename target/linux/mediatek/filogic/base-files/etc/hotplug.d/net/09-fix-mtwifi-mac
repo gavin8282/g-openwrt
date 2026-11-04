@@ -8,8 +8,11 @@ set_macs_to_dat()
     local b0_mac="$1"
     local b1_mac="$2"
 
-    local b0_dat="$(l1util if2dat ra0)"
-    local b1_dat="$(l1util if2dat rax0)"
+    local b0_dat="$(l1util if2dat ra0 2>/dev/null)"
+    local b1_dat="$(l1util if2dat rax0 2>/dev/null)"
+
+    [ -z "$b0_dat" -o ! -f "$b0_dat" ] && b0_dat="/etc/wireless/mediatek/mt7981.dbdc.b0.dat"
+    [ -z "$b1_dat" -o ! -f "$b1_dat" ] && b1_dat="/etc/wireless/mediatek/mt7981.dbdc.b1.dat"
 
     if [ -f "$b0_dat" ]; then
         local mac="$(sed -n 's/^MacAddress=//p' "$b0_dat")"
@@ -40,6 +43,19 @@ mtwifi_set_macs()
 
         set_macs_to_dat "$b0_mac" "$b1_mac"
 		;;
+    cetron,ct3003|\
+    cetron,ct3003-112m|\
+    cetron,ct3003-ubootmod)
+        local base_mac="$(mtd_get_mac_ascii art MAC_ADDRESS)"
+        [ -z "$base_mac" ] && base_mac="$(mtd_get_mac_ascii art mac)"
+        [ -z "$base_mac" ] && base_mac="$(mtd_get_mac_ascii u-boot-env ethaddr)"
+        [ -z "$base_mac" ] && base_mac="$(mtd_get_mac_ascii u-boot-env mac)"
+        [ -z "$base_mac" ] && base_mac="$(mtd_get_mac_binary Factory 0x4)"
+        local b0_mac="$(macaddr_add $base_mac 1)"
+        local b1_mac="$(macaddr_add $base_mac 2)"
+
+        set_macs_to_dat "$b0_mac" "$b1_mac"
+        ;;
     clx,s20l|\
     clx,s20p)
         local b0_mac="$(mmc_get_mac_binary factory 0x4)"

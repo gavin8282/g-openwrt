@@ -10,7 +10,6 @@
 / {
 	aliases {
 		serial0 = &uart0;
-		label-mac-device = &gmac0;
 		led-boot = &led_status_red;
 		led-failsafe = &led_status_red;
 		led-running = &led_status_green;
@@ -67,9 +66,6 @@
 		reg = <0>;
 		phy-mode = "2500base-x";
 
-		nvmem-cells = <&macaddr_art_0 0>;
-		nvmem-cell-names = "mac-address";
-
 		fixed-link {
 			speed = <2500>;
 			full-duplex;
@@ -123,18 +119,6 @@
 				label = "art";
 				reg = <0x180000 0x100000>;
 				read-only;
-
-				nvmem-layout {
-					compatible = "fixed-layout";
-					#address-cells = <1>;
-					#size-cells = <1>;
-
-					macaddr_art_0: macaddr@0 {
-						compatible = "mac-base";
-						reg = <0x0 0x6>;
-						#nvmem-cell-cells = <1>;
-					};
-				};
 			};
 
 			factory: partition@280000 {
@@ -173,9 +157,6 @@
 		port@3 {
 			reg = <3>;
 			label = "wan";
-
-			nvmem-cells = <&macaddr_art_0 3>;
-			nvmem-cell-names = "mac-address";
 		};
 
 		port@6 {
@@ -222,20 +203,6 @@
 };
 
 &wifi {
-	#address-cells = <1>;
-	#size-cells = <0>;
-	mediatek,mtd-eeprom = <&factory 0x0>;
 	status = "okay";
-
-	band@0 {
-		reg = <0>;
-		nvmem-cells = <&macaddr_art_0 1>;
-		nvmem-cell-names = "mac-address";
-	};
-
-	band@1 {
-		reg = <1>;
-		nvmem-cells = <&macaddr_art_0 2>;
-		nvmem-cell-names = "mac-address";
-	};
+	mediatek,mtd-eeprom = <&factory 0x0>;
 };
