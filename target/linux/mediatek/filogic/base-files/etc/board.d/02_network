@@ -221,6 +221,29 @@ mediatek_setup_macs()
 	bananapi,bpi-r4)
 		wan_mac=$(macaddr_add $(cat /sys/class/net/eth0/address) 1)
 		;;
+	cetron,ct3003|\
+	cetron,ct3003-112m|\
+	cetron,ct3003-ubootmod)
+		lan_mac=$(mtd_get_mac_ascii art MAC_ADDRESS)
+		[ -z "$lan_mac" ] && lan_mac=$(mtd_get_mac_ascii art mac)
+		[ -z "$lan_mac" ] && lan_mac=$(mtd_get_mac_ascii u-boot-env ethaddr)
+		[ -z "$lan_mac" ] && lan_mac=$(mtd_get_mac_ascii u-boot-env mac)
+		[ -z "$lan_mac" ] && lan_mac=$(mtd_get_mac_binary Factory 0x4)
+		wan_mac=$(macaddr_add "$lan_mac" 3)
+		label_mac=$lan_mac
+		local b0_mac="$(macaddr_add $lan_mac 1)"
+		local b1_mac="$(macaddr_add $lan_mac 2)"
+		local b0_dat="/etc/wireless/mediatek/mt7981.dbdc.b0.dat"
+		local b1_dat="/etc/wireless/mediatek/mt7981.dbdc.b1.dat"
+		if [ -f "$b0_dat" ]; then
+			sed -i '/^MacAddress=/d' "$b0_dat"
+			echo "MacAddress=$b0_mac" >> "$b0_dat"
+		fi
+		if [ -f "$b1_dat" ]; then
+			sed -i '/^MacAddress=/d' "$b1_dat"
+			echo "MacAddress=$b1_mac" >> "$b1_dat"
+		fi
+		;;
 	h3c,magic-nx30-pro|\
 	h3c,magic-nx30-pro-nmbm)
 		wan_mac=$(mtd_get_mac_ascii pdt_data_1 ethaddr)
