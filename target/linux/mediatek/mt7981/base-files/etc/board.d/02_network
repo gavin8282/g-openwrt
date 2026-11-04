@@ -199,6 +199,10 @@ mediatek_setup_macs()
 		;;
 	*cetron,ct3003*)
 		lan_mac=$(mtd_get_mac_ascii art MAC_ADDRESS)
+		[ -z "$lan_mac" ] && lan_mac=$(mtd_get_mac_ascii art mac)
+		[ -z "$lan_mac" ] && lan_mac=$(mtd_get_mac_ascii u-boot-env ethaddr)
+		[ -z "$lan_mac" ] && lan_mac=$(mtd_get_mac_ascii u-boot-env mac)
+		[ -z "$lan_mac" ] && lan_mac=$(mtd_get_mac_binary Factory 0x4)
 		wan_mac=$(macaddr_add $lan_mac 3)
 		label_mac=$lan_mac
 		local wifi_mac="$(macaddr_add $lan_mac 1)"
