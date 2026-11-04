@@ -108,6 +108,7 @@ for (let devname in all_devnames) {
     // call helper functions to batch set properties
     set_section_options("wireless", iface_name, {
         "device": devname,
+        "ifname": cur_dev.main_ifname,
         "network": "lan",
         "mode": "ap",
         "ssid": defs.ssid,

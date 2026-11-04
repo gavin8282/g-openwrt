@@ -140,10 +140,14 @@ function render_network_status(radioNet) {
 	    bssid = radioNet.getActiveBSSID(),
 	    channel = radioNet.getChannel(),
 	    disabled = (radioNet.get('disabled') == '1' || uci.get('wireless', radioNet.getWifiDeviceName(), 'disabled') == '1'),
+	    hwtype = uci.get('wireless', radioNet.getWifiDeviceName(), 'type'),
 	    is_assoc = (bssid && bssid != '00:00:00:00:00:00' && channel && mode != 'Unknown' && !disabled),
 	    is_mesh = (radioNet.getMode() == 'mesh'),
 	    changecount = count_changes(radioNet.getName()),
 	    status_text = null;
+
+	if (hwtype == 'mtwifi' && !is_assoc && !disabled && radioNet.isUp())
+		is_assoc = true;
 
 	if (changecount)
 		status_text = E('a', {
@@ -168,8 +172,11 @@ function render_modal_status(node, radioNet) {
 	    bssid = radioNet.getActiveBSSID(),
 	    channel = radioNet.getChannel(),
 	    disabled = (radioNet.get('disabled') == '1'),
-	    is_assoc = (bssid && bssid != '00:00:00:00:00:00' && channel && mode != 'Unknown' && !disabled),
-	    hwtype = uci.get('wireless', radioNet.getWifiDeviceName(), 'type');
+	    hwtype = uci.get('wireless', radioNet.getWifiDeviceName(), 'type'),
+	    is_assoc = (bssid && bssid != '00:00:00:00:00:00' && channel && mode != 'Unknown' && !disabled);
+
+	if (hwtype == 'mtwifi' && !is_assoc && !disabled && radioNet.isUp())
+		is_assoc = true;
 
 	if (node == null)
 		node = E('span', { 'class': 'ifacebadge large', 'data-network': radioNet.getName() }, [ E('small'), E('span') ]);
@@ -190,7 +197,7 @@ function render_modal_status(node, radioNet) {
 		_('SSID'),       radioNet.getSSID() || '?',
 		_('BSSID'),      is_assoc ? bssid : null,
 		_('Encryption'), is_assoc ? radioNet.getActiveEncryption() || _('None') : null,
-		_('Channel'),    is_assoc ? '%d (%.3f %s)'.format(radioNet.getChannel(), radioNet.getFrequency() || 0, _('GHz')) : null,
+		_('Channel'),    is_assoc ? (channel ? (isNaN(channel) ? channel : '%d (%.3f %s)'.format(channel, radioNet.getFrequency() || 0, _('GHz'))) : null) : null,
 		_('Tx-Power'),   is_assoc ? '%d %s'.format(radioNet.getTXPower(), _('dBm')) : null,
 		_('Signal'),     (is_assoc && (hwtype != 'mtwifi')) ? '%d %s'.format(radioNet.getSignal(), _('dBm')) : null,
 		_('Noise'),      (is_assoc && noise != null) ? '%d %s'.format(noise, _('dBm')) : null,
