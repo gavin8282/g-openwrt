@@ -66,7 +66,8 @@ get_mac_ascii() {
 	local key="$2"
 	local mac_dirty
 
-	mac_dirty=$(strings "$part" | tr -d ' \t' | sed -n 's/^'"$key"'=//p' | head -n 1)
+	mac_dirty=$(strings "$part" | grep -i -E "^[[:space:]]*${key}[[:space:]]*=" | head -n 1 | cut -d'=' -f2- | tr -d ' \t\r"')
+	[ -z "$mac_dirty" ] && mac_dirty=$(strings "$part" | tr -d ' \t\r"' | sed -n 's/^'"$key"'=//p' | head -n 1)
 
 	# "canonicalize" mac
 	[ -n "$mac_dirty" ] && macaddr_canonicalize "$mac_dirty"
@@ -78,7 +79,8 @@ mtd_get_mac_ascii() {
 	local part
 
 	part=$(find_mtd_part "$mtdname")
-	if [ -z "$part" ]; then
+	[ -z "$part" -o ! -e "$part" ] && part=$(find_mtd_chardev "$mtdname")
+	if [ -z "$part" -o ! -e "$part" ]; then
 		echo "mtd_get_mac_ascii: partition $mtdname not found!" >&2
 		return
 	fi
@@ -189,6 +191,7 @@ mtd_get_mac_binary() {
 	local part
 
 	part=$(find_mtd_part "$mtdname")
+	[ -z "$part" -o ! -e "$part" ] && part=$(find_mtd_chardev "$mtdname")
 	get_mac_binary "$part" "$offset"
 }
 
@@ -239,11 +242,26 @@ mmc_get_mac_binary() {
 	get_mac_binary "$part" "$offset"
 }
 
+is_valid_unicast_mac() {
+	local mac="$1"
+	local canon
+	canon=$(macaddr_canonicalize "$mac")
+	[ -z "$canon" ] && return 1
+	[ "$canon" = "00:00:00:00:00:00" ] && return 1
+	[ "$canon" = "ff:ff:ff:ff:ff:ff" ] && return 1
+	local first_byte="0x${canon%%:*}"
+	[ $((first_byte & 1)) -ne 0 ] && return 1
+	return 0
+}
+
 macaddr_add() {
 	local mac=$1
 	local val=$2
-	local oui=${mac%:*:*:*}
-	local nic=${mac#*:*:*:}
+	local canon
+	canon=$(macaddr_canonicalize "$mac")
+	[ -z "$canon" ] && return 1
+	local oui=${canon%:*:*:*}
+	local nic=${canon#*:*:*:}
 
 	nic=$(printf "%06x" $((0x${nic//:/} + val & 0xffffff)) | sed 's/^\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)/\1:\2:\3/')
 	echo $oui:$nic
