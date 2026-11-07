@@ -499,9 +499,6 @@ static int mtk_get_frequency(const char *dev, int *buf)
 	return 0;
 }
 
-	return 0;
-}
-
 static int mtk_get_txpower(const char *dev, int *buf)
 {
 	struct iwreq wrq;
