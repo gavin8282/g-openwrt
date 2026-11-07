@@ -116,6 +116,7 @@ function render_network_badge(radioNet) {
 function render_radio_status(radioDev, wifiNets) {
 	var name = radioDev.getI18n().replace(/ Wireless Controller .+$/, ''),
 	    node = E('div', [ E('big', {}, E('strong', {}, name)), E('div') ]),
+	    hwtype = uci.get('wireless', radioDev.getName(), 'type'),
 	    channel, frequency, bitrate;
 
 	for (var i = 0; i < wifiNets.length; i++) {
@@ -129,6 +130,13 @@ function render_radio_status(radioDev, wifiNets) {
 			_('Channel'), '%s (%s %s)'.format(channel || '?', frequency || '?', _('GHz')),
 			_('Bitrate'), '%s %s'.format(bitrate || '?', _('Mbit/s'))
 		], ' | ');
+	else if (hwtype == 'mtwifi' && !radioDev.isDisabled()) {
+		var chan = channel || uci.get('wireless', radioDev.getName(), 'channel') || '?';
+		L.itemlist(node.lastElementChild, [
+			_('Channel'), '%s'.format(chan),
+			_('Bitrate'), '%s %s'.format(bitrate || '1201', _('Mbit/s'))
+		], ' | ');
+	}
 	else
 		node.lastElementChild.appendChild(E('em', _('Device is not active')));
 
@@ -146,8 +154,15 @@ function render_network_status(radioNet) {
 	    changecount = count_changes(radioNet.getName()),
 	    status_text = null;
 
-	if (hwtype == 'mtwifi' && !is_assoc && !disabled && radioNet.isUp())
+	if (hwtype == 'mtwifi' && !disabled) {
+		if (!bssid || bssid == '00:00:00:00:00:00')
+			bssid = radioNet.get('bssid') || radioNet.ubus('net', 'bssid');
+		if (!channel)
+			channel = uci.get('wireless', radioNet.getWifiDeviceName(), 'channel');
+		if (!mode || mode == 'Unknown')
+			mode = (radioNet.get('mode') == 'sta') ? 'Client' : 'Master';
 		is_assoc = true;
+	}
 
 	if (changecount)
 		status_text = E('a', {
@@ -175,8 +190,15 @@ function render_modal_status(node, radioNet) {
 	    hwtype = uci.get('wireless', radioNet.getWifiDeviceName(), 'type'),
 	    is_assoc = (bssid && bssid != '00:00:00:00:00:00' && channel && mode != 'Unknown' && !disabled);
 
-	if (hwtype == 'mtwifi' && !is_assoc && !disabled && radioNet.isUp())
+	if (hwtype == 'mtwifi' && !disabled) {
+		if (!bssid || bssid == '00:00:00:00:00:00')
+			bssid = radioNet.get('bssid') || radioNet.ubus('net', 'bssid');
+		if (!channel)
+			channel = uci.get('wireless', radioNet.getWifiDeviceName(), 'channel');
+		if (!mode || mode == 'Unknown')
+			mode = (radioNet.get('mode') == 'sta') ? 'Client' : 'Master';
 		is_assoc = true;
+	}
 
 	if (node == null)
 		node = E('span', { 'class': 'ifacebadge large', 'data-network': radioNet.getName() }, [ E('small'), E('span') ]);

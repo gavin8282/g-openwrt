@@ -37,8 +37,11 @@ export function set_retry(retry) {
 	notify(CMD_SET_RETRY, null, { retry });
 };
 
-export function set_vif(interface, ifname) {
-	notify(CMD_SET_DATA, { interface }, { ifname });
+export function set_vif(interface, ifname, bssid) {
+	let data = { ifname };
+	if (bssid)
+		data.bssid = bssid;
+	notify(CMD_SET_DATA, { interface }, data);
 };
 
 export function set_vlan(interface, ifname, vlan) {

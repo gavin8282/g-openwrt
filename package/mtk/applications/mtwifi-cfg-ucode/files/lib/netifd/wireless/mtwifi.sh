@@ -259,6 +259,31 @@ function handle_setup(data) {
     /*****          SETUP VIFS        *******/
     // UCI => DAT, ifup, reload driver...
     cfg.setup(data, all_devs);
+
+    // populate BSSID from net device into netifd and UCI for LuCI/iwinfo
+    for (let idx, iface_data in data.interfaces) {
+        let calc_ifname = iface_data.mtwifi_ifname;
+        if (!calc_ifname) continue;
+
+        let mac = null;
+        let addr_file = fs.open(`/sys/class/net/${calc_ifname}/address`, "r");
+        if (addr_file) {
+            mac = trim(addr_file.read("all"));
+            addr_file.close();
+        }
+
+        if (mac && length(mac) == 17) {
+            mac = uc(mac);
+            if (iface_data.name) {
+                netifd.set_vif(iface_data.name, calc_ifname, mac);
+            }
+            if (iface_data.name && cursor) {
+                cursor.set("wireless", iface_data.name, "bssid", mac);
+            }
+        }
+    }
+    if (cursor) cursor.commit("wireless");
+
     // notify netifd to setup
 	netifd.set_up();
 

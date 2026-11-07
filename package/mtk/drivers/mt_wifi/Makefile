@@ -304,7 +304,7 @@ define KernelPackage/mt_wifi
   DEPENDS:=+wifi-dats +kmod-conninfra +kmod-mediatek_hnat +kmod-warp
   FILES:=$(PKG_BUILD_DIR)/mt_wifi_ap/mt_wifi.ko \
 	$(PKG_BUILD_DIR)/mt_wifi/embedded/plug_in/warp_proxy/mtk_warp_proxy.ko
-  AUTOLOAD:=$(call AutoProbe,mt_wifi mtk_warp_proxy)
+  AUTOLOAD:=$(call AutoLoad,80,mt_wifi mtk_warp_proxy)
   SUBMENU:=Drivers
   MENU:=1
 endef

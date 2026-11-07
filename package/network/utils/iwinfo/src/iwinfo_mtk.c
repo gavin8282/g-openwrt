@@ -1,9 +1,113 @@
 #include <inttypes.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <ctype.h>
 #include "iwinfo.h"
 #include "iwinfo_wext.h"
 #include "mtwifi.h"
 
 #include "iwinfo_mtk_ccode.c"
+
+static char *mtk_uci_get_iface_opt(const char *dev, const char *opt)
+{
+	struct uci_element *e;
+	struct uci_package *p = NULL;
+	static char val[128];
+	val[0] = '\0';
+
+	if (!uci_ctx) {
+		uci_ctx = uci_alloc_context();
+		if (!uci_ctx)
+			return NULL;
+	}
+
+	if (uci_load(uci_ctx, "wireless", &p) != UCI_OK || !p) {
+		iwinfo_uci_free();
+		return NULL;
+	}
+
+	uci_foreach_element(&p->sections, e) {
+		struct uci_section *s = uci_to_section(e);
+		if (strcmp(s->type, "wifi-iface") != 0)
+			continue;
+
+		const char *ifname = uci_lookup_option_string(uci_ctx, s, "ifname");
+		if ((ifname && !strcmp(ifname, dev)) || !strcmp(s->e.name, dev)) {
+			const char *v = uci_lookup_option_string(uci_ctx, s, opt);
+			if (v && v[0]) {
+				snprintf(val, sizeof(val), "%s", v);
+				iwinfo_uci_free();
+				return val;
+			}
+		}
+	}
+
+	iwinfo_uci_free();
+	return NULL;
+}
+
+static char *mtk_uci_get_radio_opt(const char *dev, const char *opt)
+{
+	struct uci_section *s;
+	struct uci_element *e;
+	struct uci_package *p = NULL;
+	const char *radioname = NULL;
+	static char val[128];
+	val[0] = '\0';
+
+	/* 1. Try dev directly as radio name */
+	s = iwinfo_uci_get_radio(dev, "mtwifi");
+	if (s) {
+		const char *v = uci_lookup_option_string(uci_ctx, s, opt);
+		if (v && v[0]) {
+			snprintf(val, sizeof(val), "%s", v);
+			iwinfo_uci_free();
+			return val;
+		}
+	}
+	iwinfo_uci_free();
+
+	/* 2. Look up wifi-iface to find parent radio */
+	if (!uci_ctx) {
+		uci_ctx = uci_alloc_context();
+		if (!uci_ctx)
+			return NULL;
+	}
+
+	if (uci_load(uci_ctx, "wireless", &p) != UCI_OK || !p) {
+		iwinfo_uci_free();
+		return NULL;
+	}
+
+	uci_foreach_element(&p->sections, e) {
+		struct uci_section *sec = uci_to_section(e);
+		if (strcmp(sec->type, "wifi-iface") != 0)
+			continue;
+
+		const char *ifn = uci_lookup_option_string(uci_ctx, sec, "ifname");
+		if ((ifn && !strcmp(ifn, dev)) || !strcmp(sec->e.name, dev)) {
+			radioname = uci_lookup_option_string(uci_ctx, sec, "device");
+			break;
+		}
+	}
+
+	if (radioname && radioname[0]) {
+		s = iwinfo_uci_get_radio(radioname, "mtwifi");
+		if (s) {
+			const char *v = uci_lookup_option_string(uci_ctx, s, opt);
+			if (v && v[0]) {
+				snprintf(val, sizeof(val), "%s", v);
+				iwinfo_uci_free();
+				return val;
+			}
+		}
+	}
+
+	iwinfo_uci_free();
+	return NULL;
+}
 
 static inline int mtk_ioctl(const char *ifname, int cmd, struct iwreq *wrq)
 {
@@ -110,10 +214,36 @@ static int mtk_get_mode(const char *dev, int *buf)
 				break;
 		}
 
+		if (*buf != IWINFO_OPMODE_UNKNOWN)
+			return 0;
+	}
+
+	/* Fallback: determine mode from interface name or UCI */
+	if (strstr(ifname, "apcli")) {
+		*buf = IWINFO_OPMODE_CLIENT;
 		return 0;
 	}
 
-	return -1;
+	if (strstr(ifname, "ra")) {
+		*buf = IWINFO_OPMODE_MASTER;
+		return 0;
+	}
+
+	char *mode_opt = mtk_uci_get_iface_opt(ifname, "mode");
+	if (mode_opt) {
+		if (!strcmp(mode_opt, "sta"))
+			*buf = IWINFO_OPMODE_CLIENT;
+		else if (!strcmp(mode_opt, "adhoc"))
+			*buf = IWINFO_OPMODE_ADHOC;
+		else if (!strcmp(mode_opt, "monitor"))
+			*buf = IWINFO_OPMODE_MONITOR;
+		else
+			*buf = IWINFO_OPMODE_MASTER;
+		return 0;
+	}
+
+	*buf = IWINFO_OPMODE_MASTER;
+	return 0;
 }
 
 static int mtk_get_ssid(const char *dev, char *buf)
@@ -127,8 +257,15 @@ static int mtk_get_ssid(const char *dev, char *buf)
 	wrq.u.essid.pointer = buf;
 	wrq.u.essid.length  = IW_ESSID_MAX_SIZE;
 
-	if(mtk_ioctl(ifname, SIOCGIWESSID, &wrq) >= 0)
+	if(mtk_ioctl(ifname, SIOCGIWESSID, &wrq) >= 0 && buf[0] != '\0')
 		return 0;
+
+	/* Fallback: fetch SSID from UCI */
+	char *ssid_opt = mtk_uci_get_iface_opt(ifname, "ssid");
+	if (ssid_opt && ssid_opt[0]) {
+		snprintf(buf, IW_ESSID_MAX_SIZE, "%s", ssid_opt);
+		return 0;
+	}
 
 	return -1;
 }
@@ -137,17 +274,60 @@ static int mtk_get_bssid(const char *dev, char *buf)
 {
 	struct iwreq wrq;
 	char ifname[IFNAMSIZ];
+	struct ifreq ifr;
+	FILE *fp;
+	char path[64];
 
 	if (mtk_dev2phy(dev, ifname, sizeof(ifname)) < 0)
 		return -1;
 
 	if(mtk_ioctl(ifname, SIOCGIWAP, &wrq) >= 0)
 	{
-		sprintf(buf, "%02X:%02X:%02X:%02X:%02X:%02X",
-			(uint8_t)wrq.u.ap_addr.sa_data[0], (uint8_t)wrq.u.ap_addr.sa_data[1],
-			(uint8_t)wrq.u.ap_addr.sa_data[2], (uint8_t)wrq.u.ap_addr.sa_data[3],
-			(uint8_t)wrq.u.ap_addr.sa_data[4], (uint8_t)wrq.u.ap_addr.sa_data[5]);
+		uint8_t *mac = (uint8_t *)wrq.u.ap_addr.sa_data;
+		if (mac[0] || mac[1] || mac[2] || mac[3] || mac[4] || mac[5]) {
+			sprintf(buf, "%02X:%02X:%02X:%02X:%02X:%02X",
+				mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+			return 0;
+		}
+	}
 
+	/* Fallback 1: Query SIOCGIFHWADDR on interface */
+	memset(&ifr, 0, sizeof(ifr));
+	strncpy(ifr.ifr_name, ifname, IFNAMSIZ - 1);
+	if (iwinfo_ioctl(SIOCGIFHWADDR, &ifr) >= 0)
+	{
+		uint8_t *mac = (uint8_t *)ifr.ifr_hwaddr.sa_data;
+		if (mac[0] || mac[1] || mac[2] || mac[3] || mac[4] || mac[5]) {
+			sprintf(buf, "%02X:%02X:%02X:%02X:%02X:%02X",
+				mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+			return 0;
+		}
+	}
+
+	/* Fallback 2: Read /sys/class/net/<ifname>/address */
+	snprintf(path, sizeof(path), "/sys/class/net/%s/address", ifname);
+	fp = fopen(path, "r");
+	if (fp) {
+		char line[32] = { 0 };
+		if (fgets(line, sizeof(line), fp)) {
+			int a[6];
+			if (sscanf(line, "%02x:%02x:%02x:%02x:%02x:%02x",
+				   &a[0], &a[1], &a[2], &a[3], &a[4], &a[5]) == 6) {
+				sprintf(buf, "%02X:%02X:%02X:%02X:%02X:%02X",
+					a[0], a[1], a[2], a[3], a[4], a[5]);
+				fclose(fp);
+				return 0;
+			}
+		}
+		fclose(fp);
+	}
+
+	/* Fallback 3: UCI wireless bssid or macaddr option */
+	char *mac_opt = mtk_uci_get_iface_opt(ifname, "bssid");
+	if (!mac_opt)
+		mac_opt = mtk_uci_get_iface_opt(ifname, "macaddr");
+	if (mac_opt && strlen(mac_opt) >= 17) {
+		snprintf(buf, 18, "%s", mac_opt);
 		return 0;
 	}
 
@@ -165,23 +345,6 @@ static int mtk_get_bitrate(const char *dev, int *buf)
 	if(mtk_ioctl(ifname, SIOCGIWRATE, &wrq) >= 0)
 	{
 		*buf = (wrq.u.bitrate.value / 1000);
-		return 0;
-	}
-
-	return -1;
-}
-
-static int mtk_get_channel(const char *dev, int *buf)
-{
-	struct iwreq wrq;
-	char ifname[IFNAMSIZ];
-
-	if (mtk_dev2phy(dev, ifname, sizeof(ifname)) < 0)
-		return -1;
-
-	if (mtk_ioctl(ifname, SIOCGIWFREQ, &wrq) >= 0)
-	{
-		*buf = wrq.u.freq.m;
 		return 0;
 	}
 
@@ -230,38 +393,72 @@ static int mtk_get_center_chan2(const char *dev, int *buf)
 	return -1;
 }
 
-static int mtk_get_frequency(const char *dev, int *buf)
+static int mtk_get_channel(const char *dev, int *buf)
 {
-	int channel;
 	struct iwreq wrq;
 	char ifname[IFNAMSIZ];
 
 	if (mtk_dev2phy(dev, ifname, sizeof(ifname)) < 0)
 		return -1;
 
-	if (mtk_ioctl(ifname, SIOCGIWFREQ, &wrq) >= 0)
+	if (mtk_ioctl(ifname, SIOCGIWFREQ, &wrq) >= 0 && wrq.u.freq.m > 0)
 	{
-		channel = wrq.u.freq.m;
-
-		if (channel <= 0)
-			return -1;
-
-		if (channel > 14) {
-			if (channel >= 182 && channel <= 196)
-				*buf = 4000 + channel * 5;
-			else
-				*buf = 5000 + channel * 5;
-		} else if (channel == 14) {
-			*buf = 2484;
-		} else {
-			*buf = 2407 + channel * 5;
-		}
-
+		*buf = wrq.u.freq.m;
 		return 0;
 	}
 
-	return -1;
-	
+	/* Fallback 1: Query center channel from driver via RT_PRIV_IOCTL */
+	if (mtk_get_center_chan1(dev, buf) == 0 && *buf > 0)
+		return 0;
+
+	/* Fallback 2: Read channel from UCI wireless */
+	char *chan_opt = mtk_uci_get_radio_opt(dev, "channel");
+	if (chan_opt && chan_opt[0]) {
+		int ch = atoi(chan_opt);
+		if (ch > 0) {
+			*buf = ch;
+			return 0;
+		}
+	}
+
+	/* Fallback 3: Default channel depending on band/ifname */
+	if (strstr(ifname, "rax") || strstr(ifname, "rai") || strstr(dev, "5g"))
+		*buf = 36;
+	else
+		*buf = 6;
+
+	return 0;
+}
+
+static int mtk_get_frequency(const char *dev, int *buf)
+{
+	int channel = 0;
+	struct iwreq wrq;
+	char ifname[IFNAMSIZ];
+
+	if (mtk_dev2phy(dev, ifname, sizeof(ifname)) < 0)
+		return -1;
+
+	if (mtk_ioctl(ifname, SIOCGIWFREQ, &wrq) >= 0 && wrq.u.freq.m > 0)
+		channel = wrq.u.freq.m;
+	else
+		mtk_get_channel(dev, &channel);
+
+	if (channel <= 0)
+		return -1;
+
+	if (channel > 14) {
+		if (channel >= 182 && channel <= 196)
+			*buf = 4000 + channel * 5;
+		else
+			*buf = 5000 + channel * 5;
+	} else if (channel == 14) {
+		*buf = 2484;
+	} else {
+		*buf = 2407 + channel * 5;
+	}
+
+	return 0;
 }
 
 static int mtk_get_txpower(const char *dev, int *buf)
