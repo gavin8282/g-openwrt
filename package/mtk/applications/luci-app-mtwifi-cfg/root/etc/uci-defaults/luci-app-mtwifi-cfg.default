@@ -1,17 +1,23 @@
 #!/bin/sh
 
 if [ -d /www/luci-static/resources/view/network ]; then
-	mv -f /usr/share/luci-app-mtwifi-cfg/wireless-mtk.js /www/luci-static/resources/view/network/wireless.js
+	cp -f /usr/share/luci-app-mtwifi-cfg/wireless-mtk.js /www/luci-static/resources/view/network/wireless.js
 fi
 
 if [ -d /usr/share/luci/menu.d ]; then
-	mv -f /usr/share/luci-app-mtwifi-cfg/luci-mod-status.json /usr/share/luci/menu.d/luci-mod-status.json
+	cp -f /usr/share/luci-app-mtwifi-cfg/luci-mod-status.json /usr/share/luci/menu.d/luci-mod-status.json
 fi
 
 for luci_network_js in /www/luci-static/resources/network.js /www/luci-static/resources/tools/network.js; do
 	if [ -f "$luci_network_js" ]; then
 		if ! grep -sq 'ra\[xiyez\]' "$luci_network_js" ; then
-			sed -i 's#/^wlan\\d+/,#/^wlan\\d+/,/^ra[xiyez]?\\d+/,/^apcli[xiyez]?\\d+/,#' "$luci_network_js"
+			sed -i 's#/\^wlan[^,]*,#& /^ra[xiyez]?[0-9]+/, /^apcli[xiyez]?[0-9]+/,#' "$luci_network_js"
 		fi
+		sed -i "s#return this.ubus('net', 'config', 'bssid')#return this.ubus('net', 'iwinfo', 'bssid') || this.ubus('net', 'config', 'bssid') || this.ubus('net', 'bssid')#" "$luci_network_js"
 	fi
 done
+
+LUCI_STATUS_WIFI="/www/luci-static/resources/view/status/include/60_wifi.js"
+if [ -f "$LUCI_STATUS_WIFI" ]; then
+	sed -i "s#const is_assoc = (net.getBSSID() != '00:00:00:00:00:00' && net.getChannel() && !net.isDisabled());#const is_assoc = ((net.getActiveBSSID() || net.getBSSID()) != '00:00:00:00:00:00' && (net.getChannel() || net.getFrequency()) && !net.isDisabled());#" "$LUCI_STATUS_WIFI"
+fi
