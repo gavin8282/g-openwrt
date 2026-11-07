@@ -27,8 +27,12 @@ function count_changes(section_id) {
 }
 
 function render_radio_badge(radioDev) {
+	var hwtype = uci.get('wireless', radioDev.getName(), 'type'),
+	    is_disabled = (radioDev.get('disabled') == '1'),
+	    is_up = radioDev.isUp() || (hwtype == 'mtwifi' && !is_disabled);
+
 	return E('span', { 'class': 'ifacebadge' }, [
-		E('img', { 'src': L.resource('icons/wifi%s.svg').format(radioDev.isUp() ? '' : '_disabled') }),
+		E('img', { 'src': L.resource('icons/wifi%s.svg').format(is_up ? '' : '_disabled') }),
 		' ',
 		radioDev.getName()
 	]);
@@ -101,12 +105,19 @@ function render_signal_badge(signalPercent, signalValue, noiseValue, wrap, mode)
 }
 
 function render_network_badge(radioNet) {
-	var hwtype = uci.get('wireless', radioNet.getWifiDeviceName(), 'type');
+	var hwtype = uci.get('wireless', radioNet.getWifiDeviceName(), 'type'),
+	    is_disabled = (radioNet.get('disabled') == '1' || uci.get('wireless', radioNet.getWifiDeviceName(), 'disabled') == '1');
 
-	if (hwtype == 'mtwifi')
+	if (hwtype == 'mtwifi') {
+		var is_up = !is_disabled,
+		    txpwr = radioNet.getTXPower();
+		if (!txpwr || txpwr <= 0)
+			txpwr = is_up ? 20 : null;
+
 		return render_signal_badge(
-			radioNet.isUp() ? 100 : -1,
-			radioNet.getTXPower(), null, false, radioNet.getMode());
+			is_up ? 100 : -1,
+			txpwr, null, false, radioNet.getMode());
+	}
 	else
 		return render_signal_badge(
 			radioNet.isUp() ? radioNet.getSignalPercent() : -1,
@@ -156,7 +167,7 @@ function render_network_status(radioNet) {
 
 	if (hwtype == 'mtwifi' && !disabled) {
 		if (!bssid || bssid == '00:00:00:00:00:00')
-			bssid = radioNet.get('bssid') || radioNet.ubus('net', 'bssid');
+			bssid = radioNet.get('bssid') || radioNet.ubus('net', 'bssid') || uci.get('wireless', radioNet.getName(), 'macaddr') || uci.get('wireless', radioNet.getName(), 'bssid');
 		if (!channel)
 			channel = uci.get('wireless', radioNet.getWifiDeviceName(), 'channel');
 		if (!mode || mode == 'Unknown')
@@ -192,7 +203,7 @@ function render_modal_status(node, radioNet) {
 
 	if (hwtype == 'mtwifi' && !disabled) {
 		if (!bssid || bssid == '00:00:00:00:00:00')
-			bssid = radioNet.get('bssid') || radioNet.ubus('net', 'bssid');
+			bssid = radioNet.get('bssid') || radioNet.ubus('net', 'bssid') || uci.get('wireless', radioNet.getName(), 'macaddr') || uci.get('wireless', radioNet.getName(), 'bssid');
 		if (!channel)
 			channel = uci.get('wireless', radioNet.getWifiDeviceName(), 'channel');
 		if (!mode || mode == 'Unknown')
@@ -205,9 +216,13 @@ function render_modal_status(node, radioNet) {
 
 	if (hwtype == 'mtwifi') {
 		noise = null;
+		var txpwr = radioNet.getTXPower();
+		if (!txpwr || txpwr <= 0)
+			txpwr = disabled ? null : 20;
+
 		dom.content(node.firstElementChild, render_signal_badge(
 			disabled ? -1 : 100,
-			radioNet.getTXPower(), noise, true, radioNet.getMode()));
+			txpwr, noise, true, radioNet.getMode()));
 	} else {
 		dom.content(node.firstElementChild, render_signal_badge(
 			disabled ? -1 : radioNet.getSignalPercent(),
